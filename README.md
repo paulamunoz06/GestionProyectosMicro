@@ -24,11 +24,6 @@
 - [Levantamiento de Requisitos](https://docs.google.com/spreadsheets/d/1hG2GuJDQpcxUXRv70Yiytuf38SZNCaiGbclfKXcRKBk/edit?usp=sharing)
 - [Test de Usabilidad](https://docs.google.com/spreadsheets/d/1pmMF3Gd32J0-KrMs3bDB2ZYqA62sIhG9D5hBbXWHq5U/edit?gid=946668092#gid=946668092)
 
-## Base de Datos
-- [Creación de Tablas](https://docs.google.com/document/d/1kMIIEXTbxMX_9jPuHZQbjI-xVG2hGmIFbEeRHqOTYbQ/edit?usp=sharing)
-- [Inserción de Datos](https://docs.google.com/document/d/15t-HtM0J3-9bGSsDSEnZZqkk12O9IaQs3rojCnnxk8U/edit?usp=sharing)
-- [Función Almacenada](https://docs.google.com/document/d/12_va4__3k_VSFBanorPgKcRr3RxaZvxdwFB6OonF2jg/edit?usp=sharing)
-
 ## Pruebas Unitarias
 
 ## Instalación y Uso
