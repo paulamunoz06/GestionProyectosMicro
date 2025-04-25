@@ -48,21 +48,21 @@ public class Factory {
     private Factory() {
         // Diccionario para repositorios de compañías
         companyDictionary = new HashMap<>();
-        companyDictionary.put("MARIADB", new CompanyMariaDBRepository()); // Agrega repositorio MariaDB
+        companyDictionary.put("COMPANY", new CompanyRepository()); // Agrega repositorio MariaDB
         
         // Diccionario para repositorios de estudiantes
         studentDictionary = new HashMap<>();
-        studentDictionary.put("MARIADB", new StudentMariaDBRepository()); // Agrega repositorio MariaDB
+        studentDictionary.put("STUDENT", new StudentRepository()); // Agrega repositorio MariaDB
         
         // Diccionario para repositorios de proyectos
         projectDictionary = new HashMap<>();
-        projectDictionary.put("MARIADB", new ProjectMariaDBRepository()); // Agrega repositorio MariaDB
+        projectDictionary.put("PROJECT", new ProjectRepository()); // Agrega repositorio MariaDB
         
         coordinatorDictionary = new HashMap<>();
-        coordinatorDictionary.put("MARIADB", new CoordinatorMariaDBRepository()); // Agrega repositorio MariaDB
+        coordinatorDictionary.put("COORDINATOR", new CoordinatorRepository()); // Agrega repositorio MariaDB
         
         userDictionary = new HashMap<>();
-        userDictionary.put("MARIADB", new UserMariaDBRepository()); // Agrega repositorio MariaDB
+        userDictionary.put("USER", new UserRepository()); // Agrega repositorio de usuario
     }
     
     /**

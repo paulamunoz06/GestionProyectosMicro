@@ -26,16 +26,16 @@ public class DashboardFactory {
     ProjectService projectService;
     public DashboardFactory(){
         // Obtener instancias de los repositorios a través de la fábrica
-        IStudentRepository studentRepository = Factory.getInstance().getRepositoryStudent("MARIADB");
+        IStudentRepository studentRepository = Factory.getInstance().getRepositoryStudent("STUDENT");
         studentService = new StudentService(studentRepository);
         
-        ICoordinatorRepository coordinatorRepository = Factory.getInstance().getRepositoryCoordinator("MARIADB");
+        ICoordinatorRepository coordinatorRepository = Factory.getInstance().getRepositoryCoordinator("COORDINATOR");
         coordinatorService = new CoordinatorService(coordinatorRepository);
 
-        ICompanyRepository companyRepository = Factory.getInstance().getRepositoryCompany("MARIADB");
+        ICompanyRepository companyRepository = Factory.getInstance().getRepositoryCompany("COMPANY");
         companyService = new CompanyService(companyRepository);
         
-        IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("MARIADB");
+        IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("PROJECT");
         projectService = new ProjectService(projectRepository);
     }
     public Dashboard crearDashboard(int result, String idEntity){

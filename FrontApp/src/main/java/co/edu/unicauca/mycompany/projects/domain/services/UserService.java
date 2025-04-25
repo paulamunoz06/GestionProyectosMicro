@@ -31,7 +31,6 @@ public class UserService {
      * @return Un código de estado que indica el resultado del intento de inicio de sesión.
      */
     public int iniciarSesion(String prmUserName, char[] prmPassword) {
-        String str_password = new String(prmPassword);
         return repository.iniciarSesion(prmUserName,prmPassword);
     }
 
