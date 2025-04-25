@@ -1,0 +1,103 @@
+package co.edu.unicauca.mycompany.projects.domain.services;
+
+import co.edu.unicauca.mycompany.projects.domain.entities.Project;
+import co.edu.unicauca.mycompany.projects.infra.ValidationException;
+import java.text.SimpleDateFormat;
+
+/**
+ * Clase que valida los datos de un proyecto.
+ * 
+ * Implementa la interfaz IValidation para proporcionar reglas de validación específicas
+ * para los datos de una empresa dentro del sistema.
+ */
+public class DataValidationProject implements IValidation {
+
+    /** Proyecto cuyos datos serán validados. */
+    private Project project;
+
+    /**
+     * Constructor de la clase que recibe un proyecto a validar.
+     *
+     * @param project El proyecto cuyos datos serán validados.
+     */
+    public DataValidationProject(Project project) {
+        this.project = project;
+    }
+
+    /**
+     * Valida los datos del proyecto asegurando que los campos requeridos no
+     * estén vacíos y que cumplan con los formatos establecidos.
+     *
+     * @return {@code true} si el proyecto es válido.
+     * @throws ValidationException Si algún dato no cumple con las reglas
+     * establecidas.
+     */
+    @Override
+    public boolean isValid() throws ValidationException {
+
+        String validationStrings = "[a-zA-ZáéíóúÁÉÍÓÚñÑ ]+";
+        String validationId = "[a-zA-Z0-9]{1,10}";
+        String validationDate = "\\d{2}/\\d{2}/\\d{4}";
+        String validationBudget = "\\d+(\\.\\d{1,2})?";
+
+        // Validaciones de campos obligatorios
+        if (project.getProId().isBlank() || project.getProId() == null) {
+            throw new ValidationException("El ID del proyecto es obligatorio", "proId");
+        } else if (project.getProTitle().isBlank() || project.getProTitle() == null) {
+            throw new ValidationException("El título del proyecto es obligatorio", "proTitle");
+        } else if (project.getProDescription().isBlank() || project.getProDescription() == null) {
+            throw new ValidationException("La descripción del proyecto es obligatoria", "proDescription");
+        } else if (project.getProAbstract().isBlank() || project.getProAbstract() == null) {
+            throw new ValidationException("El resumen del proyecto es obligatorio", "proAbstract");
+        } else if (project.getProGoals().isBlank() || project.getProGoals() == null) {
+            throw new ValidationException("Los objetivos del proyecto son obligatorios", "proGoals");
+        } else if (project.getProDate() == null) {
+            throw new ValidationException("La fecha del proyecto es obligatoria", "proDate");
+        } else if (project.getProDeadLine() <= 0) {
+            throw new ValidationException("El plazo del proyecto debe ser mayor  a 0", "proDeadLine");
+        } else if (project.getProBudget() < 0) {
+            throw new ValidationException("El presupuesto del proyecto debe ser un número positivo", "proBudget");
+        } else if (project.getIdcompany().isBlank() || project.getIdcompany() == null) {
+            throw new ValidationException("El ID de la empresa es obligatorio", "idcompany");
+        }
+
+        // Validaciones de formato y longitud
+        if (!project.getProId().matches(validationId)) {
+            throw new ValidationException("El ID del proyecto debe contener solo letras y números, y tener entre 1 y 10 caracteres", "proId");
+        }
+        if (!project.getProTitle().matches(validationStrings)) {
+            throw new ValidationException("El título del proyecto debe contener solo letras", "proTitle");
+        }
+        if (project.getProTitle().length() < 1 || project.getProTitle().length() > 20) {
+            throw new ValidationException("El título del proyecto debe tener entre 1 y 20 caracteres", "proTitle");
+        }
+        if (project.getProAbstract().length() < 10 || project.getProAbstract().length() > 50) {
+            throw new ValidationException("El resumen debe tener entre 10 y 300 caracteres", "proAbstract");
+        }
+        if (project.getProGoals().length() < 10 || project.getProGoals().length() > 50) {
+            throw new ValidationException("Los objetivos deben tener entre 10 y 50 caracteres", "proGoals");
+        }
+        if (project.getProDescription().length() < 10 || project.getProDescription().length() > 1000) {
+            throw new ValidationException("La descripción debe tener entre 10 y 100 caracteres", "proDescription");
+        }
+        if (project.getProDeadLine() <= 0 || project.getProDeadLine() > 36) {
+            throw new ValidationException("El plazo del proyecto debe estar entre 1 y 36 meses", "proDeadLine");
+        }
+        if (!String.valueOf(project.getProBudget()).matches(validationBudget)) {
+            throw new ValidationException("El presupuesto debe ser un número entero positivo con hasta 2 decimales", "proBudget");
+        }
+        if (project.getProBudget() < 0 || project.getProBudget() > 1000000000) {
+            throw new ValidationException("El presupuesto debe estar entre 0 y 1'000.000.000 de pesos", "proBudget");
+        }
+        if (!new SimpleDateFormat("dd/MM/yyyy").format(project.getProDate()).matches(validationDate)) {
+            throw new ValidationException("La fecha no tiene el formato dd/MM/yyyy", "proDate");
+        }
+        return true;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    
+}
