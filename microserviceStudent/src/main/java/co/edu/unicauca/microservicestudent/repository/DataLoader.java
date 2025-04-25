@@ -21,7 +21,7 @@ public class DataLoader implements CommandLineRunner {
 
     @Override
     @Transactional
-    public void run(String... args) throws Exception {
+    public void run(String... args){
         studentRepository.deleteAll();
         projectRepository.deleteAll();
 

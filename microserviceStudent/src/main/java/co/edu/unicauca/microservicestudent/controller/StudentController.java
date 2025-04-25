@@ -2,7 +2,6 @@ package co.edu.unicauca.microservicestudent.controller;
 
 import co.edu.unicauca.microservicestudent.entity.Project;
 import co.edu.unicauca.microservicestudent.entity.Student;
-import co.edu.unicauca.microservicestudent.infra.dto.ProjectCompanyDto;
 import co.edu.unicauca.microservicestudent.infra.dto.ProjectDto;
 import co.edu.unicauca.microservicestudent.service.ProjectService;
 import co.edu.unicauca.microservicestudent.service.StudentService;
