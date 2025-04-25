@@ -1,7 +1,5 @@
 package co.edu.unicauca.microservicestudent.infra.dto;
 
-import jakarta.persistence.ElementCollection;
-import jakarta.validation.constraints.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

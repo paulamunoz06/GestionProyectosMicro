@@ -2,6 +2,7 @@ package co.edu.unicauca.microservicestudent.controller;
 
 import co.edu.unicauca.microservicestudent.entity.Project;
 import co.edu.unicauca.microservicestudent.entity.Student;
+import co.edu.unicauca.microservicestudent.infra.dto.ProjectCompanyDto;
 import co.edu.unicauca.microservicestudent.infra.dto.ProjectDto;
 import co.edu.unicauca.microservicestudent.service.ProjectService;
 import co.edu.unicauca.microservicestudent.service.StudentService;
@@ -82,5 +83,20 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
+
+    @GetMapping("/project/{idProject}")
+    public ResponseEntity<?> getCompanyInfo(@PathVariable Long idProject) {
+        try {
+            Optional<Project> project = projectService.findById(idProject);
+            if (project.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok(projectService.getProjectCompanyInfo(idProject));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
+    }
+
 }
 

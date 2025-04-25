@@ -86,7 +86,7 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public ProjectCompanyDto getProjectCompanyInfo(Long projectId) throws Exception{
+    public ProjectCompanyDto getProjectCompanyInfo(Long projectId){
         if (projectId == null) {
             throw new EntityNotFoundException("Id del proyecto es nulo");
         }
@@ -98,7 +98,7 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public List<ProjectDto> getAvailableProjectsForStudent(Long studentId) throws Exception {
+    public List<ProjectDto> getAvailableProjectsForStudent(Long studentId){
         if (studentId == null) {
             throw new EntityNotFoundException("Id del estudiante es nulo");
         }
@@ -117,7 +117,7 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public int getPostulatedProjects(Long studentId) throws Exception {
+    public int getPostulatedProjects(Long studentId){
         if (studentId == null) {
             throw new EntityNotFoundException("Id del estudiante es nulo");
         }
@@ -128,7 +128,7 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public int getApprovedProjects(Long studentId) throws Exception {
+    public int getApprovedProjects(Long studentId) {
         if (studentId == null) {
             throw new EntityNotFoundException("Id del estudiante es nulo");
         }

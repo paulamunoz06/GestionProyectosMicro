@@ -13,26 +13,26 @@ import java.util.Optional;
 public interface IProjectService {
     @RabbitListener(queues = RabbitMQConfig.CREATEPROJECT_QUEUE)
     @Transactional
-    public Project createProject(ProjectDto projectDto);
+    Project createProject(ProjectDto projectDto);
 
     @Transactional
     @RabbitListener(queues = RabbitMQConfig.UPDATEPROJECT_QUEUE)
-    public Project updateProject(ProjectDto projectDto);
+    Project updateProject(ProjectDto projectDto);
 
     @Transactional
-    public Optional<Project> findById(Long id);
+    Optional<Project> findById(Long id);
 
-    public ProjectCompanyDto getProjectCompanyInfo(Long projectId) throws Exception;
+    ProjectCompanyDto getProjectCompanyInfo(Long projectId) throws Exception;
 
-    public List<ProjectDto> getAvailableProjectsForStudent(Long studentId) throws Exception;
+    List<ProjectDto> getAvailableProjectsForStudent(Long studentId) throws Exception;
 
-    public int getAllProjects();
+    int getAllProjects();
 
-    public int getPostulatedProjects(Long studentId) throws Exception;
+    int getPostulatedProjects(Long studentId);
 
-    public int getApprovedProjects(Long studentId) throws Exception;
+    int getApprovedProjects(Long studentId);
 
-    public ProjectDto projectToDto(Project project);
+    ProjectDto projectToDto(Project project);
 
-    public Project projectToClass(ProjectDto projectDto);
+    Project projectToClass(ProjectDto projectDto);
 }
