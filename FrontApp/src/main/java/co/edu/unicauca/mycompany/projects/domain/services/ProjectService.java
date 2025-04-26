@@ -2,6 +2,7 @@ package co.edu.unicauca.mycompany.projects.domain.services;
 
 import co.edu.unicauca.mycompany.projects.access.IProjectRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
+import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.infra.Messages;
 import co.edu.unicauca.mycompany.projects.infra.Subject;
 import java.util.ArrayList;
@@ -48,6 +49,10 @@ public class ProjectService extends Subject{
      */
     public List<Project> projectsAvailable(String studentId) {
         return repository.listProjectsAvailable(studentId);
+    }
+    
+    public Company getCompany(String projectId) {
+        return repository.getcompany(projectId);
     }
 
     /**

@@ -14,14 +14,14 @@ import java.util.List;
 @AllArgsConstructor
 public class StudentDto {
 
-    private Long id;
+    private String id;
     private String name;
     private String email;
     private String password;
-    private List<Long> postulatedIds = new ArrayList<>();
-    private List<Long> approvedIds = new ArrayList<>();
+    private List<String> postulatedIds = new ArrayList<>();
+    private List<String> approvedIds = new ArrayList<>();
 
-    public StudentDto(Long id, String name, String email, String password) {
+    public StudentDto(String id, String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;

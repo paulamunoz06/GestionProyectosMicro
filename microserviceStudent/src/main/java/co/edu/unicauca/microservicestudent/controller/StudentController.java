@@ -2,6 +2,7 @@ package co.edu.unicauca.microservicestudent.controller;
 
 import co.edu.unicauca.microservicestudent.entity.Project;
 import co.edu.unicauca.microservicestudent.entity.Student;
+import co.edu.unicauca.microservicestudent.infra.dto.CompanyDto;
 import co.edu.unicauca.microservicestudent.infra.dto.ProjectDto;
 import co.edu.unicauca.microservicestudent.service.ProjectService;
 import co.edu.unicauca.microservicestudent.service.StudentService;
@@ -25,7 +26,7 @@ public class StudentController {
     private ProjectService projectService;
 
     @GetMapping("/{idStudent}/projects")
-    public ResponseEntity<?> getDataProjects(@PathVariable Long idStudent) {
+    public ResponseEntity<?> getDataProjects(@PathVariable String idStudent) {
         try {
             List<Integer> datos = new ArrayList<>();
             datos.add(projectService.getAllProjects());
@@ -38,7 +39,7 @@ public class StudentController {
     }
 
     @GetMapping("/{idStudent}/projectsAvailable")
-    public ResponseEntity<?> getProjectsAvailable(@PathVariable Long idStudent) {
+    public ResponseEntity<?> getProjectsAvailable(@PathVariable String idStudent) {
         try {
             List<ProjectDto> projects = projectService.getAvailableProjectsForStudent(idStudent);
             return ResponseEntity.ok(projects);
@@ -48,7 +49,7 @@ public class StudentController {
     }
 
     @PostMapping("/{idStudent}/project/{idProject}")
-    public ResponseEntity<?> studentPostulation(@PathVariable Long idStudent, @PathVariable Long idProject) {
+    public ResponseEntity<?> studentPostulation(@PathVariable String idStudent, @PathVariable String idProject) {
         try {
             Optional<Student> optionalStudent = studentService.findById(idStudent);
             if (optionalStudent.isEmpty()) {
@@ -70,7 +71,7 @@ public class StudentController {
     }
 
     @GetMapping("/{idStudent}")
-    public ResponseEntity<?> getStudentById(@PathVariable Long idStudent) {
+    public ResponseEntity<?> getStudentById(@PathVariable String idStudent) {
         try {
             Optional<Student> student = studentService.findById(idStudent);
             if (student.isEmpty()) {
@@ -84,13 +85,27 @@ public class StudentController {
     }
 
     @GetMapping("/project/{idProject}")
-    public ResponseEntity<?> getCompanyInfo(@PathVariable Long idProject) {
+    public ResponseEntity<?> getProjectById(@PathVariable String idProject) {
         try {
             Optional<Project> project = projectService.findById(idProject);
             if (project.isEmpty()) {
                 return ResponseEntity.notFound().build();
             } else {
-                return ResponseEntity.ok(projectService.getProjectCompanyInfo(idProject));
+                return ResponseEntity.ok(projectService.projectToDto(project.get()));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @GetMapping("/project/{idProject}/company")
+    public ResponseEntity<?> getCompanyInfo(@PathVariable String idProject) {
+        try {
+            Optional<Project> project = projectService.findById(idProject);
+            if (project.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok(projectService.getCompanyInfo(idProject));
             }
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));

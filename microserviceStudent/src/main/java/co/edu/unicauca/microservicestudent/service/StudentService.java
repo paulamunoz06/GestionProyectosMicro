@@ -53,7 +53,7 @@ public class StudentService implements IStudentService {
 
     @Override
     @Transactional
-    public Optional<Student> findById(Long studentId) {
+    public Optional<Student> findById(String studentId) {
         return studentRepository.findById(studentId);
     }
 
@@ -64,8 +64,8 @@ public class StudentService implements IStudentService {
         studentDto.setName(student.getName());
         studentDto.setEmail(student.getEmail());
         studentDto.setPassword(student.getPassword());
-        studentDto.setPostulatedIds(student.getPostulated().stream().map(Project::getProid).collect(Collectors.toList()));
-        studentDto.setApprovedIds(student.getApproved().stream().map(Project::getProid).collect(Collectors.toList()));
+        studentDto.setPostulatedIds(student.getPostulated().stream().map(Project::getProId).collect(Collectors.toList()));
+        studentDto.setApprovedIds(student.getApproved().stream().map(Project::getProId).collect(Collectors.toList()));
         return studentDto;
     }
 }

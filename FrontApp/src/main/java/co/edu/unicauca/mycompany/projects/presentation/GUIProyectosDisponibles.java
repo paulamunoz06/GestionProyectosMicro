@@ -1,7 +1,6 @@
 package co.edu.unicauca.mycompany.projects.presentation;
 
 import co.edu.unicauca.mycompany.projects.domain.entities.Student;
-import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
 import co.edu.unicauca.mycompany.projects.domain.services.ProjectService;
 import javax.swing.JButton;
 
@@ -22,10 +21,9 @@ public class GUIProyectosDisponibles extends javax.swing.JFrame {
      *
      * @param student          Estudiante que está visualizando los proyectos.
      * @param projectService   Servicio encargado de gestionar los proyectos y sus postulaciones.
-     * @param companyService   Servicio encargado de gestionar las empresas de los proyectos.
      * @param btnPostularInicio Botón de la pantalla principal para postulación rápida.
      */
-    public GUIProyectosDisponibles(Student student, ProjectService projectService, CompanyService companyService, JButton btnPostularInicio) {
+    public GUIProyectosDisponibles(Student student, ProjectService projectService, JButton btnPostularInicio) {
         this.student = student;
         this.btnPostularInicio = btnPostularInicio;
 
@@ -36,7 +34,7 @@ public class GUIProyectosDisponibles extends javax.swing.JFrame {
         initVisual();
 
         // Agregar un observador para actualizar la tabla de proyectos disponibles
-        projectService.addObserver(new TableProjectsStudentObserver(student, projectService, companyService, jTableEstudiante, jScrollPane1));
+        projectService.addObserver(new TableProjectsStudentObserver(student, projectService, jTableEstudiante, jScrollPane1));
     }
 
     /**

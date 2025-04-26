@@ -54,6 +54,10 @@ public class Company extends User {
         this.companyProjects = new ArrayList<>();
     }
 
+    public Company() {
+        
+    }
+
     /**
      * Obtiene el nombre de la empresa.
      * 

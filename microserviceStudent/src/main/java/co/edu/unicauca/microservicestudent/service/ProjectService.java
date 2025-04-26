@@ -3,7 +3,7 @@ package co.edu.unicauca.microservicestudent.service;
 import co.edu.unicauca.microservicestudent.entity.EnumProjectState;
 import co.edu.unicauca.microservicestudent.entity.Project;
 import co.edu.unicauca.microservicestudent.entity.Student;
-import co.edu.unicauca.microservicestudent.infra.dto.ProjectCompanyDto;
+import co.edu.unicauca.microservicestudent.infra.dto.CompanyDto;
 import co.edu.unicauca.microservicestudent.infra.dto.ProjectDto;
 import co.edu.unicauca.microservicestudent.repository.IProjectRepository;
 import co.edu.unicauca.microservicestudent.repository.IStudentRepository;
@@ -16,6 +16,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -36,11 +37,11 @@ public class ProjectService implements IProjectService {
     @Transactional
     public Project createProject(ProjectDto projectDto) {
         try {
-            if (projectDto.getProid() == null) {
+            if (projectDto.getProId() == null) {
                 throw new EntityNotFoundException("Id del proyecto es nulo");
             }
-            if (projectRepository.findById(projectDto.getProid()).isPresent()) {
-                throw new IllegalAccessException("El proyecto con ID " + projectDto.getProid() + " ya existe");
+            if (projectRepository.findById(projectDto.getProId()).isPresent()) {
+                throw new IllegalAccessException("El proyecto con ID " + projectDto.getProId() + " ya existe");
             }
 
             Project project = projectToClass(projectDto);
@@ -60,11 +61,11 @@ public class ProjectService implements IProjectService {
     @RabbitListener(queues = RabbitMQConfig.UPDATEPROJECT_QUEUE)
     public Project updateProject(ProjectDto projectDto){
         try{
-            if (projectDto.getProid() == null) {
+            if (projectDto.getProId() == null) {
                 throw new EntityNotFoundException("Id del proyecto es nulo");
             }
-            if (projectRepository.findById(projectDto.getProid()).isPresent()) {
-                throw new IllegalAccessException("El proyecto con ID " + projectDto.getProid() + " ya existe");
+            if (projectRepository.findById(projectDto.getProId()).isPresent()) {
+                throw new IllegalAccessException("El proyecto con ID " + projectDto.getProId() + " ya existe");
             }
 
             Project project = projectToClass(projectDto);
@@ -81,12 +82,12 @@ public class ProjectService implements IProjectService {
 
     @Override
     @Transactional
-    public Optional<Project> findById(Long id) {
+    public Optional<Project> findById(String id) {
         return projectRepository.findById(id);
     }
 
     @Override
-    public ProjectCompanyDto getProjectCompanyInfo(Long projectId){
+    public CompanyDto getCompanyInfo(String projectId){
         if (projectId == null) {
             throw new EntityNotFoundException("Id del proyecto es nulo");
         }
@@ -94,11 +95,22 @@ public class ProjectService implements IProjectService {
             throw new EntityNotFoundException("El proyecto con ID " + projectId + " no existe");
         }
 
-        return (ProjectCompanyDto) rabbitTemplate.convertSendAndReceive(RabbitMQConfig.PROJECTCOMPANYINFO_QUEUE, projectId);
+        //return (CompanyDto) rabbitTemplate.convertSendAndReceive(RabbitMQConfig.PROJECTCOMPANYINFO_QUEUE, projectId);
+        return new CompanyDto(
+                "COMP001",                            // id
+                "empresa@ficticia.com",              // email
+                "encryptedPassword123",              // password
+                "Empresa Ficticia S.A.",             // companyName
+                "Laura",                              // contactName
+                "Gómez",                              // contactLastName
+                "3001234567",                         // contactPhone
+                "Gerente de TI",                      // contactPosition
+                "TECHNOLOGY"                          // companySector
+        );
     }
 
     @Override
-    public List<ProjectDto> getAvailableProjectsForStudent(Long studentId){
+    public List<ProjectDto> getAvailableProjectsForStudent(String studentId){
         if (studentId == null) {
             throw new EntityNotFoundException("Id del estudiante es nulo");
         }
@@ -117,7 +129,7 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public int getPostulatedProjects(Long studentId){
+    public int getPostulatedProjects(String studentId){
         if (studentId == null) {
             throw new EntityNotFoundException("Id del estudiante es nulo");
         }
@@ -128,7 +140,7 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public int getApprovedProjects(Long studentId) {
+    public int getApprovedProjects(String studentId) {
         if (studentId == null) {
             throw new EntityNotFoundException("Id del estudiante es nulo");
         }
@@ -142,17 +154,17 @@ public class ProjectService implements IProjectService {
     public ProjectDto projectToDto(Project project) {
         ProjectDto projectDto = new ProjectDto();
 
-        projectDto.setProid(project.getProid());
-        projectDto.setProtitle(project.getProtitle());
-        projectDto.setProdescription(project.getProdescription());
+        projectDto.setProId(project.getProId());
+        projectDto.setProTitle(project.getProTitle());
+        projectDto.setProDescription(project.getProDescription());
         projectDto.setProAbstract(project.getProAbstract());
         projectDto.setProGoals(project.getProGoals());
         projectDto.setProDate(project.getProDate());
-        projectDto.setProDeadline(project.getProDeadline());
+        projectDto.setProDeadLine(project.getProDeadLine());
         projectDto.setProBudget(project.getProBudget());
         projectDto.setProState(project.getProState().toString());
-        projectDto.setPostulatedIds(project.getPostulated().stream().map(Student::getId).collect(Collectors.toList()));
-        projectDto.setApprovedIds(project.getApproved().stream().map(Student::getId).collect(Collectors.toList()));
+        projectDto.setPostulated(project.getPostulated().stream().map(Student::getId).collect(Collectors.toList()));
+        projectDto.setApproved(project.getApproved().stream().map(Student::getId).collect(Collectors.toList()));
 
         return projectDto;
     }
@@ -161,18 +173,18 @@ public class ProjectService implements IProjectService {
     public Project projectToClass(ProjectDto projectDto) {
         Project projectClass = new Project();
 
-        projectClass.setProid(projectDto.getProid());
-        projectClass.setProtitle(projectDto.getProtitle());
-        projectClass.setProdescription(projectDto.getProdescription());
+        projectClass.setProId(projectDto.getProId());
+        projectClass.setProTitle(projectDto.getProTitle());
+        projectClass.setProDescription(projectDto.getProDescription());
         projectClass.setProAbstract(projectDto.getProAbstract());
         projectClass.setProGoals(projectDto.getProGoals());
         projectClass.setProDate(projectDto.getProDate());
-        projectClass.setProDeadline(projectDto.getProDeadline());
+        projectClass.setProDeadLine(projectDto.getProDeadLine());
         projectClass.setProBudget(projectDto.getProBudget());
         projectClass.setProState(EnumProjectState.valueOf(projectDto.getProState()));
-        List<Student> postulatedStudents = studentRepository.findAllById(projectDto.getPostulatedIds());
+        List<Student> postulatedStudents = studentRepository.findAllById(projectDto.getPostulated());
         projectClass.setPostulated(postulatedStudents);
-        List<Student> approvedStudents = studentRepository.findAllById(projectDto.getApprovedIds());
+        List<Student> approvedStudents = studentRepository.findAllById(projectDto.getApproved());
         projectClass.setApproved(approvedStudents);
 
         return projectClass;

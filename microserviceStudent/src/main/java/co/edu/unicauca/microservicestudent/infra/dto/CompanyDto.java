@@ -10,20 +10,10 @@ import java.time.LocalDate;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
-public class ProjectCompanyDto {
-    private Long proid;
-    private String protitle;
-    private String prodescription;
-    private String proAbstract;
-    private String proGoals;
-    private LocalDate proDate;
-    private int proDeadline;
-    private Double proBudget;
-    private String proState;
-
-    private String id;
-    private String email;
-    private String password;
+public class CompanyDto {
+    private String userId;
+    private String userEmail;
+    private String userPassword;
     private String companyName;
     private String contactName;
     private String contactLastName;

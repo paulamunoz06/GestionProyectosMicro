@@ -19,17 +19,17 @@ import java.util.List;
 public class Project {
     @Id
     @Column(name = "PROID",nullable = false, unique = true)
-    private Long proid;
+    private String proId;
 
     @NotBlank(message = "El título del proyecto no puede estar vacío")
     @Size(min = 2, max = 100)
     @Column(name = "PROTITLE", nullable = false)
-    private String protitle;
+    private String proTitle;
 
     @NotBlank(message = "La descripción del proyecto no puede estar vacía")
     @Size(min = 10, max = 1000)
     @Column(name = "PRODESCRIPTION",nullable = false)
-    private String prodescription;
+    private String proDescription;
 
     @NotBlank(message = "El resumen no puede estar vacío")
     @Column(name = "PROABSTRACT",nullable = false)
@@ -45,7 +45,7 @@ public class Project {
 
     @NotNull(message = "El tiempo maximo en meses no puede estar vacío")
     @Column(name = "PRODEADLINE",nullable = false)
-    private int proDeadline;
+    private int proDeadLine;
 
     @Column(name = "PROBUDGET",nullable = true)
     private Double proBudget;
@@ -70,14 +70,14 @@ public class Project {
     )
     private List<Student> approved = new ArrayList<>();
 
-    public Project(Long proid, String protitle, String prodescription, String proAbstract, String proGoals, int proDeadline, Double proBudget) {
-        this.proid = proid;
-        this.protitle = protitle;
-        this.prodescription = prodescription;
+    public Project(String proid, String protitle, String prodescription, String proAbstract, String proGoals, int proDeadline, Double proBudget) {
+        this.proId = proid;
+        this.proTitle = protitle;
+        this.proDescription = prodescription;
         this.proAbstract = proAbstract;
         this.proGoals = proGoals;
         this.proDate = LocalDate.now();
-        this.proDeadline = proDeadline;
+        this.proDeadLine = proDeadline;
         this.proBudget = proBudget;
         this.proState = EnumProjectState.RECIBIDO;
     }

@@ -1,5 +1,6 @@
 package co.edu.unicauca.mycompany.projects.access;
 
+import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import java.util.List;
 
@@ -33,6 +34,7 @@ public interface IProjectRepository {
      * @return Lista de proyectos disponibles para el estudiante.
      */
     List<Project> listProjectsAvailable(String studentId);
+    Company getcompany(String studentId);
     
     /**
      * Obtiene la información detallada de un proyecto a partir de su identificador.

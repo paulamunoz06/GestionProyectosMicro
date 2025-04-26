@@ -2,7 +2,7 @@ package co.edu.unicauca.microservicestudent.service;
 
 import co.edu.unicauca.microservicestudent.entity.Project;
 import co.edu.unicauca.microservicestudent.infra.config.RabbitMQConfig;
-import co.edu.unicauca.microservicestudent.infra.dto.ProjectCompanyDto;
+import co.edu.unicauca.microservicestudent.infra.dto.CompanyDto;
 import co.edu.unicauca.microservicestudent.infra.dto.ProjectDto;
 import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,17 +20,17 @@ public interface IProjectService {
     Project updateProject(ProjectDto projectDto);
 
     @Transactional
-    Optional<Project> findById(Long id);
+    Optional<Project> findById(String id);
 
-    ProjectCompanyDto getProjectCompanyInfo(Long projectId) throws Exception;
+    CompanyDto getCompanyInfo(String projectId) throws Exception;
 
-    List<ProjectDto> getAvailableProjectsForStudent(Long studentId) throws Exception;
+    List<ProjectDto> getAvailableProjectsForStudent(String studentId) throws Exception;
 
     int getAllProjects();
 
-    int getPostulatedProjects(Long studentId);
+    int getPostulatedProjects(String studentId);
 
-    int getApprovedProjects(Long studentId);
+    int getApprovedProjects(String studentId);
 
     ProjectDto projectToDto(Project project);
 

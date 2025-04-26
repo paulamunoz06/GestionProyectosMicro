@@ -19,6 +19,8 @@ public class GUIDashboardEstudiante extends javax.swing.JFrame implements Dashbo
      * Estudiante que ha iniciado sesión en el sistema.
      */
     private final Student student;
+    
+    private ProjectService projectService;
 
     /**
      * Constructor del panel de inicio para estudiantes.Inicializa los servicios de estudiante y proyectos, 
@@ -29,7 +31,8 @@ public class GUIDashboardEstudiante extends javax.swing.JFrame implements Dashbo
      */
     public GUIDashboardEstudiante(Student student, ProjectService projectService) {
         this.student = student;
-
+        this.projectService = projectService;
+        
         // Inicializar los componentes gráficos de la interfaz
         initComponents();
         
@@ -202,7 +205,7 @@ public class GUIDashboardEstudiante extends javax.swing.JFrame implements Dashbo
     }//GEN-LAST:event_btnInicioActionPerformed
 
     private void btnCerrarSesiónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesiónActionPerformed
-        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("MARIADB");
+        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("USER");
         
         GUIinicioSesion instance = new GUIinicioSesion(new UserService(repositoryUser));
         
@@ -217,10 +220,7 @@ public class GUIDashboardEstudiante extends javax.swing.JFrame implements Dashbo
      * @param evt Evento de acción generado al presionar el botón.
      */
     private void btnPostularActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPostularActionPerformed
-        IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("MARIADB");
-        ICompanyRepository companyRepository = Factory.getInstance().getRepositoryCompany("MARIADB");
-        
-        GUIProyectosDisponibles gui = new GUIProyectosDisponibles(student, new ProjectService(projectRepository),new CompanyService(companyRepository), btnPostular);
+        GUIProyectosDisponibles gui = new GUIProyectosDisponibles(student, projectService, btnPostular);
         gui.setVisible(true);
         
         btnPostular.setVisible(false);

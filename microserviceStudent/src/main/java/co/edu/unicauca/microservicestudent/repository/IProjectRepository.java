@@ -7,7 +7,7 @@ import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
-public interface IProjectRepository extends JpaRepository<Project, Long> {
+public interface IProjectRepository extends JpaRepository<Project, String> {
     @Query(value = """
     SELECT p.* FROM Project p
     WHERE NOT EXISTS (
@@ -18,7 +18,7 @@ public interface IProjectRepository extends JpaRepository<Project, Long> {
     )
     AND p.proState = 'ACEPTADO'
     """, nativeQuery = true)
-    List<Project> findAvailableProjectsForStudent(@Param("studentId") Long studentId);
+    List<Project> findAvailableProjectsForStudent(@Param("studentId") String studentId);
 
     @Query(value = """
     SELECT COUNT(p.proId) FROM Project p
@@ -28,10 +28,10 @@ public interface IProjectRepository extends JpaRepository<Project, Long> {
     @Query(value = """
     SELECT COUNT(p.proId) FROM Project p JOIN Postulated a ON p.proId = a.pro_Id WHERE a.student_Id = :studentId
     """,nativeQuery = true)
-    int countPostulatedProjects(@Param("studentId") Long studentId);
+    int countPostulatedProjects(@Param("studentId") String studentId);
 
     @Query(value = """
     SELECT COUNT(p.proId) FROM Project p JOIN Approved d ON p.proId = d.pro_Id WHERE d.student_Id = :studentId
     """,nativeQuery = true)
-    int countApprovedProjects(@Param("studentId") Long studentId);
+    int countApprovedProjects(@Param("studentId") String studentId);
 }

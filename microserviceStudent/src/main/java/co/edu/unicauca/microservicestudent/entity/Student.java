@@ -18,7 +18,7 @@ public class Student {
     @Id
     @NotNull(message = "El ID no puede estar vacío")
     @Column(name = "STUDENTID",nullable = false, unique = true)
-    private Long id;
+    private String id;
 
     @NotBlank(message = "El nombre no puede estar vacío")
     @Size(min = 2, max = 50, message = "El nombre debe tener entre 2 y 50 caracteres")
@@ -46,7 +46,7 @@ public class Student {
     @ManyToMany(mappedBy = "approved")
     private List<Project> approved = new ArrayList<>();
 
-    public Student(Long id, String name, String email, String password) {
+    public Student(String id, String name, String email, String password) {
         this.id = id;
         this.name = name;
         this.email = email;

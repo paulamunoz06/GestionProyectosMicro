@@ -12,7 +12,7 @@ public interface IStudentService {
     Student studentPostulation(Student student, Project project) throws Exception;
 
     @Transactional
-    Optional<Student> findById(Long studentId);
+    Optional<Student> findById(String studentId);
 
     StudentDto studentToDto(Student student);
 }
