@@ -1,4 +1,7 @@
 package co.edu.unicauca.microservicecoordinator.repository;
 
-public class CoordinatorRepository implements ICoordinatorRepository{
+import co.edu.unicauca.microservicecoordinator.entities.Coordinator;
+import org.springframework.data.jpa.repository.JpaRepository;
+
+public interface CoordinatorRepository extends JpaRepository<Coordinator, Long> {
 }
