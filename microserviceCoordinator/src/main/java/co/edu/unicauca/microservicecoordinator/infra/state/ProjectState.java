@@ -6,11 +6,13 @@ import co.edu.unicauca.microservicecoordinator.entities.Project;
  * Interface que maneja el ciclo de vida del proyecto
  */
 public interface ProjectState {
-    void approve(Project project);
+    void receive(Project project);
 
     void reject(Project project);
 
-    void assign(Project project);
+    void accept(Project project);
 
-    void complete(Project project);
+    void close(Project project);
+
+    void execute(Project project);
 }

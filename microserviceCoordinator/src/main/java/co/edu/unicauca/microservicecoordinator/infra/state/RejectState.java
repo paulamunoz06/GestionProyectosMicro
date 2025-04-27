@@ -4,7 +4,7 @@ import co.edu.unicauca.microservicecoordinator.entities.Project;
 
 public class RejectState implements ProjectState {
     @Override
-    public void approve(Project project) {
+    public void receive(Project project) {
         System.out.println("Cannot approve a rejected project.");
     }
 
@@ -14,13 +14,18 @@ public class RejectState implements ProjectState {
     }
 
     @Override
-    public void assign(Project project) {
+    public void accept(Project project) {
         System.out.println("Cannot assign a rejected project.");
     }
 
     @Override
-    public void complete(Project project) {
+    public void close(Project project) {
         System.out.println("Cannot complete a rejected project.");
+    }
+
+    @Override
+    public void execute(Project project) {
+        System.out.println("Cannot execute a rejected project.");
     }
 
     @Override

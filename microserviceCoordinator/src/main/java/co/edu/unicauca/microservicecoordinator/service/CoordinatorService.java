@@ -1,9 +1,9 @@
 package co.edu.unicauca.microservicecoordinator.service;
 
 import co.edu.unicauca.microservicecoordinator.entities.Project;
-import co.edu.unicauca.microservicecoordinator.entities.ProjectStatus;
+import co.edu.unicauca.microservicecoordinator.entities.EnumProjectState;
 import co.edu.unicauca.microservicecoordinator.repository.CoordinatorRepository;
-import co.edu.unicauca.microservicecoordinator.repository.ProjectRepository;
+import co.edu.unicauca.microservicecoordinator.repository.IProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +14,7 @@ public class CoordinatorService implements ICoordinatorService{
     @Autowired
     private CoordinatorRepository coordinatorRepository;
     @Autowired
-    private ProjectRepository projectRepository;
+    private IProjectRepository projectRepository;
 
     /**
      * Actualiza el estado de un proyecto y lo actualiza en la base de datos.
@@ -23,10 +23,10 @@ public class CoordinatorService implements ICoordinatorService{
      * @return Project - Proyecto actualizado.
      */
     @Override
-    public Project evaluateProject(Long proId, ProjectStatus proStatus) {
+    public Project evaluateProject(String proId, EnumProjectState proStatus) {
         Optional<Project> project = projectRepository.findById(proId);
         if(project.isPresent()){
-            project.get().setProStatus(proStatus);
+            project.get().setProState(proStatus);
             projectRepository.save(project.get());
             return project.get();
         }else{

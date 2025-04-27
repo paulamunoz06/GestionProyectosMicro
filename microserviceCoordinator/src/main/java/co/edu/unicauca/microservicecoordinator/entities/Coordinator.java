@@ -19,9 +19,8 @@ public class Coordinator {
      * Identificador único del coordinador.
      */
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "id", nullable = false, unique = true)
-    private Long coordinatorId;
+    private String coordinatorId;
 
     /**
      * Correo electrónico del coordinador.

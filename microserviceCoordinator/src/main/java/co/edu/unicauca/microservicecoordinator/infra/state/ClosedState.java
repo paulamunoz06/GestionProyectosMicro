@@ -2,9 +2,9 @@ package co.edu.unicauca.microservicecoordinator.infra.state;
 
 import co.edu.unicauca.microservicecoordinator.entities.Project;
 
-public class CompletedState implements ProjectState {
+public class ClosedState implements ProjectState {
     @Override
-    public void approve(Project project) {
+    public void receive(Project project) {
         System.out.println("Completed project cannot be approved.");
     }
 
@@ -14,18 +14,23 @@ public class CompletedState implements ProjectState {
     }
 
     @Override
-    public void assign(Project project) {
+    public void accept(Project project) {
         System.out.println("Completed project cannot be assigned.");
     }
 
     @Override
-    public void complete(Project project) {
+    public void close(Project project) {
         System.out.println("Project has already been completed.");
     }
 
     @Override
+    public void execute(Project project) {
+        System.out.println("Project has been closed.");
+    }
+
+    @Override
     public String toString() {
-        return "CompletedState";
+        return "ClosedState";
     }
 }
 
