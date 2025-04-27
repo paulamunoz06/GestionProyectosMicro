@@ -155,12 +155,73 @@ public class ProjectRepository implements IProjectRepository {
 
     @Override
     public int countByStatus(String status) {
-        return 0;
+        HttpClient httpClient = HttpClients.createDefault();
+        ObjectMapper mapper = new ObjectMapper();
+        int projectCount = 0; // Variable para almacenar el número de proyectos
+
+        try {
+            // Definir la URL de la API REST
+            String apiUrl = "http://localhost:8081/coordinator/projects/count-by-status/" + status;
+
+            // Crear una solicitud GET
+            HttpGet request = new HttpGet(apiUrl);
+
+            // Ejecutar la solicitud y obtener la respuesta
+            HttpResponse response = httpClient.execute(request);
+
+            // Verificar el código de estado de la respuesta
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == 200) {
+                // La solicitud fue exitosa, procesar la respuesta
+                String jsonResponse = EntityUtils.toString(response.getEntity());
+
+                // Mapear la respuesta JSON a un valor int
+                projectCount = mapper.readValue(jsonResponse, Integer.class);
+            } else {
+                // La solicitud falló, mostrar el código de estado
+                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Error al obtener el número de proyectos. Código de estado: " + statusCode);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Error de IO al obtener el número de proyectos", ex);
+        }
+
+        return projectCount; // Retornar el número de proyectos o 0 en caso de error
     }
+    
 
     @Override
     public int countTotalProjects() {
-        return 0;
+        HttpClient httpClient = HttpClients.createDefault();
+        ObjectMapper mapper = new ObjectMapper();
+        int totalProjects = 0; // Variable para almacenar el número total de proyectos
+
+        try {
+            // Definir la URL de la API REST
+            String apiUrl = "http://localhost:8081/coordinator/projects/count-total";
+
+            // Crear una solicitud GET
+            HttpGet request = new HttpGet(apiUrl);
+
+            // Ejecutar la solicitud y obtener la respuesta
+            HttpResponse response = httpClient.execute(request);
+
+            // Verificar el código de estado de la respuesta
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == 200) {
+                // La solicitud fue exitosa, procesar la respuesta
+                String jsonResponse = EntityUtils.toString(response.getEntity());
+
+                // Mapear la respuesta JSON a un valor int
+                totalProjects = mapper.readValue(jsonResponse, Integer.class);
+            } else {
+                // La solicitud falló, mostrar el código de estado
+                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Error al obtener el número total de proyectos. Código de estado: " + statusCode);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Error de IO al obtener el número total de proyectos", ex);
+        }
+
+        return totalProjects; // Retornar el número total de proyectos o 0 en caso de error
     }
 
     @Override

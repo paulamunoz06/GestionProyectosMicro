@@ -335,6 +335,10 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        IProjectRepository repository = Factory.getInstance().getRepositoryProject("STUDENTMICROSERVICE");
+        ProjectService projectService = new ProjectService(repository);
+        GUIDashboardCoordinadorInicio instance = new  GUIDashboardCoordinadorInicio(new Coordinator("C01", "coord@example.com", "1234"),  projectService);
+        instance.setVisible(true);
 
     }
 
