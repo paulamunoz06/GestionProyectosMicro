@@ -63,7 +63,7 @@ public class TableProjectsStudentObserver extends JFrame implements Observer {
         modelo.setRowCount(0);
 
         // Obtener la lista de proyectos disponibles para el estudiante
-        List<Project> projects = projectService.projectsAvailable(student.getUserId());
+        List<Project> projects = projectService.projectsAvailable(student.getId());
 
         // Agregar cada proyecto a la tabla
         for (Project project : projects) {

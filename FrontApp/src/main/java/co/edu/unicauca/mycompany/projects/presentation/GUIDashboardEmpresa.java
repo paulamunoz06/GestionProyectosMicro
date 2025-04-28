@@ -58,8 +58,8 @@ public class GUIDashboardEmpresa extends javax.swing.JFrame implements Dashboard
         this.setVisible(true);
         setLocationRelativeTo(null); 
         setResizable(false);
-        lblNameCompany.setText("Compañía " + company.getUserId());
-        lblEmailCompany.setText(company.getUserEmail());
+        lblNameCompany.setText("Compañía " + company.getId());
+        lblEmailCompany.setText(company.getEmail());
     }
     
     /**
@@ -406,7 +406,7 @@ public class GUIDashboardEmpresa extends javax.swing.JFrame implements Dashboard
         String proGoals = txtGoalsProject.getText().trim();
         String proDeadLine = txtDeadLineProject.getText().trim();
         String proBudget = txtBudgetProject.getText().trim();
-        String idCompany = company.getUserId();
+        String idCompany = company.getId();
         
         // Instanciar projectService 
         IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("MARIADB");

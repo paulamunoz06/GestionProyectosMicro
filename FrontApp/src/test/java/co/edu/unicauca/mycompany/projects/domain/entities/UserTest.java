@@ -11,7 +11,7 @@ public class UserTest {
         
         assertThat(userTest.getUserId()).isEqualTo("1234");
         assertThat(userTest.getUserEmail()).isEqualTo("example@example.com");
-        assertThat(userTest.getUserPassword()).isEqualTo("password");
+        assertThat(userTest.getPassword()).isEqualTo("password");
 
     }
 
@@ -21,10 +21,10 @@ public class UserTest {
 
         user.setUserId("123456");
         user.setUserEmail("user@example.com");
-        user.setUserPassword("securepassword");
+        user.setPassword("securepassword");
 
         assertThat(user.getUserId()).isEqualTo("123456");
         assertThat(user.getUserEmail()).isEqualTo("user@example.com");
-        assertThat(user.getUserPassword()).isEqualTo("securepassword");
+        assertThat(user.getPassword()).isEqualTo("securepassword");
     }
 }

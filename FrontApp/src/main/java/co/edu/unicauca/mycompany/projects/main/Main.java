@@ -8,7 +8,7 @@ import co.edu.unicauca.mycompany.projects.presentation.GUIinicioSesion;
 public class Main {
 
     public static void main(String[] args) {
-        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("MARIADB");
+        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("USER");
         GUIinicioSesion instance = new GUIinicioSesion(new UserService(repositoryUser));
         instance.setVisible(true);
     }
