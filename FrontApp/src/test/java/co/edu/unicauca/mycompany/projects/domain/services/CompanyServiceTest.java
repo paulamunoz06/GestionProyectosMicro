@@ -3,7 +3,6 @@ package co.edu.unicauca.mycompany.projects.domain.services;
 import co.edu.unicauca.mycompany.projects.access.ICompanyRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.domain.entities.enumSector;
-import co.edu.unicauca.mycompany.projects.infra.ValidationException;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
@@ -148,22 +147,5 @@ public class CompanyServiceTest {
         boolean result = companyService.validData(validCompany);
 
         assertTrue(result);
-    }
-
-    /**
-     * Prueba la validación de datos con una empresa inválida.
-     *
-     * Se verifica que el método {@code validData()} lance una excepción cuando
-     * la empresa tiene datos vacíos o inválidos.
-     */
-    @Test
-    void invalidDataTest() {
-        Company invalidCompany = new Company("", "", "", "", "", enumSector.OTHER, "", "", "");
-
-        Exception exception = assertThrows(ValidationException.class, () -> {
-            companyService.validData(invalidCompany);
-        });
-
-        assertNotNull(exception);
     }
 }

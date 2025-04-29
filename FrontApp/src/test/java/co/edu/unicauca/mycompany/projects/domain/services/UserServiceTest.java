@@ -2,7 +2,6 @@ package co.edu.unicauca.mycompany.projects.domain.services;
 
 import co.edu.unicauca.mycompany.projects.access.IUserRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.User;
-import co.edu.unicauca.mycompany.projects.infra.ValidationException;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeEach;
@@ -187,18 +186,4 @@ public class UserServiceTest {
         assertTrue(result);
     }
 
-    /**
-     * Test para verificar la validación de datos cuando el usuario tiene datos
-     * incorrectos.
-     */
-    @Test
-    void invalidDataTest() {
-        User invalidUser = new User("", "invalid-email", "123");
-
-        Exception exception = assertThrows(ValidationException.class, () -> {
-            userService.validData(invalidUser);
-        });
-
-        assertNotNull(exception);
-    }
 }

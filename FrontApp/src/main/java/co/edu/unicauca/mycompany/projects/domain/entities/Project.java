@@ -48,10 +48,10 @@ public class Project {
     private ProjectStatePatron proStatePatron;
 
     /** Lista de estudiantes asignados al proyecto. */
-    private List<Student> proTeam;
+        private List<Student> approved;
 
     /** Lista de estudiantes que postulan al proyecto. */
-    private List<Student> proPostulates;
+    private List<Student> postulated;
 
     /** Coordinador del proyecto. */
     private String proCoordinator;
@@ -80,13 +80,15 @@ public class Project {
         this.proDate = proDate; 
         this.proBudget = proBudget;
         this.proState = enumProjectState.RECIBIDO; 
-        this.proTeam = new ArrayList<>(); 
-        this.proPostulates = new ArrayList<>(); 
+        this.approved = new ArrayList<>(); 
+        this.postulated = new ArrayList<>(); 
         this.proCoordinator = null; 
         this.idcompany = idcompany;
         this.proStatePatron = proStatePatron;
     }
 
+    public Project() {
+    }
    
     /**
      * Obtiene el identificador del proyecto.
@@ -262,7 +264,7 @@ public class Project {
      * @return Lista de estudiantes en el equipo del proyecto.
      */
     public List<Student> getProTeam() {
-        return proTeam;
+        return approved;
     }
 
     /**
@@ -271,7 +273,7 @@ public class Project {
      * @param proTeam Lista de estudiantes a asignar.
      */
     public void setProTeam(List<Student> proTeam) {
-        this.proTeam = proTeam;
+        this.approved = proTeam;
     }
 
     /**
@@ -280,7 +282,7 @@ public class Project {
      * @return Lista de estudiantes postulantes.
      */
     public List<Student> getProPostulates() {
-        return proPostulates;
+        return postulated;
     }
 
     /**
@@ -289,7 +291,7 @@ public class Project {
      * @param proPostulates Lista de estudiantes postulantes.
      */
     public void setProPostulates(List<Student> proPostulates) {
-        this.proPostulates = proPostulates;
+        this.postulated = proPostulates;
     }
 
     /**
@@ -327,4 +329,5 @@ public class Project {
     public void setProCoordinator(String proCoordinator) {
         this.proCoordinator = proCoordinator;
     }
+    
 }
