@@ -1,3 +1,4 @@
+//IProjectService.java
 package co.edu.unicauca.microserviceCompany.service;
 
 import co.edu.unicauca.microserviceCompany.entity.Project;
@@ -11,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.Optional;
 
 public interface IProjectService {
-    @RabbitListener(queues = RabbitMQConfig.CREATEPROJECT_QUEUE)
     @Transactional
     Project createProject(ProjectDto projectDto);
 

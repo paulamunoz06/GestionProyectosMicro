@@ -38,6 +38,24 @@ public class CompanyService implements ICompanyService {
     }
 
     @Override
+    @Transactional
+    public Company updateCompany(Company company) throws Exception {
+        if (company == null) {
+            throw new IllegalArgumentException("La información de la empresa no puede ser nula");
+        }
+
+        if (company.getId() == null) {
+            throw new IllegalArgumentException("El ID de la empresa no puede ser nulo");
+        }
+
+        if (!companyRepository.existsById(company.getId())) {
+            throw new EntityNotFoundException("No existe una empresa con el ID proporcionado");
+        }
+
+        return companyRepository.save(company);
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public Optional<Company> findById(Long id) {
         if (id == null) {

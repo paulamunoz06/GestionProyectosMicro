@@ -21,4 +21,5 @@ public class ProjectDto {
     private int proDeadLine;
     private Double proBudget;
     private String proState;
+    private String companyId;
 }
