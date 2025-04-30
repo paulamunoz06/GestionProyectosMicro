@@ -259,7 +259,7 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
      * @param evt Evento de acción generado al presionar el botón.
      */
     private void btnCoordiNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCoordiNameActionPerformed
-        IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("MARIADB");
+        IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("PROJECT");
         
         GUIDashboardCoordinadorInicio gui = new GUIDashboardCoordinadorInicio(coordinator, new ProjectService(projectRepository));
         gui.setVisible(true);
@@ -272,7 +272,7 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void btnCerrarSesiónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesiónActionPerformed
-        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("MARIADB");
+        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("USER");
         
         GUIinicioSesion instance = new GUIinicioSesion(new UserService(repositoryUser));
         instance.setVisible(true);

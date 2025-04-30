@@ -19,6 +19,7 @@ import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
 public class ProjectRepository implements IProjectRepository {
+
     @Override
     public boolean save(Project newProject) {
         return false;
@@ -26,7 +27,39 @@ public class ProjectRepository implements IProjectRepository {
 
     @Override
     public List<Project> listAll() {
-        return List.of();
+        HttpClient httpClient = HttpClients.createDefault();
+        ObjectMapper mapper = new ObjectMapper();
+        List<Project> projectList = List.of(); // Lista vacía por defecto
+
+        try {
+            // Definir la URL de la API REST
+            String apiUrl = "http://localhost:8081/coordinator/projects";
+
+            // Crear la solicitud GET
+            HttpGet request = new HttpGet(apiUrl);
+
+            // Ejecutar la solicitud
+            HttpResponse response = httpClient.execute(request);
+
+            // Verificar el código de estado
+            int statusCode = response.getStatusLine().getStatusCode();
+            if (statusCode == 200) {
+                // Leer el contenido JSON de la respuesta
+                String jsonResponse = EntityUtils.toString(response.getEntity());
+
+                // Mapear el JSON a una lista de Project
+                Project[] projectsArray = mapper.readValue(jsonResponse, Project[].class);
+                projectList = List.of(projectsArray); // Convertir a lista inmutable
+            } else {
+                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE,
+                        "Error al obtener la lista de proyectos. Código de estado: " + statusCode);
+            }
+        } catch (IOException ex) {
+            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE,
+                    "Error de IO al obtener la lista de proyectos", ex);
+        }
+
+        return projectList;
     }
 
     @Override
@@ -36,7 +69,7 @@ public class ProjectRepository implements IProjectRepository {
         List<Project> listReturn = null;
         try {
             // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/" + studentId +"/projectsAvailable" ;
+            String apiUrl = "http://localhost:8083/student/" + studentId + "/projectsAvailable";
             // Crear una solicitud GET 
             HttpGet request = new HttpGet(apiUrl);
 
@@ -50,7 +83,8 @@ public class ProjectRepository implements IProjectRepository {
                 String jsonResponse = EntityUtils.toString(response.getEntity());
 
                 // Mapear la respuesta JSON a objetos Product
-                listReturn = mapper.readValue(jsonResponse, new TypeReference<List<Project>>() {});
+                listReturn = mapper.readValue(jsonResponse, new TypeReference<List<Project>>() {
+                });
             } else {
                 // La solicitud falló, mostrar el código de estado
                 Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, "Error al obtener la lista de proyectos disponibles. Código de estado: " + statusCode);
@@ -68,7 +102,7 @@ public class ProjectRepository implements IProjectRepository {
         Project project = null;
         try {
             // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/project/" + projectId ;
+            String apiUrl = "http://localhost:8083/student/project/" + projectId;
             // Crear una solicitud GET 
             HttpGet request = new HttpGet(apiUrl);
 
@@ -99,7 +133,7 @@ public class ProjectRepository implements IProjectRepository {
         ObjectMapper mapper = new ObjectMapper();
         try {
             // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/"+studentId+"/project/" + projectId;
+            String apiUrl = "http://localhost:8083/student/" + studentId + "/project/" + projectId;
             // Crear una solicitud GET 
             HttpPost request = new HttpPost(apiUrl);
 
@@ -127,7 +161,7 @@ public class ProjectRepository implements IProjectRepository {
         List<Integer> listReturn = null;
         try {
             // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/" + studentId +"/projects" ;
+            String apiUrl = "http://localhost:8083/student/" + studentId + "/projects";
             // Crear una solicitud GET 
             HttpGet request = new HttpGet(apiUrl);
 
@@ -141,7 +175,8 @@ public class ProjectRepository implements IProjectRepository {
                 String jsonResponse = EntityUtils.toString(response.getEntity());
 
                 // Mapear la respuesta JSON a objetos Product
-                listReturn = mapper.readValue(jsonResponse, new TypeReference<List<Integer>>() {});
+                listReturn = mapper.readValue(jsonResponse, new TypeReference<List<Integer>>() {
+                });
 
             } else {
                 // La solicitud falló, mostrar el código de estado
@@ -187,7 +222,6 @@ public class ProjectRepository implements IProjectRepository {
 
         return projectCount; // Retornar el número de proyectos o 0 en caso de error
     }
-    
 
     @Override
     public int countTotalProjects() {
@@ -233,7 +267,7 @@ public class ProjectRepository implements IProjectRepository {
     public boolean existProjectId(String projectId) {
         return false;
     }
-    
+
     @Override
     public Company getcompany(String projectId) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -265,5 +299,5 @@ public class ProjectRepository implements IProjectRepository {
         }
         return company;
     }
-    
+
 }

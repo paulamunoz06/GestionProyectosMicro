@@ -258,8 +258,8 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
      * @param evt Evento de acción generado al presionar el botón.
      */
     private void btnProyectosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProyectosActionPerformed
-        IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("MARIADB");
-        ICompanyRepository companyRepository = Factory.getInstance().getRepositoryCompany("MARIADB");
+        IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("PROJECT");
+        ICompanyRepository companyRepository = Factory.getInstance().getRepositoryCompany("COMPANY");
         
         GUIDashboardCoordinador gui = new GUIDashboardCoordinador(coordinator, new ProjectService(projectRepository), new CompanyService(companyRepository), btnProyectos);
         gui.setVisible(true);
@@ -272,7 +272,7 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void btnCerrarSesiónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesiónActionPerformed
-        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("MARIADB");
+        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("USER");
         
         GUIinicioSesion instance = new GUIinicioSesion(new UserService(repositoryUser));
         instance.setVisible(true);
@@ -335,7 +335,7 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
-        IProjectRepository repository = Factory.getInstance().getRepositoryProject("STUDENTMICROSERVICE");
+        IProjectRepository repository = Factory.getInstance().getRepositoryProject("PROJECT");
         ProjectService projectService = new ProjectService(repository);
         GUIDashboardCoordinadorInicio instance = new  GUIDashboardCoordinadorInicio(new Coordinator("C01", "coord@example.com", "1234"),  projectService);
         instance.setVisible(true);
