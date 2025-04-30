@@ -9,8 +9,8 @@ public class UserTest {
     void testCompanyConstructorAndGetters() {
         User userTest = new User("1234", "example@example.com", "password");
         
-        assertThat(userTest.getUserId()).isEqualTo("1234");
-        assertThat(userTest.getUserEmail()).isEqualTo("example@example.com");
+        assertThat(userTest.getId()).isEqualTo("1234");
+        assertThat(userTest.getEmail()).isEqualTo("example@example.com");
         assertThat(userTest.getPassword()).isEqualTo("password");
 
     }
@@ -19,12 +19,12 @@ public class UserTest {
     void testSetters() {
         User user = new User("", "", "");
 
-        user.setUserId("123456");
-        user.setUserEmail("user@example.com");
+        user.setId("123456");
+        user.setEmail("user@example.com");
         user.setPassword("securepassword");
 
-        assertThat(user.getUserId()).isEqualTo("123456");
-        assertThat(user.getUserEmail()).isEqualTo("user@example.com");
+        assertThat(user.getId()).isEqualTo("123456");
+        assertThat(user.getEmail()).isEqualTo("user@example.com");
         assertThat(user.getPassword()).isEqualTo("securepassword");
     }
 }

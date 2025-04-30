@@ -48,6 +48,8 @@ public class DataLoader implements CommandLineRunner {
         project1.setProBudget(10000.0);
         project1.setProState(EnumProjectState.ACEPTADO);
         project1.setProDate(LocalDate.now());
+        project1.setIdcompany("1");
+        project1.setProCoordinator("1");
         projectRepository.save(project1);
 
         // Proyecto 2 con estudiante aprobado
@@ -61,6 +63,8 @@ public class DataLoader implements CommandLineRunner {
         project2.setProBudget(8000.0);
         project2.setProState(EnumProjectState.ACEPTADO);
         project2.setProDate(LocalDate.now());
+        project1.setIdcompany("1");
+        project1.setProCoordinator("1");
 
         // Asociar estudiante2 como aprobado
         project2.getApproved().add(student2);

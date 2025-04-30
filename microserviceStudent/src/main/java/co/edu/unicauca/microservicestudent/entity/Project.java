@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -16,6 +17,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class Project {
     @Id
     @Column(name = "PROID",nullable = false, unique = true)
@@ -54,6 +56,12 @@ public class Project {
     @Column(name = "PROSTATE",nullable = false)
     private EnumProjectState proState;
 
+    @Column(name = "IDCOMPANY",nullable = true)
+    private String idcompany;
+
+    @Column(name = "IDCOORDINADOR",nullable = true)
+    private String proCoordinator;
+
     @ManyToMany
     @JoinTable(
             name = "postulated",
@@ -70,7 +78,7 @@ public class Project {
     )
     private List<Student> approved = new ArrayList<>();
 
-    public Project(String proid, String protitle, String prodescription, String proAbstract, String proGoals, int proDeadline, Double proBudget) {
+    public Project(String proid, String protitle, String prodescription, String proAbstract, String proGoals, int proDeadline, Double proBudget, String idcompany, String proCoordinator) {
         this.proId = proid;
         this.proTitle = protitle;
         this.proDescription = prodescription;
@@ -80,6 +88,8 @@ public class Project {
         this.proDeadLine = proDeadline;
         this.proBudget = proBudget;
         this.proState = EnumProjectState.RECIBIDO;
+        this.idcompany = idcompany;
+        this.proCoordinator = proCoordinator;
     }
 
 }
