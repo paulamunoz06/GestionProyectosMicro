@@ -117,8 +117,9 @@ public class PanelActionCoordinator extends javax.swing.JPanel {
      * @param evt Evento de acción generado por el botón.
      */
     private void btnDetallesActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetallesActionPerformed
-        GUIVerDetalles detallesFrame = new GUIVerDetalles(proyecto);
-       detallesFrame.setVisible(true);
+        // ojo cambiar a su base de datos 
+        GUIVerDetalles detallesFrame = new GUIVerDetalles(proyecto,projectService);
+        detallesFrame.setVisible(true);
     }//GEN-LAST:event_btnDetallesActionPerformed
 
     /**

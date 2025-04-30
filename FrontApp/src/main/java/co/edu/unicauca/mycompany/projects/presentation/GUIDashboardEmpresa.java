@@ -374,7 +374,7 @@ public class GUIDashboardEmpresa extends javax.swing.JFrame implements Dashboard
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCerrarSesiónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesiónActionPerformed
-        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("MARIADB");
+        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("STUDENTMICROSERVICE");
         
         GUIinicioSesion instance = new GUIinicioSesion(new UserService(repositoryUser));
         instance.setVisible(true);

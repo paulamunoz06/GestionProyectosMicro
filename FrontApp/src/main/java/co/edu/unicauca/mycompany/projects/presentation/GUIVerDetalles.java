@@ -5,6 +5,7 @@ import co.edu.unicauca.mycompany.projects.access.ICompanyRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
+import co.edu.unicauca.mycompany.projects.domain.services.ProjectService;
 import javax.swing.JFrame;
 
 /**
@@ -20,23 +21,21 @@ public class GUIVerDetalles extends javax.swing.JFrame {
     private final Company company;
 
     /** Servicio para gestionar la información de empresas. */
-    private final CompanyService companyService;
+    private final ProjectService projectService;
 
     /**
-     * Constructor de la clase GUIVerDetalles.
-     * Inicializa la interfaz con la información del proyecto y la empresa asociada.
+     * Constructor de la clase GUIVerDetalles.Inicializa la interfaz con la información del proyecto y la empresa asociada.
      *
      * @param project Proyecto cuyos detalles se van a visualizar.
+     * @param projectService
      */
-    public GUIVerDetalles(Project project) {
-        // Obtener el repositorio de empresas desde la fábrica
-        ICompanyRepository companyRepository = Factory.getInstance().getRepositoryCompany("MARIADB");
+    public GUIVerDetalles(Project project, ProjectService projectService) {
 
         this.project = project;
-        this.companyService = new CompanyService(companyRepository);
+        this.projectService = projectService;
 
         // Obtener la empresa asociada al proyecto
-        this.company = companyService.getCompany(project.getIdcompany());
+        this.company = projectService.getCompany(project.getProId());
 
         // Inicializar los componentes gráficos de la interfaz
         initComponents();

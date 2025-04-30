@@ -3,9 +3,10 @@ package co.edu.unicauca.mycompany.projects.presentation;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import co.edu.unicauca.mycompany.projects.domain.entities.Student;
-import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
 import co.edu.unicauca.mycompany.projects.infra.Observer;
 import co.edu.unicauca.mycompany.projects.domain.services.ProjectService;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
@@ -24,9 +25,6 @@ public class TableProjectsStudentObserver extends JFrame implements Observer {
 
     /** Servicio de gestión de proyectos. */
     private final ProjectService projectService;
-    
-    /** Servicio de gestión de compañías */
-    private final CompanyService companyService;
 
     /** Estudiante que interactúa con los proyectos. */
     private final Student student;
@@ -36,15 +34,13 @@ public class TableProjectsStudentObserver extends JFrame implements Observer {
      * 
      * @param student Estudiante actual.
      * @param projectService Servicio de gestión de proyectos.
-     * @param companyService Servicio de gestión de empresas.
      * @param jTableEstudiante Tabla que muestra los proyectos disponibles.
      * @param jScrollPane1 Panel de desplazamiento para la tabla.
      */
-    public TableProjectsStudentObserver(Student student, ProjectService projectService, CompanyService companyService, JTable jTableEstudiante, JScrollPane jScrollPane1) {
+    public TableProjectsStudentObserver(Student student, ProjectService projectService, JTable jTableEstudiante, JScrollPane jScrollPane1) {
         this.student = student;
         this.jTableEstudiante = jTableEstudiante;
         this.projectService = projectService;
-        this.companyService = companyService;
         this.jScrollPane1 = jScrollPane1;
 
         // Cargar datos iniciales
@@ -67,12 +63,15 @@ public class TableProjectsStudentObserver extends JFrame implements Observer {
 
         // Agregar cada proyecto a la tabla
         for (Project project : projects) {
-            Company company = companyService.getCompany(project.getIdcompany());
+            Company company = projectService.getCompany(project.getProId());
+            Date fecha = project.getProDate();
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            String fechaFormateada = sdf.format(fecha);
             modelo.addRow(new Object[]{
                 project.getProId(),
                 company.getCompanyName(),
                 project.getProTitle(),
-                project.getProDate(),
+                fechaFormateada,
                 project.getProAbstract(),
                 "Acciones"
             });

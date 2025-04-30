@@ -105,7 +105,7 @@ public class PanelActionEstudiante extends javax.swing.JPanel {
     * @param evt Evento de acción generado por el botón.
     */
     private void btnDetallesEstActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnDetallesEstActionPerformed
-        GUIVerDetalles detallesFrame = new GUIVerDetalles(proyecto);
+        GUIVerDetalles detallesFrame = new GUIVerDetalles(proyecto,projectService);
         detallesFrame.setVisible(true);
     }//GEN-LAST:event_btnDetallesEstActionPerformed
 
