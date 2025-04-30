@@ -1,6 +1,7 @@
 package co.edu.unicauca.microservicelogin.repository;
 
 import co.edu.unicauca.microservicelogin.entities.User;
+import co.edu.unicauca.microservicelogin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.stereotype.Component;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Component;
 public class DataLoader implements CommandLineRunner {
 
     @Autowired
-    UserRepository userRepository;
+    UserService userService;
 
     @Override
     public void run(String... args) throws Exception {
@@ -19,6 +20,6 @@ public class DataLoader implements CommandLineRunner {
         user.setPassword("password");
         user.setEmail("juanvela@example.com");
         user.setRole(3);
-        userRepository.save(user);
+        userService.registerUser(user);
     }
 }

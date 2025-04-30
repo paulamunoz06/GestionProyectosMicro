@@ -57,6 +57,7 @@ public class User {
      * ser un código numérico o una referencia a una tabla de roles más compleja.
      * Está anotada con {@code @Getter} y {@code @Setter} para la generación automática
      * de los métodos de acceso.
+     * 1=Estudiante, 2=Coordinador, 3=Empresa
      */
     @Getter
     @Setter

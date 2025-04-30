@@ -53,10 +53,8 @@ public class UserRepository implements IUserRepository {
                 String jsonResponse = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
                 User user = mapper.readValue(jsonResponse, User.class);
                 return user.getRole();
-            } else if (statusCode == HttpStatus.SC_UNAUTHORIZED) {
-                // Credenciales inválidas
-                throw new RuntimeException("Usuario o contraseña incorrectos");
-            } else {
+            }
+            else {
                 throw new RuntimeException("Error en login. Código HTTP: " + statusCode);
             }
 
