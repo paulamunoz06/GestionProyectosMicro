@@ -7,6 +7,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface IUserService {
     public abstract User login(@RequestBody UserRequest user);
-    public abstract ResponseEntity<?> registerUser(@RequestBody UserRequest user);
+    public abstract void registerUser(User user);
     public abstract boolean checkUser(@RequestBody UserRequest user);
 }
