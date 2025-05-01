@@ -176,9 +176,9 @@ public class CompanyRepository implements ICompanyRepository {
     // Métodos de mapeo entre entidad y DTO
     private CompanyDto mapToCompanyDto(Company company) {
         CompanyDto dto = new CompanyDto();
-        dto.setUserId(company.getUserId());
-        dto.setUserEmail(company.getUserEmail());
-        dto.setUserPassword(company.getUserPassword());
+        dto.setUserId(company.getId());
+        dto.setUserEmail(company.getEmail());
+        dto.setUserPassword(company.getPassword());
         dto.setCompanyName(company.getCompanyName());
         dto.setContactName(company.getContactName());
         dto.setContactLastName(company.getContactLastName());

@@ -50,10 +50,6 @@ public class ProjectService extends Subject{
     public List<Project> projectsAvailable(String studentId) {
         return repository.listProjectsAvailable(studentId);
     }
-    
-    public Company getCompany(String projectId) {
-        return repository.getcompany(projectId);
-    }
 
     /**
      * Obtiene la información de un proyecto específico.

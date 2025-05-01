@@ -1,5 +1,6 @@
 package co.edu.unicauca.mycompany.projects.presentation;
 
+import co.edu.unicauca.mycompany.projects.access.CompanyRepository;
 import co.edu.unicauca.mycompany.projects.access.Factory;
 import co.edu.unicauca.mycompany.projects.access.ICompanyRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
@@ -30,12 +31,12 @@ public class GUIVerDetalles extends javax.swing.JFrame {
      * @param projectService
      */
     public GUIVerDetalles(Project project, ProjectService projectService) {
-
+        CompanyService companyService = new CompanyService(Factory.getInstance().getRepositoryCompany("COMPANY"));
         this.project = project;
         this.projectService = projectService;
 
         // Obtener la empresa asociada al proyecto
-        this.company = projectService.getCompany(project.getProId());
+        this.company = companyService.getCompany(project.getIdcompany());
 
         // Inicializar los componentes gráficos de la interfaz
         initComponents();

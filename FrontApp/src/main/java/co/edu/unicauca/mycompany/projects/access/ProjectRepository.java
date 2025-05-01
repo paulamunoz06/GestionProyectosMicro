@@ -266,37 +266,5 @@ public class ProjectRepository implements IProjectRepository {
     public boolean updateProjectStatus(String projectId, String newStatus) {
         return false;
     }
-
-    @Override
-    public Company getcompany(String projectId) {
-        HttpClient httpClient = HttpClients.createDefault();
-        ObjectMapper mapper = new ObjectMapper();
-        Company company = null;
-        try {
-            // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/project/" + projectId + "/company";
-            // Crear una solicitud GET
-            HttpGet request = new HttpGet(apiUrl);
-
-            // Ejecutar la solicitud y obtener la respuesta
-            HttpResponse response = httpClient.execute(request);
-
-            // Verificar el código de estado de la respuesta
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == 200) {
-                // La solicitud fue exitosa, procesar la respuesta
-                String jsonResponse = EntityUtils.toString(response.getEntity());
-
-                // Mapear la respuesta JSON a objetos Product
-                company = mapper.readValue(jsonResponse, Company.class);
-            } else {
-                // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, "Error al obtener una compania. Código de estado: " + statusCode);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return company;
-    }
-
+    
 }
