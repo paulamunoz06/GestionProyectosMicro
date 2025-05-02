@@ -8,30 +8,45 @@ import org.springframework.stereotype.Component;
 
 import java.time.LocalDate;
 
-
+/**
+ * Componente encargado de cargar datos iniciales en la base de datos.
+ *
+ * <p>Esta clase implementa la funcionalidad de carga de datos de prueba
+ * para el microservicio de coordinador. Se ejecuta automáticamente durante
+ * la inicialización de la aplicación gracias a la anotación {@link PostConstruct}
+ * en el método de carga de datos.</p>
+ *
+ * <p>Los datos se cargan solo si la base de datos está vacía, evitando
+ * así la duplicación de registros en ejecuciones posteriores del servicio.</p>
+ *
+ * @author [Tu nombre aquí]
+ * @version 1.0
+ * @see Project
+ * @see IProjectRepository
+ * @see EnumProjectState
+ */
 @Component
 public class DataLoader {
 
+    /**
+     * Repositorio de proyectos utilizado para verificar y guardar datos.
+     */
     @Autowired
     private IProjectRepository projectRepository;
 
+    /**
+     * Carga datos iniciales en la base de datos.
+     *
+     * <p>Este método se ejecuta automáticamente después de la inicialización
+     * del componente, gracias a la anotación {@link PostConstruct}. Verifica
+     * si ya existen proyectos en la base de datos y, en caso negativo, crea
+     * y guarda proyectos de prueba con diferentes estados.</p>
+     */
     @PostConstruct
     public void loadData() {
         if (projectRepository.count() == 0) { // Para no duplicar datos si ya existen
 
-            /*
-            Project project1 = new Project();
-            project1.setProId("P001");
-            project1.setProTitle("Sistema de Gestión Académica");
-            project1.setProDescription("Desarrollar un sistema completo para la gestión académica de una universidad.");
-            project1.setProAbstract("Sistema para matrícula, notas y reportes académicos.");
-            project1.setProGoals("Automatizar la gestión académica.");
-            project1.setProDate(LocalDate.now());
-            project1.setProDeadLine(12);
-            project1.setProBudget(50000.0);
-            project1.setProState(EnumProjectState.ACEPTADO);
 
-             */
             // Proyecto 1 con estudiante postulado
             Project project1 = new Project();
             project1.setProId("1");
