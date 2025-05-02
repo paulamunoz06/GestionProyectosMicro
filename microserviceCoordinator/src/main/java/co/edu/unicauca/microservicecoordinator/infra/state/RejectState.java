@@ -1,11 +1,12 @@
 package co.edu.unicauca.microservicecoordinator.infra.state;
 
 import co.edu.unicauca.microservicecoordinator.entities.Project;
+import co.edu.unicauca.microservicecoordinator.infra.exceptions.InvalidStateTransitionException;
 
 public class RejectState implements ProjectState {
     @Override
     public void receive(Project project) {
-        System.out.println("Cannot approve a rejected project.");
+        throw new InvalidStateTransitionException("No se puede recibir un proyecto rechazado.");
     }
 
     @Override
@@ -15,17 +16,17 @@ public class RejectState implements ProjectState {
 
     @Override
     public void accept(Project project) {
-        System.out.println("Cannot assign a rejected project.");
+        throw new InvalidStateTransitionException("No se puede aceptar un proyecto rechazado.");
     }
 
     @Override
     public void close(Project project) {
-        System.out.println("Cannot complete a rejected project.");
+        throw new InvalidStateTransitionException("No se puede completar un proyecto rechazado.");
     }
 
     @Override
     public void execute(Project project) {
-        System.out.println("Cannot execute a rejected project.");
+        throw new InvalidStateTransitionException("No se puede ejecutar un proyecto rechazado.");
     }
 
     @Override

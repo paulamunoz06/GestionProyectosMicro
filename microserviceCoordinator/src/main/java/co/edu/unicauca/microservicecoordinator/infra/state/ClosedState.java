@@ -1,31 +1,32 @@
 package co.edu.unicauca.microservicecoordinator.infra.state;
 
 import co.edu.unicauca.microservicecoordinator.entities.Project;
+import co.edu.unicauca.microservicecoordinator.infra.exceptions.InvalidStateTransitionException;
 
 public class ClosedState implements ProjectState {
     @Override
     public void receive(Project project) {
-        System.out.println("Completed project cannot be approved.");
+        throw new InvalidStateTransitionException("No se puede recibir un proyecto cerrado.");
     }
 
     @Override
     public void reject(Project project) {
-        System.out.println("Completed project cannot be rejected.");
+        throw new InvalidStateTransitionException("No se puede rechazar un proyecto cerrado.");
     }
 
     @Override
     public void accept(Project project) {
-        System.out.println("Completed project cannot be assigned.");
+        throw new InvalidStateTransitionException("No se puede aceptar un proyecto cerrado.");
     }
 
     @Override
     public void close(Project project) {
-        System.out.println("Project has already been completed.");
+        throw new InvalidStateTransitionException("El proyecto ya se cerró.");
     }
 
     @Override
     public void execute(Project project) {
-        System.out.println("Project has been closed.");
+        throw new InvalidStateTransitionException("No se puede ejecutar un proyecto cerrado.");
     }
 
     @Override

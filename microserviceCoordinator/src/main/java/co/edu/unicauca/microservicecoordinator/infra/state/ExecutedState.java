@@ -2,33 +2,34 @@ package co.edu.unicauca.microservicecoordinator.infra.state;
 
 import co.edu.unicauca.microservicecoordinator.entities.Project;
 import co.edu.unicauca.microservicecoordinator.entities.EnumProjectState;
+import co.edu.unicauca.microservicecoordinator.infra.exceptions.InvalidStateTransitionException;
 
 public class ExecutedState implements ProjectState {
     @Override
     public void receive(Project project) {
-        System.out.println("Cannot receive a running project.");
+        throw new InvalidStateTransitionException("No se puede recibir un proyecto en ejecución.");
     }
 
     @Override
     public void reject(Project project) {
-        System.out.println("Cannot reject a running project.");
+        throw new InvalidStateTransitionException("No se puede rechazar un proyecto en ejecución.");
     }
 
     @Override
     public void accept(Project project) {
-        System.out.println("Cannot accept a project that is running.");
+        throw new InvalidStateTransitionException("No se puede aceptar un proyecto que está en ejecución.");
     }
 
     @Override
     public void close(Project project) {
         project.setProState(EnumProjectState.CERRADO);
         project.setCurrentState(new ClosedState());
-        System.out.println("Project Completed.");
+        System.out.println("Proyecto cerrado correctamente.");
     }
 
     @Override
     public void execute(Project project) {
-        System.out.println("Project is al ready running.");
+        throw new InvalidStateTransitionException("El proyecto ya se encuentra en ejecución.");
     }
 
     @Override

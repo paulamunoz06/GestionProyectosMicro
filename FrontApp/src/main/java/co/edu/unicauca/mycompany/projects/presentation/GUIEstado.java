@@ -219,9 +219,7 @@ public class GUIEstado extends javax.swing.JFrame {
         dispose();
         if (estado.updateDatabase(proyecto, projectService)) {
             Messages.mensajeVario("El estado del proyecto ha sido cambiado a Aceptado.");
-        } else {
-            Messages.mensajeVario("Error al actualizar el estado en la base de datos.");
-        }
+        } 
     }//GEN-LAST:event_btnAceptadoActionPerformed
 
     /**
@@ -237,9 +235,7 @@ public class GUIEstado extends javax.swing.JFrame {
         dispose();
         if (estado.updateDatabase(proyecto, projectService)) {
             Messages.mensajeVario("El estado del proyecto ha sido cambiado a Rechazado.");
-        } else {
-            Messages.mensajeVario("Error al actualizar el estado en la base de datos.");
-        }
+        } 
     }//GEN-LAST:event_btnRechazadoActionPerformed
 
     /**
@@ -254,9 +250,7 @@ public class GUIEstado extends javax.swing.JFrame {
         dispose();
         if (estado.updateDatabase(proyecto, projectService)) {
             Messages.mensajeVario("El estado del proyecto ha sido cambiado a Ejecucion.");
-        } else {
-            Messages.mensajeVario("Error al actualizar el estado en la base de datos.");
-        }
+        } 
     }//GEN-LAST:event_btnEjecucionActionPerformed
 
      /**
@@ -271,9 +265,7 @@ public class GUIEstado extends javax.swing.JFrame {
         dispose();
         if (estado.updateDatabase(proyecto, projectService)) {
             Messages.mensajeVario("El estado del proyecto ha sido cambiado a Cerrado.");
-        } else {
-            Messages.mensajeVario("Error al actualizar el estado en la base de datos.");
-        }
+        } 
     }//GEN-LAST:event_btnCerradoActionPerformed
 
     private void btnRecibidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRecibidoActionPerformed

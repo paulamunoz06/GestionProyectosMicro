@@ -3,18 +3,23 @@ package co.edu.unicauca.mycompany.projects.access;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.domain.entities.Student;
+import co.edu.unicauca.mycompany.projects.infra.Messages;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import javax.swing.JOptionPane;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
+import org.apache.http.client.methods.HttpPut;
+import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
@@ -259,9 +264,46 @@ public class ProjectRepository implements IProjectRepository {
     }
 
     @Override
-    public boolean updateProjectStatus(String projectId, String newStatus) {
+public boolean updateProjectStatus(String projectId, String newStatus) {
+    HttpClient httpClient = HttpClients.createDefault();
+    ObjectMapper mapper = new ObjectMapper();
+
+    try {
+        // Definir la URL del endpoint
+        String apiUrl = "http://localhost:8081/coordinator/projects/update-status";
+
+        // Crear el objeto JSON con proId y proState
+        ObjectNode requestBody = mapper.createObjectNode();
+        requestBody.put("proId", projectId);
+        requestBody.put("proState", newStatus);
+
+        // Crear la solicitud PUT
+        HttpPut request = new HttpPut(apiUrl);
+        request.setHeader("Content-Type", "application/json");
+        request.setEntity(new StringEntity(requestBody.toString(), "UTF-8"));
+
+        // Ejecutar la solicitud
+        HttpResponse response = httpClient.execute(request);
+
+        int statusCode = response.getStatusLine().getStatusCode();
+
+        if (statusCode == 200) {
+            return true;
+        } else {
+            String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
+            // Aquí puedes mostrarlo en un JOptionPane o consola
+            Messages.mensajeVario("Error: " + responseBody);
+            return false;
+        }
+
+    } catch (IOException ex) {
+        Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE,
+                "Error de IO al actualizar el estado del proyecto", ex);
+        JOptionPane.showMessageDialog(null, "Error de conexión con el servidor.", "Error", JOptionPane.ERROR_MESSAGE);
         return false;
     }
+}
+
 
     @Override
     public boolean existProjectId(String projectId) {

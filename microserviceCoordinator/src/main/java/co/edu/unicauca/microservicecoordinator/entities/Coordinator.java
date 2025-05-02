@@ -7,8 +7,6 @@ import lombok.Setter;
 /**
  * Representa un coordinador dentro del sistema, que es un tipo de usuario con
  * la capacidad de gestionar proyectos.
- * <p>
- * Un coordinador tiene una lista de proyectos asociados que puede supervisar o administrar.
  */
 @Entity
 @Getter
@@ -28,11 +26,6 @@ public class Coordinator {
     @Column(nullable = false, unique = true)
     private String coordinatorEmail;
 
-    /**
-     * Contraseña del coordinador.
-     */
-    @Column(nullable = false)
-    private String coordinatorPassword;
 
     /**
      * Nombre completo del coordinador.

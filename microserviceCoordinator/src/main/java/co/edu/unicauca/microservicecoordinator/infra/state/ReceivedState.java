@@ -2,12 +2,13 @@ package co.edu.unicauca.microservicecoordinator.infra.state;
 
 import co.edu.unicauca.microservicecoordinator.entities.Project;
 import co.edu.unicauca.microservicecoordinator.entities.EnumProjectState;
+import co.edu.unicauca.microservicecoordinator.infra.exceptions.InvalidStateTransitionException;
 
 public class ReceivedState implements ProjectState {
 
     @Override
     public void receive(Project project) {
-        System.out.println("Project is already received.");
+        throw new InvalidStateTransitionException("El proyecto ya fue recibido");
     }
 
     @Override
@@ -26,12 +27,12 @@ public class ReceivedState implements ProjectState {
 
     @Override
     public void close(Project project) {
-        System.out.println("Cannot complete a project that has not been accepted.");
+        throw new InvalidStateTransitionException("No se puede cerrar un proyecto que no se ha aceptado.");
     }
 
     @Override
     public void execute(Project project) {
-        System.out.println("Cannot complete a project that has not been accepted.");
+        throw new InvalidStateTransitionException("No se puede ejecutar un proyecto que no se ha aceptado.");
     }
 
     @Override

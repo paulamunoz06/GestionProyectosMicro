@@ -18,6 +18,8 @@ public class DataLoader {
     @PostConstruct
     public void loadData() {
         if (projectRepository.count() == 0) { // Para no duplicar datos si ya existen
+
+            /*
             Project project1 = new Project();
             project1.setProId("P001");
             project1.setProTitle("Sistema de Gestión Académica");
@@ -28,6 +30,20 @@ public class DataLoader {
             project1.setProDeadLine(12);
             project1.setProBudget(50000.0);
             project1.setProState(EnumProjectState.ACEPTADO);
+
+             */
+            // Proyecto 1 con estudiante postulado
+            Project project1 = new Project();
+            project1.setProId("1");
+            project1.setProTitle("Sistema de Gestión");
+            project1.setProDescription("Sistema para gestionar recursos");
+            project1.setProAbstract("Resumen del sistema");
+            project1.setProGoals("Objetivos claros");
+            project1.setProDeadLine(30);
+            project1.setProBudget(10000.0);
+            project1.setProState(EnumProjectState.ACEPTADO);
+            project1.setProDate(LocalDate.now());
+
 
             Project project2 = new Project();
             project2.setProId("P002");
