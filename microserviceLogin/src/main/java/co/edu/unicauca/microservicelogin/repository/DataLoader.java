@@ -15,11 +15,25 @@ public class DataLoader implements CommandLineRunner {
     @Override
     public void run(String... args) throws Exception {
 
-        User user = new User();
-        user.setId("juanvela");
-        user.setPassword("password");
-        user.setEmail("juanvela@example.com");
-        user.setRole(3);
-        userService.registerUser(user);
+        User user1 = new User();
+        user1.setId("juanvela");
+        user1.setPassword("passwordVela");
+        user1.setEmail("juanvela@example.com");
+        user1.setRole(3);
+        userService.registerUser(user1);
+
+        User user2 = new User();
+        user2.setId("paulamunoz");
+        user2.setPassword("passwordPaula");
+        user2.setEmail("paulamunoz@example.com");
+        user2.setRole(2);
+        userService.registerUser(user2);
+
+        User user3 = new User();
+        user3.setId("cunas");
+        user3.setPassword("passwordCris");
+        user3.setEmail("cunas@example.com");
+        user3.setRole(1);
+        userService.registerUser(user3);
     }
 }
