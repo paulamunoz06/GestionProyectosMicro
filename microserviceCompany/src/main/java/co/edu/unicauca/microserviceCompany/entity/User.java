@@ -7,25 +7,15 @@ import lombok.Setter;
 /**
  * Representa un usuario de la aplicación.
  *
- * Esta entidad define la estructura de la tabla 'app_user' en la base de datos
- * y contiene información básica sobre un usuario, como su identificador único,
- * contraseña (que debe ser manejada con seguridad), correo electrónico y rol.
- *
- * Utiliza anotaciones de Jakarta Persistence para el mapeo objeto-relacional (ORM)
- * y anotaciones de Lombok para la generación automática de métodos getter y setter.
+ * Solo se usa para el envio a la cola de rabbitMQ por lo que no se guarda en la base de datos
  */
-@Entity
-@Table(name = "app_user")  // Evita el conflicto con 'user'
+
+@Setter
+@Getter
 public class User {
     /**
      * Identificador único del usuario.
-     *
-     * Esta propiedad está anotada con {@code @Id}, indicando que es la clave primaria
-     * de la entidad en la base de datos.
      */
-    @Getter
-    @Setter
-    @Id
     private String id;
 
     /**
@@ -36,8 +26,6 @@ public class User {
      * El metodo getter para esta propiedad no se genera explícitamente con Lombok
      * por consideraciones de seguridad; sin embargo, se incluye un setter.
      */
-    @Setter
-    @Getter
     private String password;
 
     /**
@@ -47,8 +35,6 @@ public class User {
      * Está anotada con {@code @Getter} y {@code @Setter} para la generación automática
      * de los métodos de acceso.
      */
-    @Setter
-    @Getter
     private String email;
 
     /**
@@ -60,8 +46,6 @@ public class User {
      * de los métodos de acceso.
      * 1=Estudiante, 2=Coordinador, 3=Empresa
      */
-    @Getter
-    @Setter
     private int role;
 
 }
