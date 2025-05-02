@@ -17,7 +17,7 @@ public class UserConsumerService {
         // Guardar el usuario en el repositorio local a traves del servicio
         try {
             userService.registerUser(user);
-            System.out.println("Recibido usuario: " + user.getId() + "Role" + user.getRole());
+            System.out.println("Recibido usuario: " + user.getId() + " Role:" + user.getRole());
         } catch (Exception e) {
             System.out.println("Error:" + e.getMessage());
 

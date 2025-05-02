@@ -50,7 +50,7 @@ public class ProjectService implements IProjectService {
             }
 
             // Buscar la compañía para asociarla al proyecto
-            Long companyId = Long.parseLong(projectDto.getCompanyId());
+            String companyId = projectDto.getCompanyId();
             Optional<Company> companyOpt = companyRepository.findById(companyId);
 
             if (companyOpt.isEmpty()) {

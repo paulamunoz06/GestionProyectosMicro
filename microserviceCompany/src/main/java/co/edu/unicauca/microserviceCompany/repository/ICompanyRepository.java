@@ -9,12 +9,12 @@ import org.springframework.stereotype.Repository;
 import java.util.Optional;
 
 @Repository
-public interface ICompanyRepository extends JpaRepository<Company, Long> {
+public interface ICompanyRepository extends JpaRepository<Company, String> {
 
     Optional<Company> findByEmail(String email);
 
     @Query("SELECT c FROM Company c WHERE c.id = :id")
-    Optional<Company> findCompanyById(Long id);
+    Optional<Company> findCompanyById(String id);
 
     boolean existsByEmail(String email);
 

@@ -2,6 +2,8 @@ package co.edu.unicauca.microserviceCompany.service;
 
 import co.edu.unicauca.microserviceCompany.entity.Company;
 import co.edu.unicauca.microserviceCompany.entity.EnumSector;
+import co.edu.unicauca.microserviceCompany.entity.User;
+import co.edu.unicauca.microserviceCompany.infra.config.RabbitMQConfig;
 import co.edu.unicauca.microserviceCompany.infra.dto.CompanyDto;
 import co.edu.unicauca.microserviceCompany.repository.ICompanyRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -33,6 +35,14 @@ public class CompanyService implements ICompanyService {
             throw new IllegalArgumentException("El correo electrónico ya está registrado");
         }
 
+        User userSaved = new User();
+        userSaved.setId(companyDto.getUserId());
+        userSaved.setPassword(companyDto.getUserPassword());
+        userSaved.setEmail(companyDto.getUserEmail());
+        userSaved.setRole(3);
+        // 5. Publicar en RabbitMQ
+        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_QUEUE, userSaved);
+
         Company company = companyToEntity(companyDto);
         return companyRepository.save(company);
     }
@@ -55,9 +65,10 @@ public class CompanyService implements ICompanyService {
         return companyRepository.save(company);
     }
 
+
     @Override
     @Transactional(readOnly = true)
-    public Optional<Company> findById(Long id) {
+    public Optional<Company> findById(String id) {
         if (id == null) {
             throw new EntityNotFoundException("Id de la empresa es nulo");
         }
@@ -106,14 +117,14 @@ public class CompanyService implements ICompanyService {
         }
 
         Company company = new Company(
+                companyDto.getUserId(),
                 companyDto.getCompanyName(),
                 companyDto.getContactName(),
                 companyDto.getContactLastName(),
                 companyDto.getContactPhone(),
                 companyDto.getContactPosition(),
                 sector,
-                companyDto.getUserEmail(),
-                companyDto.getUserPassword()
+                companyDto.getUserEmail()
         );
 
         return company;

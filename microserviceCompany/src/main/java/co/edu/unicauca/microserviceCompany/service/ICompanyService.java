@@ -13,7 +13,7 @@ public interface ICompanyService {
 
     Company updateCompany(Company company) throws Exception;
 
-    Optional<Company> findById(Long id);
+    Optional<Company> findById(String id);
 
     Optional<Company> findByEmail(String email);
 

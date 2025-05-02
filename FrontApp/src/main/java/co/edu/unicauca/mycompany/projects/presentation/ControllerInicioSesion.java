@@ -70,7 +70,7 @@ public class ControllerInicioSesion {
 
     void actionButtomRegister() {
         view.dispose();
-        ICompanyRepository repositoryCompany = Factory.getInstance().getRepositoryCompany("MARIADB");
+        ICompanyRepository repositoryCompany = Factory.getInstance().getRepositoryCompany("COMPANY");
         CompanyService companyService = new CompanyService(repositoryCompany);
         GUIregistrarEmpresa instance = new GUIregistrarEmpresa(companyService, this.service);
         instance.setVisible(true);

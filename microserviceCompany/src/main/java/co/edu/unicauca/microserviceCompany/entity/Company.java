@@ -18,18 +18,14 @@ import java.util.List;
 public class Company {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private String id;
 
     @Email(message = "Debe proporcionar un correo electrónico válido")
     @NotBlank(message = "El correo electrónico no puede estar vacío")
     @Column(nullable = false, unique = true)
     private String email;
 
-    @NotBlank(message = "La contraseña no puede estar vacía")
-    @Size(min = 6, message = "La contraseña debe tener al menos 6 caracteres")
-    @Column(nullable = false)
-    private String password;
+
 
     @NotBlank(message = "El nombre de la empresa no puede estar vacío")
     @Column(nullable = false)
@@ -59,8 +55,9 @@ public class Company {
     @JoinColumn(name = "company_id")
     private List<Project> companyProjects = new ArrayList<>();
 
-    public Company(String companyName, String contactName, String contactLastName, String contactPhone,
-                   String contactPosition, EnumSector companySector, String email, String password) {
+    public Company(String id,String companyName, String contactName, String contactLastName, String contactPhone,
+                   String contactPosition, EnumSector companySector, String email) {
+        this.id = id;
         this.companyName = companyName;
         this.contactName = contactName;
         this.contactLastName = contactLastName;
@@ -68,7 +65,6 @@ public class Company {
         this.contactPosition = contactPosition;
         this.companySector = companySector;
         this.email = email;
-        this.password = password;
     }
 
     public void addProject(Project project) {

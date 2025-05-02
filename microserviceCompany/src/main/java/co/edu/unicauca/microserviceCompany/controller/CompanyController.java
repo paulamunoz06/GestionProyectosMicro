@@ -36,7 +36,7 @@ public class CompanyController {
     }
 
     @GetMapping("/{companyId}")
-    public ResponseEntity<?> getCompanyById(@PathVariable Long companyId) {
+    public ResponseEntity<?> getCompanyById(@PathVariable String companyId) {
         try {
             Optional<Company> company = companyService.findById(companyId);
             if (company.isEmpty()) {

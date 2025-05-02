@@ -25,7 +25,7 @@ public class ProjectController {
     private ICompanyService companyService;
 
     @PostMapping("/register")
-    public ResponseEntity<?> registerProject(@RequestBody ProjectDto projectDto, @RequestParam Long companyId) {
+    public ResponseEntity<?> registerProject(@RequestBody ProjectDto projectDto, @RequestParam String companyId) {
         try {
             // Verificar si la empresa existe
             Optional<Company> companyOpt = companyService.findById(companyId);
