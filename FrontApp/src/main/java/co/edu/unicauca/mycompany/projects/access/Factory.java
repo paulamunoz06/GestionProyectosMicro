@@ -52,11 +52,11 @@ public class Factory {
         
         // Diccionario para repositorios de estudiantes
         studentDictionary = new HashMap<>();
-        studentDictionary.put("STUDENTMICROSERVICE", new StudentRepository()); // Agrega repositorio de StudentMicroservice
+        studentDictionary.put("STUDENT", new StudentRepository()); // Agrega repositorio de StudentMicroservice
         
         // Diccionario para repositorios de proyectos
         projectDictionary = new HashMap<>();
-        projectDictionary.put("STUDENTMICROSERVICE", new ProjectRepository()); // Agrega repositorio de StudentMicroservice
+        projectDictionary.put("PROJECT", new ProjectRepository()); // Agrega repositorio de StudentMicroservice
         
         coordinatorDictionary = new HashMap<>();
         coordinatorDictionary.put("COORDINATOR", new CoordinatorRepository()); // Agrega repositorio MariaDB
