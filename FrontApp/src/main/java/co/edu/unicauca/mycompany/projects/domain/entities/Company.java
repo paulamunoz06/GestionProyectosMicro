@@ -197,7 +197,7 @@ public class Company extends User {
      */
     public void addProject(String proId, String proTitle, String proDescription, String proAbstract,
                            String proGoals, int proDeadLine, Date proDate, double proBudget) {
-        Project project = new Project(proId, proTitle, proDescription, proAbstract, proGoals, proDeadLine, proDate, proBudget, this.getUserId());
+        Project project = new Project(proId, proTitle, proDescription, proAbstract, proGoals, proDeadLine, proDate, proBudget, this.getId());
         companyProjects.add(project);
     }
 }

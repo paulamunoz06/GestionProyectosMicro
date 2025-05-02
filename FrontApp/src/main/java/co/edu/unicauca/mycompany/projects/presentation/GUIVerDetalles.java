@@ -1,5 +1,6 @@
 package co.edu.unicauca.mycompany.projects.presentation;
 
+import co.edu.unicauca.mycompany.projects.access.CompanyRepository;
 import co.edu.unicauca.mycompany.projects.access.Factory;
 import co.edu.unicauca.mycompany.projects.access.ICompanyRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
@@ -30,12 +31,12 @@ public class GUIVerDetalles extends javax.swing.JFrame {
      * @param projectService
      */
     public GUIVerDetalles(Project project, ProjectService projectService) {
-
+        CompanyService companyService = new CompanyService(Factory.getInstance().getRepositoryCompany("COMPANY"));
         this.project = project;
         this.projectService = projectService;
 
         // Obtener la empresa asociada al proyecto
-        this.company = projectService.getCompany(project.getProId());
+        this.company = companyService.getCompany(project.getIdcompany());
 
         // Inicializar los componentes gráficos de la interfaz
         initComponents();
@@ -438,8 +439,8 @@ public class GUIVerDetalles extends javax.swing.JFrame {
         // Información de la empresa asociada al proyecto
         lblApellidosPersona.setText(company.getContactLastName());  // Apellido del contacto de la empresa
         lblCargoPersona.setText(company.getContactPosition());      // Cargo del contacto de la empresa
-        lblGmail.setText(company.getUserEmail());               // Correo electrónico de la empresa
-        lblNit.setText(company.getUserId());                   // NIT de la empresa
+        lblGmail.setText(company.getEmail());               // Correo electrónico de la empresa
+        lblNit.setText(company.getId());                   // NIT de la empresa
         lblNombreEmpresa.setText(company.getCompanyName());        // Nombre de la empresa
         lblNombrePersona.setText(company.getContactName());        // Nombre del contacto de la empresa
         lblSector.setText(company.getCompanySector().toString());  // Sector al que pertenece la empresa

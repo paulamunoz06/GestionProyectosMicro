@@ -72,7 +72,7 @@ public class TableProjectsCoordinatorObserver extends JFrame implements Observer
             Company company = companyService.getCompany(project.getIdcompany());
             modelo.addRow(new Object[]{
                 project.getProId(),
-                company.getUserId(),
+                company.getId(),
                 company.getCompanyName(),
                 project.getProTitle(),
                 project.getProDate(),

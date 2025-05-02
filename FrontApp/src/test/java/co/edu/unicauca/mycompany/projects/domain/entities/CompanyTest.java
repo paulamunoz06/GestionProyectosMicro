@@ -1,6 +1,5 @@
 package co.edu.unicauca.mycompany.projects.domain.entities;
 
-import java.util.Date;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.fail;
 import org.junit.jupiter.api.Test;
@@ -28,9 +27,7 @@ public class CompanyTest {
         assertThat(companyTest.getContactPhone()).isEqualTo("1234567890");
         assertThat(companyTest.getContactPosition()).isEqualTo("CEO");
         assertThat(companyTest.getCompanySector()).isEqualTo(enumSector.OTHER);
-        assertThat(companyTest.getUserId()).isEqualTo("5678");
-        assertThat(companyTest.getUserEmail()).isEqualTo("company@example.com");
-        assertThat(companyTest.getUserPassword()).isEqualTo("securepassword");
+        assertThat(companyTest.getPassword()).isEqualTo("securepassword");
     }
 
     /**
@@ -49,9 +46,7 @@ public class CompanyTest {
         company.setContactPhone("9876543210");
         company.setContactPosition("CTO");
         company.setCompanySector(enumSector.HEALTH);
-        company.setUserId("9999");
-        company.setUserEmail("contact@innovative.com");
-        company.setUserPassword("newpassword");
+        company.setPassword("newpassword");
 
         // Se validan los valores modificados con los valores esperados.
         assertThat(company.getCompanyName()).isEqualTo("Innovative Corp");
@@ -60,9 +55,7 @@ public class CompanyTest {
         assertThat(company.getContactPhone()).isEqualTo("9876543210");
         assertThat(company.getContactPosition()).isEqualTo("CTO");
         assertThat(company.getCompanySector()).isEqualTo(enumSector.HEALTH);
-        assertThat(company.getUserId()).isEqualTo("9999");
-        assertThat(company.getUserEmail()).isEqualTo("contact@innovative.com");
-        assertThat(company.getUserPassword()).isEqualTo("newpassword");
+        assertThat(company.getPassword()).isEqualTo("newpassword");
     }
     /**
      * Test of addProject method, of class Company.

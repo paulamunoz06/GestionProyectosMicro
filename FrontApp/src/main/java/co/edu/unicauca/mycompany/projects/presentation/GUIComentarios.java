@@ -189,16 +189,16 @@ public class GUIComentarios extends javax.swing.JFrame {
         // Obtener la empresa asociada al proyecto
         Company empresa = companyService.getCompany(proyecto.getIdcompany());
 
-        if (empresa == null || empresa.getUserEmail() == null || empresa.getUserEmail().trim().isEmpty()) {
+        if (empresa == null || empresa.getEmail() == null || empresa.getEmail().trim().isEmpty()) {
             JOptionPane.showMessageDialog(this, "No se encontró la empresa asociada al proyecto o su correo no está definido.", 
                                           "Error", JOptionPane.ERROR_MESSAGE);
             return;
         }
 
         // Definir destinatario y cuerpo del correo
-        String destinatarioEmpresa = empresa.getUserEmail();
+        String destinatarioEmpresa = empresa.getEmail();
         String asunto = "Nuevo Comentario del Proyecto: " + proyecto.getProTitle();
-        String cuerpo = "Coordinador: " + coordinator.getUserId()+ "\n"
+        String cuerpo = "Coordinador: " + coordinator.getId()+ "\n"
                       + "Proyecto: " + proyecto.getProTitle()+ "\n"
                       + "Comentario:\n" + comentario;
 

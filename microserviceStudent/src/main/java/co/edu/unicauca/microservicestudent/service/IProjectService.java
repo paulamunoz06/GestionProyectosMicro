@@ -22,8 +22,6 @@ public interface IProjectService {
     @Transactional
     Optional<Project> findById(String id);
 
-    CompanyDto getCompanyInfo(String projectId) throws Exception;
-
     List<ProjectDto> getAvailableProjectsForStudent(String studentId) throws Exception;
 
     int getAllProjects();

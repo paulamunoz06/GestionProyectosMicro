@@ -58,8 +58,8 @@ public class GUIDashboardEmpresa extends javax.swing.JFrame implements Dashboard
         this.setVisible(true);
         setLocationRelativeTo(null); 
         setResizable(false);
-        lblNameCompany.setText("Compañía " + company.getUserId());
-        lblEmailCompany.setText(company.getUserEmail());
+        lblNameCompany.setText("Compañía " + company.getId());
+        lblEmailCompany.setText(company.getEmail());
     }
     
     /**
@@ -374,7 +374,7 @@ public class GUIDashboardEmpresa extends javax.swing.JFrame implements Dashboard
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCerrarSesiónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesiónActionPerformed
-        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("MARIADB");
+        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("USER");
         
         GUIinicioSesion instance = new GUIinicioSesion(new UserService(repositoryUser));
         instance.setVisible(true);
@@ -406,7 +406,7 @@ public class GUIDashboardEmpresa extends javax.swing.JFrame implements Dashboard
         String proGoals = txtGoalsProject.getText().trim();
         String proDeadLine = txtDeadLineProject.getText().trim();
         String proBudget = txtBudgetProject.getText().trim();
-        String idCompany = company.getUserId();
+        String idCompany = company.getId();
         
         // Instanciar projectService 
         IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("MARIADB");

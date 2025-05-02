@@ -51,9 +51,9 @@ public class GUIDashboardEstudiante extends javax.swing.JFrame implements Dashbo
         this.setVisible(true);
         setLocationRelativeTo(null); 
         setResizable(false);
-        btnInicio.setText("Estudiante " + student.getUserId());
-        lblTitulo.setText("Bienvenido estudiante " + student.getUserId());
-        lblCorreo.setText(student.getUserEmail());
+        btnInicio.setText("Estudiante " + student.getId());
+        lblTitulo.setText("Bienvenido estudiante " + student.getId());
+        lblCorreo.setText(student.getEmail());
     }
     
     /**

@@ -12,11 +12,12 @@ import java.util.List;
 public class Student extends User {
     
     /** Lista de proyectos en los que el estudiante está participando activamente. */
-    private List<Project> myProjects;
+    private List<String> approvedIds;
     
     /** Lista de proyectos a los que el estudiante se ha postulado. */
-    private List<Project> myPostulations;
+    private List<String> postulatedIds;
     
+    private String name;
     /**
      * Constructor de la clase Student.
      * 
@@ -26,8 +27,18 @@ public class Student extends User {
      */
     public Student(String userId, String userEmail, String userPassword) {
         super(userId, userEmail, userPassword);
-        this.myProjects = new ArrayList<>();
-        this.myPostulations = new ArrayList<>();
+        this.approvedIds = new ArrayList<>();
+        this.postulatedIds = new ArrayList<>();
+    }
+
+    public Student(String id, String name, String email, String password,List<String> approvedIds, List<String> postulatedIds) {
+        super(id, email, password);
+        this.approvedIds = approvedIds;
+        this.postulatedIds = postulatedIds;
+        this.name = name;
+    }
+
+    public Student() {
     }
 
     /**
@@ -35,8 +46,8 @@ public class Student extends User {
      * 
      * @return Lista de proyectos activos del estudiante.
      */
-    public List<Project> getMyProjects() {
-        return myProjects;
+    public List<String> getMyProjects() {
+        return approvedIds;
     }
 
     /**
@@ -44,8 +55,8 @@ public class Student extends User {
      * 
      * @param myProjects Lista de proyectos en los que el estudiante está participando.
      */
-    public void setMyProjects(List<Project> myProjects) {
-        this.myProjects = myProjects;
+    public void setMyProjects(List<String> myProjects) {
+        this.approvedIds = myProjects;
     }
 
     /**
@@ -53,8 +64,8 @@ public class Student extends User {
      * 
      * @return Lista de proyectos en los que el estudiante ha enviado una postulación.
      */
-    public List<Project> getMyPostulations() {
-        return myPostulations;
+    public List<String> getMyPostulations() {
+        return postulatedIds;
     }
 
     /**
@@ -62,7 +73,16 @@ public class Student extends User {
      * 
      * @param myPostulations Lista de proyectos a los que el estudiante se ha postulado.
      */
-    public void setMyPostulations(List<Project> myPostulations) {
-        this.myPostulations = myPostulations;
+    public void setMyPostulations(List<String> myPostulations) {
+        this.postulatedIds = myPostulations;
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+    
 }

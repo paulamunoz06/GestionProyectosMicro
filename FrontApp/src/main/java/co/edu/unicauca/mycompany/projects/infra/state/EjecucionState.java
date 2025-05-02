@@ -54,7 +54,7 @@ public class EjecucionState implements ProjectStatePatron {
 
         if (company != null) {
             String mensaje = Messages.mensajeCambioEstado(company.getCompanyName(), project.getProTitle(), "EN EJECUCION");
-            EmailService.sendEmail(company.getUserEmail(), "Notificación de Cambio de Estado en Proyecto de Software", mensaje);
+            EmailService.sendEmail(company.getEmail(), "Notificación de Cambio de Estado en Proyecto de Software", mensaje);
         } else {
             System.out.println("Error: No se encontró la empresa asociada al proyecto.");
             System.out.println("ID de la empresa buscada: " + project.getIdcompany());

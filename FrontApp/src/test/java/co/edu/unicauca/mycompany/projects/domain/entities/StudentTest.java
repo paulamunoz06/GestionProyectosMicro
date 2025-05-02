@@ -48,9 +48,9 @@ public class StudentTest {
      */
     @Test
     public void testSetMyProjects() {
-        List<Project> projects = new ArrayList<>();
-        projects.add(Mockito.mock(Project.class));
-        projects.add(Mockito.mock(Project.class));
+        List<String> projects = new ArrayList<>();
+        projects.add(Mockito.mock(Project.class).getProId());
+        projects.add(Mockito.mock(Project.class).getProId());
 
         student.setMyProjects(projects);
         
@@ -71,9 +71,9 @@ public class StudentTest {
      */
     @Test
     public void testSetMyPostulations() {
-        List<Project> postulations = new ArrayList<>();
-        postulations.add(Mockito.mock(Project.class));
-        postulations.add(Mockito.mock(Project.class));
+        List<String> postulations = new ArrayList<>();
+        postulations.add(Mockito.mock(Project.class).getProId());
+        postulations.add(Mockito.mock(Project.class).getProId());
 
         student.setMyPostulations(postulations);
         
@@ -87,7 +87,7 @@ public class StudentTest {
     public void testAddProjectToMyProjects() {
         Project project = Mockito.mock(Project.class);
         
-        student.getMyProjects().add(project);
+        student.getMyProjects().add(project.getProId());
         assertEquals(1, student.getMyProjects().size(), "La lista de proyectos debería contener un solo proyecto");
         assertTrue(student.getMyProjects().contains(project), "El proyecto debería haber sido agregado correctamente");
     }
@@ -99,7 +99,7 @@ public class StudentTest {
     public void testAddProjectToMyPostulations() {
         Project project = Mockito.mock(Project.class);
         
-        student.getMyPostulations().add(project);
+        student.getMyPostulations().add(project.getProId());
         assertEquals(1, student.getMyPostulations().size(), "La lista de postulaciones debería contener un solo proyecto");
         assertTrue(student.getMyPostulations().contains(project), "El proyecto debería haber sido agregado correctamente");
     }
@@ -110,7 +110,7 @@ public class StudentTest {
     @Test
     public void testRemoveProjectFromMyProjects() {
         Project project = Mockito.mock(Project.class);
-        student.getMyProjects().add(project);
+        student.getMyProjects().add(project.getProId());
         assertEquals(1, student.getMyProjects().size(), "La lista de proyectos debería contener un solo proyecto antes de eliminar");
 
         student.getMyProjects().remove(project);
@@ -124,7 +124,7 @@ public class StudentTest {
     @Test
     public void testRemoveProjectFromMyPostulations() {
         Project project = Mockito.mock(Project.class);
-        student.getMyPostulations().add(project);
+        student.getMyPostulations().add(project.getProId());
         assertEquals(1, student.getMyPostulations().size(), "La lista de postulaciones debería contener un solo proyecto antes de eliminar");
 
         student.getMyPostulations().remove(project);

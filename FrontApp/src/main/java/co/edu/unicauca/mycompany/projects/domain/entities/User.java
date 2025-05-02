@@ -1,89 +1,48 @@
 package co.edu.unicauca.mycompany.projects.domain.entities;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 /**
- * Representa un usuario dentro del sistema.
+ * DTO que representa la respuesta de login de microservicio de usuarios.
  * 
  * Un usuario tiene un identificador, un correo electrónico y una contraseña.
  * Esta clase sirve como base para otros tipos de usuarios, como estudiantes y coordinadores.
  */
+@Data
+@NoArgsConstructor
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
     
     /** Identificador único del usuario. */
-    private String userId;
-    
-    /** Correo electrónico del usuario. */
-    private String userEmail;
+    @JsonProperty("id")
+    private String id;
     
     /** Contraseña del usuario. */
-    private String userPassword;
+    @JsonProperty("password")
+    private String password;
+
+    /** Correo electrónico del usuario. */
+    @JsonProperty("email")
+    private String email;
+
+    /** Rol del usuario como un entero, 1=Estudiante, 2=Coordinador, 3=Empresa*/
+    @JsonProperty("role")
+    private int role;
 
     /**
      * Constructor de la clase User.
      * 
-     * @param userId Identificador único del usuario.
-     * @param userEmail Correo electrónico del usuario.
-     * @param userPassword Contraseña del usuario.
+     * @param id Identificador único del usuario.
+     * @param email Correo electrónico del usuario.
+     * @param password Contraseña del usuario.
      */
-    public User(String userId, String userEmail, String userPassword) {
-        this.userId = userId;
-        this.userEmail = userEmail;
-        this.userPassword = userPassword;
+    public User(String id, String email, String password) {
+        this.id = id;
+        this.email = email;
+        this.password = password;
     }
 
-    public User() {
-    }
-
-    /**
-     * Obtiene el identificador del usuario.
-     * 
-     * @return Identificador único del usuario.
-     */
-    public String getUserId() {
-        return userId;
-    }
-
-    /**
-     * Establece el identificador del usuario.
-     * 
-     * @param userId Nuevo identificador del usuario.
-     */
-    public void setUserId(String userId) {
-        this.userId = userId;
-    }
-
-    /**
-     * Obtiene el correo electrónico del usuario.
-     * 
-     * @return Correo electrónico del usuario.
-     */
-    public String getUserEmail() {
-        return userEmail;
-    }
-
-    /**
-     * Establece el correo electrónico del usuario.
-     * 
-     * @param userEmail Nuevo correo electrónico del usuario.
-     */
-    public void setUserEmail(String userEmail) {
-        this.userEmail = userEmail;
-    }
-
-    /**
-     * Obtiene la contraseña del usuario.
-     * 
-     * @return Contraseña del usuario.
-     */
-    public String getUserPassword() {
-        return userPassword;
-    }
-    
-    /**
-     * Establece la contraseña del usuario.
-     * 
-     * @param userPassword Nueva contraseña del usuario.
-     */
-    public void setUserPassword(String userPassword) {
-        this.userPassword = userPassword;
-    }
 }
