@@ -171,7 +171,7 @@ public class ProjectRepository implements IProjectRepository {
         List<Project> listReturn = null;
         try {
             // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/" + studentId +"/projectsAvailable" ;
+            String apiUrl = "http://localhost:8083/student/" + studentId + "/projectsAvailable";
             // Crear una solicitud GET
             HttpGet request = new HttpGet(apiUrl);
 
@@ -204,7 +204,7 @@ public class ProjectRepository implements IProjectRepository {
         Project project = null;
         try {
             // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/project/" + projectId ;
+            String apiUrl = "http://localhost:8083/student/project/" + projectId;
             // Crear una solicitud GET
 
             HttpGet request = new HttpGet(apiUrl);
@@ -237,7 +237,7 @@ public class ProjectRepository implements IProjectRepository {
         try {
             // Definir la URL de la API REST
 
-            String apiUrl = "http://localhost:8083/student/"+studentId+"/project/" + projectId;
+            String apiUrl = "http://localhost:8083/student/" + studentId + "/project/" + projectId;
             // Crear una solicitud GET
             HttpPost request = new HttpPost(apiUrl);
 
@@ -266,7 +266,7 @@ public class ProjectRepository implements IProjectRepository {
         try {
             // Definir la URL de la API REST
 
-            String apiUrl = "http://localhost:8083/student/" + studentId +"/projects" ;
+            String apiUrl = "http://localhost:8083/student/" + studentId + "/projects";
             // Crear una solicitud GET
 
             HttpGet request = new HttpGet(apiUrl);
@@ -365,84 +365,45 @@ public class ProjectRepository implements IProjectRepository {
     }
 
     @Override
-public boolean updateProjectStatus(String projectId, String newStatus) {
-    HttpClient httpClient = HttpClients.createDefault();
-    ObjectMapper mapper = new ObjectMapper();
+    public boolean updateProjectStatus(String projectId, String newStatus) {
+        HttpClient httpClient = HttpClients.createDefault();
+        ObjectMapper mapper = new ObjectMapper();
 
-    try {
-        // Definir la URL del endpoint
-        String apiUrl = "http://localhost:8081/coordinator/projects/update-status";
+        try {
+            // Definir la URL del endpoint
+            String apiUrl = "http://localhost:8081/coordinator/projects/update-status";
 
-        // Crear el objeto JSON con proId y proState
-        ObjectNode requestBody = mapper.createObjectNode();
-        requestBody.put("proId", projectId);
-        requestBody.put("proState", newStatus);
+            // Crear el objeto JSON con proId y proState
+            ObjectNode requestBody = mapper.createObjectNode();
+            requestBody.put("proId", projectId);
+            requestBody.put("proState", newStatus);
 
-        // Crear la solicitud PUT
-        HttpPut request = new HttpPut(apiUrl);
-        request.setHeader("Content-Type", "application/json");
-        request.setEntity(new StringEntity(requestBody.toString(), "UTF-8"));
+            // Crear la solicitud PUT
+            HttpPut request = new HttpPut(apiUrl);
+            request.setHeader("Content-Type", "application/json");
+            request.setEntity(new StringEntity(requestBody.toString(), "UTF-8"));
 
-        // Ejecutar la solicitud
-        HttpResponse response = httpClient.execute(request);
+            // Ejecutar la solicitud
+            HttpResponse response = httpClient.execute(request);
 
-        int statusCode = response.getStatusLine().getStatusCode();
+            int statusCode = response.getStatusLine().getStatusCode();
 
-        if (statusCode == 200) {
-            return true;
-        } else {
-            String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
-            // Aquí puedes mostrarlo en un JOptionPane o consola
-            Messages.mensajeVario("Error: " + responseBody);
+            if (statusCode == 200) {
+                return true;
+            } else {
+                String responseBody = EntityUtils.toString(response.getEntity(), "UTF-8");
+                // Aquí puedes mostrarlo en un JOptionPane o consola
+                Messages.mensajeVario("Error: " + responseBody);
+                return false;
+            }
+
+        } catch (IOException ex) {
+            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE,
+                    "Error de IO al actualizar el estado del proyecto", ex);
+            JOptionPane.showMessageDialog(null, "Error de conexión con el servidor.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
-    } catch (IOException ex) {
-        Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE,
-                "Error de IO al actualizar el estado del proyecto", ex);
-        JOptionPane.showMessageDialog(null, "Error de conexión con el servidor.", "Error", JOptionPane.ERROR_MESSAGE);
-        return false;
     }
-
-}
-
-
-    @Override
-    public boolean existProjectId(String projectId) {
-        return false;
-    }
-
-    @Override
-    public Company getcompany(String projectId) {
-        HttpClient httpClient = HttpClients.createDefault();
-        ObjectMapper mapper = new ObjectMapper();
-        Company company = null;
-        try {
-            // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/project/" + projectId + "/company";
-            // Crear una solicitud GET 
-            HttpGet request = new HttpGet(apiUrl);
-
-            // Ejecutar la solicitud y obtener la respuesta
-            HttpResponse response = httpClient.execute(request);
-
-            // Verificar el código de estado de la respuesta
-            int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == 200) {
-                // La solicitud fue exitosa, procesar la respuesta
-                String jsonResponse = EntityUtils.toString(response.getEntity());
-
-                // Mapear la respuesta JSON a objetos Product
-                company = mapper.readValue(jsonResponse, Company.class);
-            } else {
-                // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, "Error al obtener una compania. Código de estado: " + statusCode);
-            }
-        } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, ex);
-        }
-        return company;
-    }
-
 
 }
