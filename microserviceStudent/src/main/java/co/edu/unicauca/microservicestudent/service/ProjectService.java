@@ -87,29 +87,6 @@ public class ProjectService implements IProjectService {
     }
 
     @Override
-    public CompanyDto getCompanyInfo(String projectId){
-        if (projectId == null) {
-            throw new EntityNotFoundException("Id del proyecto es nulo");
-        }
-        if (projectRepository.findById(projectId).isEmpty()) {
-            throw new EntityNotFoundException("El proyecto con ID " + projectId + " no existe");
-        }
-
-        //return (CompanyDto) rabbitTemplate.convertSendAndReceive(RabbitMQConfig.PROJECTCOMPANYINFO_QUEUE, projectId);
-        return new CompanyDto(
-                "COMP001",                            // id
-                "empresa@ficticia.com",              // email
-                "encryptedPassword123",              // password
-                "Empresa Ficticia S.A.",             // companyName
-                "Laura",                              // contactName
-                "Gómez",                              // contactLastName
-                "3001234567",                         // contactPhone
-                "Gerente de TI",                      // contactPosition
-                "TECHNOLOGY"                          // companySector
-        );
-    }
-
-    @Override
     public List<ProjectDto> getAvailableProjectsForStudent(String studentId){
         if (studentId == null) {
             throw new EntityNotFoundException("Id del estudiante es nulo");

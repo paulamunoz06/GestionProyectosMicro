@@ -98,19 +98,5 @@ public class StudentController {
         }
     }
 
-    @GetMapping("/project/{idProject}/company")
-    public ResponseEntity<?> getCompanyInfo(@PathVariable String idProject) {
-        try {
-            Optional<Project> project = projectService.findById(idProject);
-            if (project.isEmpty()) {
-                return ResponseEntity.notFound().build();
-            } else {
-                return ResponseEntity.ok(projectService.getCompanyInfo(idProject));
-            }
-        } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
-        }
-    }
-
 }
 

@@ -160,7 +160,7 @@ public class GUIPostularse extends javax.swing.JFrame {
      */
     private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
         dispose();
-        projectService.applyStudent(student.getUserId(), project.getProId());
+        projectService.applyStudent(student.getId(), project.getProId());
         projectService.notifyAllObserves();
     }//GEN-LAST:event_btnAceptarActionPerformed
 

@@ -61,8 +61,8 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
         this.setVisible(true); 
         setResizable(false); 
         setLocationRelativeTo(null); 
-        btnCoordiName.setText("Coordinador " + coordinator.getUserId());
-        lblCoordinatorCorreo.setText(coordinator.getUserEmail());
+        btnCoordiName.setText("Coordinador " + coordinator.getId());
+        lblCoordinatorCorreo.setText(coordinator.getEmail());
     }
     
     /**

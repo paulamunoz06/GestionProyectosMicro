@@ -37,23 +37,23 @@ public class DataValidationUser implements IValidation {
         String validationPassword = "^(?=.*[A-Z])(?=.*[!@#$%^&*\\-_.]).{6,}$";
         String validationId = "\\d+";
 
-        if (user.getUserId().isBlank() || user.getUserId() == null) {
+        if (user.getId().isBlank() || user.getId() == null) {
             throw new ValidationException("El NIT es obligatorio", "userId");
-        } else if (user.getUserEmail().isBlank() || user.getUserEmail() == null) {
+        } else if (user.getEmail().isBlank() || user.getEmail() == null) {
             throw new ValidationException("El email es obligatorio", "userEmail");
-        } else if (user.getUserPassword().isBlank() || user.getUserPassword() == null) {
+        } else if (user.getPassword().isBlank() || user.getPassword() == null) {
             throw new ValidationException("La contraseña es obligatoria", "userPassword");
         }
-        if (user.getUserId().length() < 2 || user.getUserId().length() > 20) {
+        if (user.getId().length() < 2 || user.getId().length() > 20) {
             throw new ValidationException("El NIT debe tener entre 2 y 20 dígitos", "userId");
         }
-        if (!user.getUserEmail().matches(validationEmail)) {
+        if (!user.getEmail().matches(validationEmail)) {
             throw new ValidationException("El correo no es válido", "userEmail");
         }
-        if (!user.getUserPassword().matches(validationPassword)) {
+        if (!user.getPassword().matches(validationPassword)) {
             throw new ValidationException("La contraseña debe tener al menos 6 caracteres, una mayúscula y un carácter especial.", "userPassword");
         }
-        if (!user.getUserId().matches(validationId)) {
+        if (!user.getId().matches(validationId)) {
             throw new ValidationException("El NIT debe contener solo números", "userId");
         }
         return true;

@@ -56,7 +56,7 @@ public class GraphicProjectsObserver extends JFrame implements Observer {
      * Los datos representan el total de proyectos, postulaciones y asignaciones.
      */
     private void configurarGrafica() {
-        List<Integer> datos = projectService.dataGraphicStudent(student.getUserId());
+        List<Integer> datos = projectService.dataGraphicStudent(student.getId());
 
         // Crear conjunto de datos para la gráfica
         DefaultCategoryDataset dataset = new DefaultCategoryDataset();

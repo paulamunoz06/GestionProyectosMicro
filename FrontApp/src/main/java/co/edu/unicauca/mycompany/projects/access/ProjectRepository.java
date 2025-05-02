@@ -7,10 +7,12 @@ import co.edu.unicauca.mycompany.projects.infra.Messages;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.node.ObjectNode;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import java.io.IOException;
-
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -27,7 +29,102 @@ public class ProjectRepository implements IProjectRepository {
 
     @Override
     public boolean save(Project newProject) {
-        return false;
+        HttpClient httpClient = HttpClients.createDefault();
+        ObjectMapper mapper = new ObjectMapper();
+        mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
+        mapper.setDateFormat(new com.fasterxml.jackson.databind.util.StdDateFormat());
+
+        try {
+            Long companyIdLong;
+            try {
+                companyIdLong = Long.parseLong(newProject.getIdcompany());
+            } catch (NumberFormatException e) {
+                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Invalid company ID format", e);
+                return false;
+            }
+
+            String apiUrl = "http://localhost:8080/project/register?companyId=" + companyIdLong;
+
+            HttpPost request = new HttpPost(apiUrl);
+
+            request.setHeader("Content-Type", "application/json");
+            request.setHeader("Accept", "application/json");
+
+            Map<String, Object> projectDto = new HashMap<>();
+
+            // Map project fields to DTO
+            projectDto.put("proId", newProject.getProId());
+            projectDto.put("proTitle", newProject.getProTitle());
+            projectDto.put("proDescription", newProject.getProDescription());
+            projectDto.put("proAbstract", newProject.getProAbstract());
+            projectDto.put("proGoals", newProject.getProGoals());
+
+            if (newProject.getProDate() != null) {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                projectDto.put("proDate", sdf.format(newProject.getProDate()));
+            } else {
+                java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
+                projectDto.put("proDate", sdf.format(new Date()));
+            }
+
+            projectDto.put("proDeadLine", newProject.getProDeadLine());
+            projectDto.put("proBudget", newProject.getProBudget());
+            projectDto.put("proState", "RECIBIDO");
+            projectDto.put("companyId", companyIdLong.toString());
+
+            String projectJson = mapper.writeValueAsString(projectDto);
+
+            System.out.println("Sending project data: " + projectJson);
+            System.out.println("To URL: " + apiUrl);
+
+            StringEntity entity = new StringEntity(projectJson, "UTF-8");
+            request.setEntity(entity);
+
+            HttpResponse response = httpClient.execute(request);
+
+            int statusCode = response.getStatusLine().getStatusCode();
+
+            String responseBody = EntityUtils.toString(response.getEntity());
+            System.out.println("Server response code: " + statusCode);
+            System.out.println("Server response: " + responseBody);
+
+            return statusCode == 201 || statusCode == 200;
+
+        } catch (IOException ex) {
+            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Error saving project", ex);
+            return false;
+        }
+    }
+
+    @Override
+    public boolean existProjectId(String projectId) {
+        if (projectId == null || projectId.isEmpty()) {
+            return false;
+        }
+
+        HttpClient httpClient = HttpClients.createDefault();
+        try {
+            String apiUrl = "http://localhost:8080/project/exists/" + projectId;
+
+            HttpGet request = new HttpGet(apiUrl);
+
+            HttpResponse response = httpClient.execute(request);
+
+            int statusCode = response.getStatusLine().getStatusCode();
+
+            if (statusCode == 200) {
+                String responseBody = EntityUtils.toString(response.getEntity());
+                ObjectMapper mapper = new ObjectMapper();
+                Map<String, Object> responseMap = mapper.readValue(responseBody, Map.class);
+
+                return (Boolean) responseMap.get("exists");
+            }
+
+            return false;
+        } catch (IOException ex) {
+            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Error checking if project exists", ex);
+            return false;
+        }
     }
 
     @Override
@@ -74,8 +171,8 @@ public class ProjectRepository implements IProjectRepository {
         List<Project> listReturn = null;
         try {
             // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/" + studentId + "/projectsAvailable";
-            // Crear una solicitud GET 
+            String apiUrl = "http://localhost:8083/student/" + studentId +"/projectsAvailable" ;
+            // Crear una solicitud GET
             HttpGet request = new HttpGet(apiUrl);
 
             // Ejecutar la solicitud y obtener la respuesta
@@ -107,8 +204,9 @@ public class ProjectRepository implements IProjectRepository {
         Project project = null;
         try {
             // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/project/" + projectId;
-            // Crear una solicitud GET 
+            String apiUrl = "http://localhost:8083/student/project/" + projectId ;
+            // Crear una solicitud GET
+
             HttpGet request = new HttpGet(apiUrl);
 
             // Ejecutar la solicitud y obtener la respuesta
@@ -138,8 +236,9 @@ public class ProjectRepository implements IProjectRepository {
         ObjectMapper mapper = new ObjectMapper();
         try {
             // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/" + studentId + "/project/" + projectId;
-            // Crear una solicitud GET 
+
+            String apiUrl = "http://localhost:8083/student/"+studentId+"/project/" + projectId;
+            // Crear una solicitud GET
             HttpPost request = new HttpPost(apiUrl);
 
             // Ejecutar la solicitud y obtener la respuesta
@@ -166,8 +265,10 @@ public class ProjectRepository implements IProjectRepository {
         List<Integer> listReturn = null;
         try {
             // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/" + studentId + "/projects";
-            // Crear una solicitud GET 
+
+            String apiUrl = "http://localhost:8083/student/" + studentId +"/projects" ;
+            // Crear una solicitud GET
+
             HttpGet request = new HttpGet(apiUrl);
 
             // Ejecutar la solicitud y obtener la respuesta
@@ -302,6 +403,7 @@ public boolean updateProjectStatus(String projectId, String newStatus) {
         JOptionPane.showMessageDialog(null, "Error de conexión con el servidor.", "Error", JOptionPane.ERROR_MESSAGE);
         return false;
     }
+
 }
 
 
@@ -341,5 +443,6 @@ public boolean updateProjectStatus(String projectId, String newStatus) {
         }
         return company;
     }
+
 
 }

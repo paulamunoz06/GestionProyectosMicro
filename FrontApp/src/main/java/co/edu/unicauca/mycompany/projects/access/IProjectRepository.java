@@ -34,8 +34,7 @@ public interface IProjectRepository {
      * @return Lista de proyectos disponibles para el estudiante.
      */
     List<Project> listProjectsAvailable(String studentId);
-    Company getcompany(String studentId);
-    
+
     /**
      * Obtiene la información detallada de un proyecto a partir de su identificador.
      * 

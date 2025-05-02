@@ -1,8 +1,10 @@
 package co.edu.unicauca.mycompany.projects.presentation;
 
+import co.edu.unicauca.mycompany.projects.access.Factory;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import co.edu.unicauca.mycompany.projects.domain.entities.Student;
+import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
 import co.edu.unicauca.mycompany.projects.infra.Observer;
 import co.edu.unicauca.mycompany.projects.domain.services.ProjectService;
 import java.text.SimpleDateFormat;
@@ -59,11 +61,12 @@ public class TableProjectsStudentObserver extends JFrame implements Observer {
         modelo.setRowCount(0);
 
         // Obtener la lista de proyectos disponibles para el estudiante
-        List<Project> projects = projectService.projectsAvailable(student.getUserId());
+        List<Project> projects = projectService.projectsAvailable(student.getId());
+        CompanyService companyService = new CompanyService(Factory.getInstance().getRepositoryCompany("COMPANY"));
 
         // Agregar cada proyecto a la tabla
         for (Project project : projects) {
-            Company company = projectService.getCompany(project.getProId());
+            Company company = companyService.getCompany(project.getIdcompany());
             Date fecha = project.getProDate();
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             String fechaFormateada = sdf.format(fecha);

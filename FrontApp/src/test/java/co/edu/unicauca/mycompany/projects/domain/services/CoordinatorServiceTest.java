@@ -39,8 +39,8 @@ public class CoordinatorServiceTest {
 
         // Verificar que el resultado es el esperado
         assertNotNull(result, "El coordinador no debería ser null");
-        assertEquals("C001", result.getUserId(), "El ID del coordinador no coincide");
-        assertEquals("coordinator@email.com", result.getUserEmail(), "El email del coordinador no coincide");
+        assertEquals("C001", result.getId(), "El ID del coordinador no coincide");
+        assertEquals("coordinator@email.com", result.getEmail(), "El email del coordinador no coincide");
         
         // Verificar que se llamó al método del repositorio exactamente una vez
         verify(mockRepository, times(1)).getCoordinator("C001");
@@ -143,7 +143,7 @@ public class CoordinatorServiceTest {
 
         // Verificar que el resultado es el esperado
         assertNotNull(result, "El coordinador no debería ser null");
-        assertEquals("C001", result.getUserId(), "El ID del coordinador debería coincidir sin importar mayúsculas o minúsculas");
+        assertEquals("C001", result.getId(), "El ID del coordinador debería coincidir sin importar mayúsculas o minúsculas");
     }
 }
 
