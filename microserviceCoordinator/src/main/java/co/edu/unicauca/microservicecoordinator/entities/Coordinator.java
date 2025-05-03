@@ -28,8 +28,8 @@ public class Coordinator {
 
 
     /**
-     * Nombre completo del coordinador.
+     * Password del coordinador.
      */
     @Column(nullable = false)
-    private String coordinatorName;
+    private String coordinatorPassword;
 }

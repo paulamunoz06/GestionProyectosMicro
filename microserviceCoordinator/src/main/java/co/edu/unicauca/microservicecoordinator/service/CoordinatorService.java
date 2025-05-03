@@ -2,9 +2,11 @@ package co.edu.unicauca.microservicecoordinator.service;
 
 import co.edu.unicauca.microservicecoordinator.entities.Project;
 import co.edu.unicauca.microservicecoordinator.entities.EnumProjectState;
+import co.edu.unicauca.microservicecoordinator.infra.config.RabbitMQConfig;
 import co.edu.unicauca.microservicecoordinator.infra.exceptions.InvalidStateTransitionException;
 import co.edu.unicauca.microservicecoordinator.repository.CoordinatorRepository;
 import co.edu.unicauca.microservicecoordinator.repository.IProjectRepository;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -31,6 +33,12 @@ public class CoordinatorService implements ICoordinatorService {
     @Autowired
     private IProjectRepository projectRepository;
 
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
+
+    @Autowired
+    private ProjectService projectService;
+
     /**
      * Evalúa y actualiza el estado de un proyecto.
      *
@@ -43,6 +51,7 @@ public class CoordinatorService implements ICoordinatorService {
      * @return El proyecto actualizado con su nuevo estado
      * @throws InvalidStateTransitionException Si el estado solicitado es inválido o si el proyecto no existe
      */
+
     public Project evaluateProject(String proId, String proStatusStr) {
         Optional<Project> optionalProject = projectRepository.findById(proId);
         if (optionalProject.isPresent()) {
@@ -66,6 +75,7 @@ public class CoordinatorService implements ICoordinatorService {
             }
 
             projectRepository.save(project);
+            rabbitTemplate.convertAndSend(RabbitMQConfig.UPDATEPROJECT_QUEUE, projectService.projectToDto(project));
             return project;
         } else {
             throw new InvalidStateTransitionException("Proyecto no encontrado con ID: " + proId);

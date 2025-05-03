@@ -2,7 +2,6 @@ package co.edu.unicauca.microservicestudent.controller;
 
 import co.edu.unicauca.microservicestudent.entity.Project;
 import co.edu.unicauca.microservicestudent.entity.Student;
-import co.edu.unicauca.microservicestudent.infra.dto.CompanyDto;
 import co.edu.unicauca.microservicestudent.infra.dto.ProjectDto;
 import co.edu.unicauca.microservicestudent.service.ProjectService;
 import co.edu.unicauca.microservicestudent.service.StudentService;
@@ -16,15 +15,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Controlador REST para gestionar operaciones relacionadas con estudiantes y sus proyectos.
+ */
 @RestController
 @RequestMapping("/student")
 public class StudentController {
+
     @Autowired
     private StudentService studentService;
 
     @Autowired
     private ProjectService projectService;
 
+    /**
+     * Obtiene estadísticas de proyectos relacionados con un estudiante:
+     * total de proyectos, postulaciones realizadas y proyectos aprobados.
+     *
+     * @param idStudent ID del estudiante.
+     * @return Lista de tres valores enteros representando las estadísticas.
+     */
     @GetMapping("/{idStudent}/projects")
     public ResponseEntity<?> getDataProjects(@PathVariable String idStudent) {
         try {
@@ -38,6 +48,12 @@ public class StudentController {
         }
     }
 
+    /**
+     * Obtiene la lista de proyectos disponibles para que un estudiante pueda postularse.
+     *
+     * @param idStudent ID del estudiante.
+     * @return Lista de proyectos disponibles.
+     */
     @GetMapping("/{idStudent}/projectsAvailable")
     public ResponseEntity<?> getProjectsAvailable(@PathVariable String idStudent) {
         try {
@@ -48,6 +64,13 @@ public class StudentController {
         }
     }
 
+    /**
+     * Permite que un estudiante se postule a un proyecto específico.
+     *
+     * @param idStudent ID del estudiante.
+     * @param idProject ID del proyecto.
+     * @return Información del estudiante actualizada tras la postulación.
+     */
     @PostMapping("/{idStudent}/project/{idProject}")
     public ResponseEntity<?> studentPostulation(@PathVariable String idStudent, @PathVariable String idProject) {
         try {
@@ -61,7 +84,7 @@ public class StudentController {
                 throw new Exception("Proyecto con ID " + idProject + " no encontrado");
             }
 
-            Student updateStudent = studentService.studentPostulation(optionalStudent.get(),optionalProject.get());
+            Student updateStudent = studentService.studentPostulation(optionalStudent.get(), optionalProject.get());
             return ResponseEntity.ok(studentService.studentToDto(updateStudent));
         } catch (IllegalAccessException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(Map.of("error", e.getMessage()));
@@ -70,6 +93,12 @@ public class StudentController {
         }
     }
 
+    /**
+     * Obtiene un estudiante por su ID.
+     *
+     * @param idStudent ID del estudiante.
+     * @return El estudiante correspondiente o un error si no existe.
+     */
     @GetMapping("/{idStudent}")
     public ResponseEntity<?> getStudentById(@PathVariable String idStudent) {
         try {
@@ -84,6 +113,12 @@ public class StudentController {
         }
     }
 
+    /**
+     * Obtiene un proyecto por su ID.
+     *
+     * @param idProject ID del proyecto.
+     * @return El proyecto correspondiente o un error si no existe.
+     */
     @GetMapping("/project/{idProject}")
     public ResponseEntity<?> getProjectById(@PathVariable String idProject) {
         try {
@@ -97,6 +132,4 @@ public class StudentController {
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
-
 }
-

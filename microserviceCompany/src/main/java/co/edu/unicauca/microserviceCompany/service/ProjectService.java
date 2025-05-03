@@ -18,6 +18,11 @@ import org.springframework.transaction.annotation.Transactional;
 import java.time.LocalDate;
 import java.util.Optional;
 
+/**
+ * Servicio que implementa la interfaz {@link IProjectService} para gestionar las operaciones relacionadas con los proyectos.
+ * Este servicio maneja la creación de proyectos, la consulta de información sobre proyectos y empresas asociadas,
+ * y la conversión entre entidades {@link Project} y DTOs {@link ProjectDto}.
+ */
 @Service
 public class ProjectService implements IProjectService {
 
@@ -33,10 +38,18 @@ public class ProjectService implements IProjectService {
     @Autowired
     private ICompanyService companyService;
 
+    /**
+     * Crea un nuevo proyecto.
+     *
+     * @param projectDto DTO con la información del proyecto a crear.
+     * @return El proyecto creado.
+     * @throws AmqpRejectAndDontRequeueException Si ocurre un error al intentar crear el proyecto.
+     */
     @Override
     @Transactional
     public Project createProject(ProjectDto projectDto) {
         try {
+            // Validaciones previas
             if (projectDto.getProId() == null || projectDto.getProId().isEmpty()) {
                 throw new IllegalArgumentException("Id del proyecto es nulo o vacío");
             }
@@ -62,7 +75,7 @@ public class ProjectService implements IProjectService {
 
             // Asignar explícitamente la compañía al proyecto
             Company company = companyOpt.get();
-            project.setCompany(company);
+            project.setIdcompany(company.getId());
 
             // Guardar el proyecto
             Project projectSaved = projectRepository.save(project);
@@ -80,6 +93,13 @@ public class ProjectService implements IProjectService {
         }
     }
 
+    /**
+     * Busca un proyecto por su ID.
+     *
+     * @param id Identificador único del proyecto.
+     * @return Un objeto Optional con el proyecto encontrado.
+     * @throws IllegalArgumentException Si el ID del proyecto es nulo o vacío.
+     */
     @Override
     @Transactional(readOnly = true)
     public Optional<Project> findById(String id) {
@@ -89,6 +109,13 @@ public class ProjectService implements IProjectService {
         return projectRepository.findById(id);
     }
 
+    /**
+     * Obtiene la información de la empresa asociada a un proyecto.
+     *
+     * @param projectId Identificador del proyecto.
+     * @return Un DTO con la información de la empresa asociada.
+     * @throws Exception Si ocurre un error al obtener la información de la empresa.
+     */
     @Override
     public CompanyDto getCompanyInfo(String projectId) throws Exception {
         if (projectId == null || projectId.isEmpty()) {
@@ -101,7 +128,7 @@ public class ProjectService implements IProjectService {
         }
 
         Project project = projectOpt.get();
-        Company company = project.getCompany();
+        Company company = companyRepository.findCompanyById(project.getIdcompany()).get();
 
         if (company == null) {
             throw new EntityNotFoundException("El proyecto no tiene una compañía asociada");
@@ -110,6 +137,12 @@ public class ProjectService implements IProjectService {
         return companyService.companyToDto(company);
     }
 
+    /**
+     * Convierte una entidad {@link Project} a su correspondiente DTO {@link ProjectDto}.
+     *
+     * @param project Entidad {@link Project} a convertir.
+     * @return El DTO correspondiente al proyecto.
+     */
     @Override
     public ProjectDto projectToDto(Project project) {
         ProjectDto projectDto = new ProjectDto();
@@ -125,13 +158,19 @@ public class ProjectService implements IProjectService {
         projectDto.setProState(project.getProState().toString());
 
         // Asignar el ID de la compañía si existe
-        if (project.getCompany() != null) {
-            projectDto.setCompanyId(project.getCompany().getId().toString());
+        if (project.getIdcompany() != null) {
+            projectDto.setCompanyId(project.getIdcompany());
         }
 
         return projectDto;
     }
 
+    /**
+     * Convierte un DTO {@link ProjectDto} en su entidad correspondiente {@link Project}.
+     *
+     * @param projectDto DTO con los datos del proyecto.
+     * @return La entidad {@link Project} correspondiente.
+     */
     @Override
     public Project projectToClass(ProjectDto projectDto) {
         Project project = new Project(
@@ -141,7 +180,9 @@ public class ProjectService implements IProjectService {
                 projectDto.getProAbstract(),
                 projectDto.getProGoals(),
                 projectDto.getProDeadLine(),
-                projectDto.getProBudget()
+                projectDto.getProBudget(),
+                projectDto.getIdcompany(),
+                projectDto.getProCoordinator()
         );
 
         // Si la fecha es nula, establecemos la fecha actual

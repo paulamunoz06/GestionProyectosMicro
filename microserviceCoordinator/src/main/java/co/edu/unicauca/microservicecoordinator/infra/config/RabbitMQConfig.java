@@ -10,8 +10,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class RabbitMQConfig {
     public static final String STUDENTPOSTULATION_QUEUE = "studentPostulationQueue";
-    public static final String STUDENTUPDATE_QUEUE = "studentUpdateQueue";
-    public static final String POSTULATION_QUEUE = "postulationQueue";
+
+    public static final String UPDATEPROJECT_QUEUE = "updateProjectQueue";
 
     @Bean
     public Queue studentPostulationQueue() {
@@ -19,13 +19,8 @@ public class RabbitMQConfig {
     }
 
     @Bean
-    public Queue studentUpdateQueue() {
-        return new Queue(STUDENTUPDATE_QUEUE, true);
-    }
-
-    @Bean
-    public Queue postulationQueue() {
-        return new Queue(POSTULATION_QUEUE, true);
+    public Queue updateProjectQueue() {
+        return new Queue(UPDATEPROJECT_QUEUE, true);
     }
 
     @Bean

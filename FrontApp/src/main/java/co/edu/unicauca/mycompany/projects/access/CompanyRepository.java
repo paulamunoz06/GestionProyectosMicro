@@ -84,7 +84,7 @@ public class CompanyRepository implements ICompanyRepository {
         } catch (IOException ex) {
             Logger.getLogger(CompanyRepository.class.getName()).log(Level.SEVERE, null, ex);
         }
-
+        
         return companyReturn != null ? companyReturn :
                 new Company("exampleCompany", "contact", "", "", "", enumSector.HEALTH, "", "", "");
     }

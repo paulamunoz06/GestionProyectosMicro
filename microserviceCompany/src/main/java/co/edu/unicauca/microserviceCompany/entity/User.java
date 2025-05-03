@@ -9,7 +9,6 @@ import lombok.Setter;
  *
  * Solo se usa para el envio a la cola de rabbitMQ por lo que no se guarda en la base de datos
  */
-
 @Setter
 @Getter
 public class User {

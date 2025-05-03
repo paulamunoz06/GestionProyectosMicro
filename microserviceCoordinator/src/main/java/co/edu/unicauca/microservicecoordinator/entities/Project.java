@@ -96,6 +96,12 @@ public class Project {
     @Column(name = "PROSTATE", nullable = false)
     private EnumProjectState proState;
 
+    @Column(name = "IDCOMPANY",nullable = true)
+    private String idcompany;
+
+    @Column(name = "IDCOORDINADOR",nullable = true)
+    private String proCoordinator;
+
     /**
      * Estado del proyecto como objeto State para implementar el patrón State.
      * Este campo no se persiste en la base de datos y se excluye de la serialización JSON.

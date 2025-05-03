@@ -68,6 +68,8 @@ public class ProjectService implements IProjectService {
         projectDto.setProDeadLine(project.getProDeadLine());
         projectDto.setProBudget(project.getProBudget());
         projectDto.setProState(project.getProState().toString());
+        projectDto.setIdcompany(project.getIdcompany());
+        projectDto.setProCoordinator(project.getProCoordinator());
 
         return projectDto;
     }
@@ -94,6 +96,8 @@ public class ProjectService implements IProjectService {
         projectClass.setProDeadLine(projectDto.getProDeadLine());
         projectClass.setProBudget(projectDto.getProBudget());
         projectClass.setProState(EnumProjectState.valueOf(projectDto.getProState()));
+        projectClass.setIdcompany(projectDto.getIdcompany());
+        projectClass.setProCoordinator(projectDto.getProCoordinator());
 
         return projectClass;
     }

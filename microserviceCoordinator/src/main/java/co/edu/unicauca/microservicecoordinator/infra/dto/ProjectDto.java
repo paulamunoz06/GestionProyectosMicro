@@ -1,6 +1,7 @@
 package co.edu.unicauca.microservicecoordinator.infra.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.Column;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -75,6 +76,10 @@ public class ProjectDto {
      */
     private String proState;
 
+    private String idcompany;
+
+    private String proCoordinator;
+
     /**
      * Constructor con todos los campos para crear un objeto ProjectDto.
      *
@@ -88,7 +93,7 @@ public class ProjectDto {
      * @param proBudget Presupuesto asignado al proyecto
      * @param proState Estado actual del proyecto como cadena de texto
      */
-    public ProjectDto(String proid, String protitle, String prodescription, String proAbstract, String proGoals, LocalDate proDate, int proDeadline, Double proBudget, String proState) {
+    public ProjectDto(String proid, String protitle, String prodescription, String proAbstract, String proGoals, LocalDate proDate, int proDeadline, Double proBudget, String proState, String idcompany, String proCoordinator) {
         this.proId = proid;
         this.proTitle = protitle;
         this.proDescription = prodescription;
@@ -97,6 +102,13 @@ public class ProjectDto {
         this.proDate = proDate;
         this.proDeadLine = proDeadline;
         this.proBudget = proBudget;
+        this.proState = proState;
+        this.idcompany = idcompany;
+        this.proCoordinator = proCoordinator;
+    }
+
+    public ProjectDto(String proid, String proState) {
+        this.proId = proid;
         this.proState = proState;
     }
 }

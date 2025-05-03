@@ -7,35 +7,55 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory;
 import org.springframework.context.annotation.Bean;
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter;
 
+/**
+ * Clase de configuración para la integración con RabbitMQ.
+ *
+ * Define las colas utilizadas para la comunicación entre microservicios,
+ * así como los componentes necesarios para el envío y la recepción de mensajes
+ * en formato JSON.
+ */
 @Configuration
 public class RabbitMQConfig {
+
+    /**
+     * Nombre de la cola utilizada para recibir postulaciones de estudiantes a proyectos.
+     */
     public static final String STUDENTPOSTULATION_QUEUE = "studentPostulationQueue";
 
-    public static final String CREATEPROJECT_QUEUE = "createProjectQueue";
+    /**
+     * Nombre de la cola utilizada para actualizar el estado de los proyectos.
+     */
     public static final String UPDATEPROJECT_QUEUE = "updateProjectQueue";
 
-    public static final String PROJECTCOMPANYINFO_QUEUE = "projectCompanyQueue";
-
+    /**
+     * Crea y registra una cola persistente para las postulaciones de estudiantes.
+     *
+     * @return instancia de la cola {@code studentPostulationQueue}
+     */
     @Bean
     public Queue studentPostulationQueue() {
         return new Queue(STUDENTPOSTULATION_QUEUE, true);
     }
 
-    @Bean
-    public Queue createProjectQueue() {
-        return new Queue(CREATEPROJECT_QUEUE, true);
-    }
-
+    /**
+     * Crea y registra una cola persistente para la actualización de proyectos.
+     *
+     * @return instancia de la cola {@code updateProjectQueue}
+     */
     @Bean
     public Queue updateProjectQueue() {
         return new Queue(UPDATEPROJECT_QUEUE, true);
     }
 
-    @Bean
-    public Queue projectCompanyQueue() {
-        return new Queue(PROJECTCOMPANYINFO_QUEUE, true);
-    }
-
+    /**
+     * Configura y devuelve un {@link RabbitTemplate} que utiliza un conversor de mensajes JSON.
+     *
+     * Este template permite enviar mensajes serializados automáticamente a formato JSON
+     * al utilizar el conversor Jackson.
+     *
+     * @param connectionFactory fábrica de conexiones proporcionada por Spring AMQP
+     * @return una instancia configurada de {@link RabbitTemplate}
+     */
     @Bean
     public RabbitTemplate rabbitTemplate(ConnectionFactory connectionFactory) {
         RabbitTemplate rabbitTemplate = new RabbitTemplate(connectionFactory);
@@ -43,6 +63,13 @@ public class RabbitMQConfig {
         return rabbitTemplate;
     }
 
+    /**
+     * Crea el conversor de mensajes basado en Jackson para serialización y deserialización JSON.
+     *
+     * Este conversor es necesario para transformar objetos Java en mensajes JSON y viceversa.
+     *
+     * @return instancia de {@link Jackson2JsonMessageConverter}
+     */
     @Bean
     public Jackson2JsonMessageConverter jsonMessageConverter() {
         return new Jackson2JsonMessageConverter();

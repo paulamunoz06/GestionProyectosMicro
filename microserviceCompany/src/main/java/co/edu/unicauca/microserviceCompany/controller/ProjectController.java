@@ -14,16 +14,43 @@ import org.springframework.web.bind.annotation.*;
 import java.util.Map;
 import java.util.Optional;
 
+/**
+ * Controlador REST para gestionar las operaciones relacionadas con los proyectos en el sistema.
+ *
+ * Esta clase expone endpoints para registrar proyectos, consultar proyectos por su ID,
+ * verificar la existencia de un proyecto, y obtener información de la empresa asociada a un proyecto.
+ *
+ */
 @RestController
 @RequestMapping("/project")
 public class ProjectController {
 
+    /**
+     * Servicio que maneja la lógica de negocio relacionada con los proyectos.
+     * Este servicio es responsable de registrar proyectos, consultar por ID y obtener detalles del proyecto.
+     */
     @Autowired
     private IProjectService projectService;
 
+    /**
+     * Servicio que maneja la lógica de negocio relacionada con las empresas.
+     * Este servicio se utiliza para verificar si la empresa asociada a un proyecto existe.
+     */
     @Autowired
     private ICompanyService companyService;
 
+    /**
+     * Endpoint para registrar un nuevo proyecto y asociarlo a una empresa.
+     *
+     * Este método recibe un objeto {@link ProjectDto} con los datos del proyecto y un parámetro
+     * {@code companyId} para asociar el proyecto a una empresa existente. Si la empresa no se encuentra,
+     * se devuelve un error HTTP 404. Si el proyecto se crea exitosamente, se devuelve el proyecto
+     * registrado con código HTTP 201.
+     *
+     * @param projectDto Objeto que contiene los datos del proyecto a registrar.
+     * @param companyId ID de la empresa a asociar al proyecto.
+     * @return ResponseEntity con el estado de la operación y los datos del proyecto registrado.
+     */
     @PostMapping("/register")
     public ResponseEntity<?> registerProject(@RequestBody ProjectDto projectDto, @RequestParam String companyId) {
         try {
@@ -51,6 +78,16 @@ public class ProjectController {
         }
     }
 
+    /**
+     * Endpoint para obtener los detalles de un proyecto por su ID.
+     *
+     * Este método recibe el ID de un proyecto como parámetro en la URL y devuelve los detalles
+     * del proyecto si se encuentra. Si no se encuentra el proyecto, se retorna una respuesta
+     * con código HTTP 404 (Not Found).
+     *
+     * @param projectId ID del proyecto a consultar.
+     * @return ResponseEntity con los detalles del proyecto o una respuesta 404 si no se encuentra.
+     */
     @GetMapping("/{projectId}")
     public ResponseEntity<?> getProjectById(@PathVariable String projectId) {
         try {
@@ -65,6 +102,16 @@ public class ProjectController {
         }
     }
 
+    /**
+     * Endpoint para verificar si un proyecto existe.
+     *
+     * Este método recibe el ID de un proyecto como parámetro en la URL y verifica si el proyecto
+     * existe en el sistema. Devuelve un valor booleano en formato JSON indicando si el proyecto
+     * existe o no.
+     *
+     * @param projectId ID del proyecto a verificar.
+     * @return ResponseEntity con un mapa indicando si el proyecto existe.
+     */
     @GetMapping("/exists/{projectId}")
     public ResponseEntity<?> existsProject(@PathVariable String projectId) {
         try {
@@ -75,10 +122,19 @@ public class ProjectController {
                     .body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error checking if project exists: " + e.getMessage()));
+                    .body(Map.of("error", "Error al verificar la existencia del proyecto: " + e.getMessage()));
         }
     }
 
+    /**
+     * Endpoint para obtener la información de la empresa asociada a un proyecto.
+     *
+     * Este método recibe el ID de un proyecto y devuelve los detalles de la empresa que está asociada
+     * a dicho proyecto. Si ocurre un error, se devuelve un mensaje de error con el código HTTP adecuado.
+     *
+     * @param projectId ID del proyecto cuyo empresa asociada se desea consultar.
+     * @return ResponseEntity con la información de la empresa asociada al proyecto.
+     */
     @GetMapping("/{projectId}/company")
     public ResponseEntity<?> getCompanyByProjectId(@PathVariable String projectId) {
         try {
