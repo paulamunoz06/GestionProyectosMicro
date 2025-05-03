@@ -7,6 +7,7 @@ import co.edu.unicauca.microservicecoordinator.repository.CoordinatorRepository;
 import co.edu.unicauca.microservicecoordinator.repository.IProjectRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
 
@@ -43,7 +44,9 @@ public class CoordinatorService implements ICoordinatorService {
      * @return El proyecto actualizado con su nuevo estado
      * @throws InvalidStateTransitionException Si el estado solicitado es inválido o si el proyecto no existe
      */
-    public Project evaluateProject(String proId, String proStatusStr) {
+    @Override
+    @Transactional
+    public Project updateProject(String proId, String proStatusStr) {
         Optional<Project> optionalProject = projectRepository.findById(proId);
         if (optionalProject.isPresent()) {
             Project project = optionalProject.get();

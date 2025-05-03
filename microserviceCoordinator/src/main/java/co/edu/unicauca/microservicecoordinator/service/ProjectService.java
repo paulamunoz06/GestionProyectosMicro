@@ -2,10 +2,16 @@ package co.edu.unicauca.microservicecoordinator.service;
 
 import co.edu.unicauca.microservicecoordinator.entities.Project;
 import co.edu.unicauca.microservicecoordinator.entities.EnumProjectState;
+import co.edu.unicauca.microservicecoordinator.infra.config.RabbitMQConfig;
 import co.edu.unicauca.microservicecoordinator.infra.dto.ProjectDto;
 import co.edu.unicauca.microservicecoordinator.repository.IProjectRepository;
+import jakarta.persistence.EntityNotFoundException;
+import org.springframework.amqp.AmqpRejectAndDontRequeueException;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
@@ -18,6 +24,10 @@ import java.util.Optional;
  */
 @Service
 public class ProjectService implements IProjectService {
+
+    //Para la sincronización y escuchar los otros microservicios
+    @Autowired
+    private RabbitTemplate rabbitTemplate;
 
     /**
      * Repositorio para acceder a las operaciones de persistencia de proyectos.
@@ -120,5 +130,52 @@ public class ProjectService implements IProjectService {
     @Override
     public int countTotalProjects() {
         return (int) projectRepository.count();
+    }
+
+    @Override
+    @RabbitListener(queues = RabbitMQConfig.CREATEPROJECT_QUEUE)
+    @Transactional
+    public Project createProject(ProjectDto projectDto) {
+        try {
+            if (projectDto.getProId() == null) {
+                throw new EntityNotFoundException("Id del proyecto es nulo");
+            }
+            if (projectRepository.findById(projectDto.getProId()).isPresent()) {
+                throw new IllegalAccessException("El proyecto con ID " + projectDto.getProId() + " ya existe");
+            }
+
+            Project project = projectToClass(projectDto);
+            Project projectSaved = projectRepository.save(project);
+
+            rabbitTemplate.convertAndSend(RabbitMQConfig.CREATEPROJECT_QUEUE, projectSaved);
+
+            return projectSaved;
+        }catch (Exception e) {
+            throw new AmqpRejectAndDontRequeueException("Mensaje inválido, no reenviar");
+        }
+
+    }
+
+    @Override
+    @Transactional
+    public Project updateProject(ProjectDto projectDto){
+        try{
+            if (projectDto.getProId() == null) {
+                throw new EntityNotFoundException("Id del proyecto es nulo");
+            }
+            if (projectRepository.findById(projectDto.getProId()).isPresent()) {
+                throw new IllegalAccessException("El proyecto con ID " + projectDto.getProId() + " ya existe");
+            }
+
+            Project project = projectToClass(projectDto);
+            Project projectSaved = projectRepository.save(project);
+
+            rabbitTemplate.convertAndSend(RabbitMQConfig.UPDATEPROJECT_QUEUE, projectSaved);
+
+            return projectSaved;
+        }catch (Exception e) {
+            System.out.println(e.getMessage());
+            throw new AmqpRejectAndDontRequeueException("Mensaje inválido, no reenviar");
+        }
     }
 }

@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 
 public interface ICoordinatorService{
 
+    //@Transactional
+    //Project evaluateProject(@PathVariable String proId,@RequestBody String proStatus);
     @Transactional
-    Project evaluateProject(@PathVariable String proId,@RequestBody String proStatus);
+    public Project updateProject(@PathVariable String proId,@RequestBody String proStatus);
 
 
 

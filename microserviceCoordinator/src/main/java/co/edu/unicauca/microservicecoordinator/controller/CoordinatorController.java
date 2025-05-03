@@ -74,7 +74,7 @@ public class CoordinatorController {
      */
     @PutMapping("/projects/update-status")
     public ResponseEntity<Project> updateProjectStatus(@RequestBody ProjectDto projectDto) {
-        Project updatedProject = coordinatorService.evaluateProject(projectDto.getProId(), projectDto.getProState());
+        Project updatedProject = coordinatorService.updateProject(projectDto.getProId(), projectDto.getProState());
         if (updatedProject != null) {
             return ResponseEntity.ok(updatedProject);
         } else {

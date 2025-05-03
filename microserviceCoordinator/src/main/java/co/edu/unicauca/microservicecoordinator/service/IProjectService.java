@@ -1,8 +1,10 @@
 package co.edu.unicauca.microservicecoordinator.service;
 
 import co.edu.unicauca.microservicecoordinator.entities.Project;
+import co.edu.unicauca.microservicecoordinator.infra.config.RabbitMQConfig;
 import co.edu.unicauca.microservicecoordinator.infra.dto.ProjectDto;
 import jakarta.transaction.Transactional;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 
 import java.util.List;
 import java.util.Map;
@@ -24,6 +26,13 @@ public interface IProjectService {
     Long countByStatus(String status);
 
     int countTotalProjects();
+
+    @RabbitListener(queues = RabbitMQConfig.CREATEPROJECT_QUEUE)
+    @Transactional
+    Project createProject(ProjectDto projectDto);
+
+    @Transactional
+    Project updateProject(ProjectDto projectDto);
 
 
 }
