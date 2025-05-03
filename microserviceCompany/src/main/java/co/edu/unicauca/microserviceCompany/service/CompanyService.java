@@ -2,8 +2,6 @@ package co.edu.unicauca.microserviceCompany.service;
 
 import co.edu.unicauca.microserviceCompany.entity.Company;
 import co.edu.unicauca.microserviceCompany.entity.EnumSector;
-import co.edu.unicauca.microserviceCompany.entity.User;
-import co.edu.unicauca.microserviceCompany.infra.config.RabbitMQConfig;
 import co.edu.unicauca.microserviceCompany.infra.dto.CompanyDto;
 import co.edu.unicauca.microserviceCompany.repository.ICompanyRepository;
 import jakarta.persistence.EntityNotFoundException;
@@ -29,9 +27,19 @@ public class CompanyService implements ICompanyService {
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
+    // Servicio que implementa el patrón Template Method para el registro de empresas
+    private final CompanyRegistrationService companyRegistrationService;
+
+    @Autowired
+    public CompanyService(ICompanyRepository companyRepository, RabbitTemplate rabbitTemplate) {
+        this.companyRepository = companyRepository;
+        this.rabbitTemplate = rabbitTemplate;
+        this.companyRegistrationService = new CompanyRegistrationService(companyRepository, rabbitTemplate);
+    }
+
     /**
      * Registra una nueva empresa.
-     * Valida que la empresa no esté registrada con el mismo correo electrónico y la publica en RabbitMQ.
+     * Utiliza el patrón Template Method para estructurar el proceso de registro.
      *
      * @param companyDto DTO con la información de la empresa a registrar.
      * @return La empresa registrada.
@@ -41,25 +49,8 @@ public class CompanyService implements ICompanyService {
     @Override
     @Transactional
     public Company registerCompany(CompanyDto companyDto) throws Exception {
-        if (companyDto == null) {
-            throw new IllegalArgumentException("La información de la empresa no puede ser nula");
-        }
-
-        if (companyRepository.existsByEmail(companyDto.getUserEmail())) {
-            throw new IllegalArgumentException("El correo electrónico ya está registrado");
-        }
-
-        User userSaved = new User();
-        userSaved.setId(companyDto.getUserId());
-        userSaved.setPassword(companyDto.getUserPassword());
-        userSaved.setEmail(companyDto.getUserEmail());
-        userSaved.setRole(3);  // Rol para la empresa
-
-        // Publicar la información de usuario en RabbitMQ
-        rabbitTemplate.convertAndSend(RabbitMQConfig.USER_QUEUE, userSaved);
-
-        Company company = companyToEntity(companyDto);
-        return companyRepository.save(company);
+        // Utilizamos el servicio de registro basado en el patrón Template Method
+        return companyRegistrationService.registerEntity(companyDto);
     }
 
     /**

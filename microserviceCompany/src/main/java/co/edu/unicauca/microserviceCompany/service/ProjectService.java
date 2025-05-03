@@ -8,6 +8,7 @@ import co.edu.unicauca.microserviceCompany.infra.dto.CompanyDto;
 import co.edu.unicauca.microserviceCompany.infra.dto.ProjectDto;
 import co.edu.unicauca.microserviceCompany.repository.ICompanyRepository;
 import co.edu.unicauca.microserviceCompany.repository.IProjectRepository;
+import co.edu.unicauca.microserviceCompany.service.ProjectRegistrationService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -38,8 +39,21 @@ public class ProjectService implements IProjectService {
     @Autowired
     private ICompanyService companyService;
 
+    // Servicio que implementa el patrón Template Method para el registro de proyectos
+    private final ProjectRegistrationService projectRegistrationService;
+
+    @Autowired
+    public ProjectService(RabbitTemplate rabbitTemplate, IProjectRepository projectRepository,
+                          ICompanyRepository companyRepository, ICompanyService companyService) {
+        this.rabbitTemplate = rabbitTemplate;
+        this.projectRepository = projectRepository;
+        this.companyRepository = companyRepository;
+        this.companyService = companyService;
+        this.projectRegistrationService = new ProjectRegistrationService(projectRepository, companyRepository, rabbitTemplate);
+    }
+
     /**
-     * Crea un nuevo proyecto.
+     * Crea un nuevo proyecto usando el patrón Template Method.
      *
      * @param projectDto DTO con la información del proyecto a crear.
      * @return El proyecto creado.
@@ -49,45 +63,8 @@ public class ProjectService implements IProjectService {
     @Transactional
     public Project createProject(ProjectDto projectDto) {
         try {
-            // Validaciones previas
-            if (projectDto.getProId() == null || projectDto.getProId().isEmpty()) {
-                throw new IllegalArgumentException("Id del proyecto es nulo o vacío");
-            }
-
-            if (projectRepository.findById(projectDto.getProId()).isPresent()) {
-                throw new IllegalArgumentException("El proyecto con ID " + projectDto.getProId() + " ya existe");
-            }
-
-            if (projectDto.getCompanyId() == null || projectDto.getCompanyId().isEmpty()) {
-                throw new IllegalArgumentException("ID de la compañía es nulo o vacío");
-            }
-
-            // Buscar la compañía para asociarla al proyecto
-            String companyId = projectDto.getCompanyId();
-            Optional<Company> companyOpt = companyRepository.findById(companyId);
-
-            if (companyOpt.isEmpty()) {
-                throw new EntityNotFoundException("La compañía con ID " + companyId + " no existe");
-            }
-
-            // Convertir DTO a entidad Project
-            Project project = projectToClass(projectDto);
-
-            // Asignar explícitamente la compañía al proyecto
-            Company company = companyOpt.get();
-            project.setIdcompany(company.getId());
-
-            // Guardar el proyecto
-            Project projectSaved = projectRepository.save(project);
-
-            // Actualizar la lista de proyectos de la compañía
-            company.addProject(projectSaved);
-            companyRepository.save(company);
-
-            // Notificar a otros microservicios sobre el nuevo proyecto
-            rabbitTemplate.convertAndSend(RabbitMQConfig.CREATEPROJECT_QUEUE, projectToDto(projectSaved));
-
-            return projectSaved;
+            // Utilizamos el servicio de registro basado en el patrón Template Method
+            return projectRegistrationService.registerEntity(projectDto);
         } catch (Exception e) {
             throw new AmqpRejectAndDontRequeueException("Error al crear el proyecto: " + e.getMessage());
         }
