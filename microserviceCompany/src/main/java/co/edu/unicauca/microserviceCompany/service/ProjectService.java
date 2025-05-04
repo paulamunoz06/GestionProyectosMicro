@@ -8,7 +8,6 @@ import co.edu.unicauca.microserviceCompany.infra.dto.CompanyDto;
 import co.edu.unicauca.microserviceCompany.infra.dto.ProjectDto;
 import co.edu.unicauca.microserviceCompany.repository.ICompanyRepository;
 import co.edu.unicauca.microserviceCompany.repository.IProjectRepository;
-import co.edu.unicauca.microserviceCompany.service.ProjectRegistrationService;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.amqp.AmqpRejectAndDontRequeueException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
@@ -59,11 +58,50 @@ public class ProjectService implements IProjectService {
      * @return El proyecto creado.
      * @throws AmqpRejectAndDontRequeueException Si ocurre un error al intentar crear el proyecto.
      */
+    // En ProjectService.java, modificar el método createProject para validar mejor el companyId
+
     @Override
     @Transactional
     public Project createProject(ProjectDto projectDto) {
         try {
-            // Utilizamos el servicio de registro basado en el patrón Template Method
+            // Validar que el projectDto no sea nulo
+            if (projectDto == null) {
+                throw new IllegalArgumentException("La información del proyecto no puede ser nula");
+            }
+
+            // Validar que el ID de la compañía esté presente
+            String companyIdOrEmail = projectDto.getCompanyId();
+            if (companyIdOrEmail == null || companyIdOrEmail.trim().isEmpty()) {
+                throw new IllegalArgumentException("El ID de la compañía no puede estar vacío");
+            }
+
+            // Comprobar si el companyId parece ser un email (contiene @)
+            if (companyIdOrEmail.contains("@")) {
+                // Intentar encontrar la compañía por email primero
+                Optional<Company> companyByEmail = companyRepository.findByEmail(companyIdOrEmail);
+                if (companyByEmail.isPresent()) {
+                    // Si encontramos la compañía por email, usamos su ID real
+                    String realCompanyId = companyByEmail.get().getId();
+                    projectDto.setCompanyId(realCompanyId);
+                    System.out.println("Converted company email to ID: " + realCompanyId);
+                } else {
+                    // Si no encontramos la compañía con ese email
+                    throw new EntityNotFoundException("No existe una compañía con el email: " + companyIdOrEmail);
+                }
+            } else {
+                // Verificar que la compañía con ese ID existe
+                Optional<Company> companyById = companyRepository.findById(companyIdOrEmail);
+                if (companyById.isEmpty()) {
+                    throw new EntityNotFoundException("La compañía con ID " + companyIdOrEmail + " no existe");
+                }
+            }
+
+            // Ajustar también el campo idcompany si existe en el DTO
+            if (projectDto.getIdcompany() != null) {
+                projectDto.setIdcompany(projectDto.getCompanyId());
+            }
+
+            // Continuar con el registro usando el servicio de registro
             return projectRegistrationService.registerEntity(projectDto);
         } catch (Exception e) {
             throw new AmqpRejectAndDontRequeueException("Error al crear el proyecto: " + e.getMessage());
