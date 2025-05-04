@@ -4,10 +4,6 @@ import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 
 /**
  * Interface que define el contrato para el repositorio de compañías.
- * 
- * Proporciona métodos para guardar, listar, verificar la existencia y obtener
- * información de una compañía.
- * 
  */
 public interface ICompanyRepository {
     /**
