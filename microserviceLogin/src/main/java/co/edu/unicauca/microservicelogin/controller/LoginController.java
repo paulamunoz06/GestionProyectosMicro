@@ -2,6 +2,7 @@ package co.edu.unicauca.microservicelogin.controller;
 
 import co.edu.unicauca.microservicelogin.entities.User;
 import co.edu.unicauca.microservicelogin.infra.dto.UserRequest;
+import co.edu.unicauca.microservicelogin.service.Proxy;
 import co.edu.unicauca.microservicelogin.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class LoginController {
 
     @Autowired
-    private UserService userService;
+    private Proxy proxyUserService;
 
     /**
      * Endpoint para realizar el inicio de sesión de un usuario.
@@ -39,8 +40,18 @@ public class LoginController {
     public ResponseEntity<?> login(@RequestBody UserRequest user) {
         try {
             // Intenta iniciar sesión con las credenciales proporcionadas
-            User loginUser = userService.login(user);
-            return ResponseEntity.ok(loginUser);
+            User loginUser = proxyUserService.login(user);
+            if(loginUser != null) {
+                return ResponseEntity.ok(loginUser);
+            }
+            if(loginUser.getRole() == -3) {
+                return ResponseEntity.status(HttpStatus.TOO_MANY_REQUESTS)
+                        .body("Demasiadas solicitudes. Por favor, inténtelo más tarde.");
+            }
+            else {
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body("{\"error\":\"Error al hacer login.\"}");
+            }
         } catch (Exception ex) {
             // Si ocurre un error, devuelve una respuesta con el estado BAD_REQUEST
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
