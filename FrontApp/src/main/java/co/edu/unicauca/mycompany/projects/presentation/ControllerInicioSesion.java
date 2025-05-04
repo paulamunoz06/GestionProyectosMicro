@@ -1,14 +1,9 @@
 package co.edu.unicauca.mycompany.projects.presentation;
 
-import co.edu.unicauca.mycompany.projects.access.Factory;
+import co.edu.unicauca.mycompany.projects.access.CompanyRepositoryFactory;
 import co.edu.unicauca.mycompany.projects.access.ICompanyRepository;
-import co.edu.unicauca.mycompany.projects.access.ICoordinatorRepository;
-import co.edu.unicauca.mycompany.projects.access.IProjectRepository;
-import co.edu.unicauca.mycompany.projects.access.IStudentRepository;
+import co.edu.unicauca.mycompany.projects.access.RepositoryType;
 import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
-import co.edu.unicauca.mycompany.projects.domain.services.CoordinatorService;
-import co.edu.unicauca.mycompany.projects.domain.services.ProjectService;
-import co.edu.unicauca.mycompany.projects.domain.services.StudentService;
 import co.edu.unicauca.mycompany.projects.domain.services.UserService;
 import co.edu.unicauca.mycompany.projects.infra.Messages;
 
@@ -70,10 +65,9 @@ public class ControllerInicioSesion {
 
     void actionButtomRegister() {
         view.dispose();
-        ICompanyRepository repositoryCompany = Factory.getInstance().getRepositoryCompany("COMPANY");
+        ICompanyRepository repositoryCompany = CompanyRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         CompanyService companyService = new CompanyService(repositoryCompany);
         GUIregistrarEmpresa instance = new GUIregistrarEmpresa(companyService, this.service);
         instance.setVisible(true);
-
     }
 }

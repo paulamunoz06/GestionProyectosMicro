@@ -1,6 +1,7 @@
 package co.edu.unicauca.mycompany.projects.presentation;
 
-import co.edu.unicauca.mycompany.projects.access.Factory;
+import co.edu.unicauca.mycompany.projects.access.CompanyRepositoryFactory;
+import co.edu.unicauca.mycompany.projects.access.RepositoryType;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import co.edu.unicauca.mycompany.projects.domain.entities.Student;
@@ -62,7 +63,7 @@ public class TableProjectsStudentObserver extends JFrame implements Observer {
 
         // Obtener la lista de proyectos disponibles para el estudiante
         List<Project> projects = projectService.projectsAvailable(student.getId());
-        CompanyService companyService = new CompanyService(Factory.getInstance().getRepositoryCompany("COMPANY"));
+        CompanyService companyService = new CompanyService(CompanyRepositoryFactory.getInstance().getRepository(RepositoryType.H2));
 
         // Agregar cada proyecto a la tabla
         for (Project project : projects) {

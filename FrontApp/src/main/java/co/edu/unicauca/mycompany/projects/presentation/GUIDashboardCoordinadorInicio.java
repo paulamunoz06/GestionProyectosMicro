@@ -1,9 +1,12 @@
 package co.edu.unicauca.mycompany.projects.presentation;
 
-import co.edu.unicauca.mycompany.projects.access.Factory;
+import co.edu.unicauca.mycompany.projects.access.CompanyRepositoryFactory;
 import co.edu.unicauca.mycompany.projects.access.ICompanyRepository;
 import co.edu.unicauca.mycompany.projects.access.IProjectRepository;
 import co.edu.unicauca.mycompany.projects.access.IUserRepository;
+import co.edu.unicauca.mycompany.projects.access.ProjectRepositoryFactory;
+import co.edu.unicauca.mycompany.projects.access.RepositoryType;
+import co.edu.unicauca.mycompany.projects.access.UserRepositoryFactory;
 import co.edu.unicauca.mycompany.projects.domain.entities.Coordinator;
 import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
 import co.edu.unicauca.mycompany.projects.domain.services.ProjectService;
@@ -258,8 +261,8 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
      * @param evt Evento de acción generado al presionar el botón.
      */
     private void btnProyectosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProyectosActionPerformed
-        IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("PROJECT");
-        ICompanyRepository companyRepository = Factory.getInstance().getRepositoryCompany("COMPANY");
+        IProjectRepository projectRepository = ProjectRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
+        ICompanyRepository companyRepository = CompanyRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         
         GUIDashboardCoordinador gui = new GUIDashboardCoordinador(coordinator, new ProjectService(projectRepository), new CompanyService(companyRepository), btnProyectos);
         gui.setVisible(true);
@@ -272,7 +275,7 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void btnCerrarSesiónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesiónActionPerformed
-        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("USER");
+        IUserRepository repositoryUser = UserRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         
         GUIinicioSesion instance = new GUIinicioSesion(new UserService(repositoryUser));
         instance.setVisible(true);
@@ -335,11 +338,10 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
-        IProjectRepository repository = Factory.getInstance().getRepositoryProject("PROJECT");
+        IProjectRepository repository = ProjectRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         ProjectService projectService = new ProjectService(repository);
         GUIDashboardCoordinadorInicio instance = new  GUIDashboardCoordinadorInicio(new Coordinator("C01", "coord@example.com", "1234"),  projectService);
         instance.setVisible(true);
-
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
