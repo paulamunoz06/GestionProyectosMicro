@@ -271,15 +271,15 @@ public class CompanyRepositoryH2 implements ICompanyRepository {
         }
 
         return new Company(
-                dto.getCompanyName(),
+                                dto.getCompanyName(),
                 dto.getContactName(),
                 dto.getContactLastName(),
                 dto.getContactPhone(),
                 dto.getContactPosition(),
                 sector,
+                dto.getUserId(),
                 dto.getUserEmail(),
-                dto.getUserPassword(),
-                dto.getUserId()
+                dto.getUserPassword()
         );
     }
 }
