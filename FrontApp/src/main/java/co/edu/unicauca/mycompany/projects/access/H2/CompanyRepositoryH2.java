@@ -16,8 +16,20 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+/**
+ * Implementación del repositorio de empresas que se comunica con un servicio REST
+ * mediante peticiones HTTP para realizar operaciones de persistencia y consulta
+ * sobre entidades de tipo Company
+ */
 public class CompanyRepositoryH2 implements ICompanyRepository {
 
+    /**
+     * Registra una nueva empresa enviando una solicitud HTTP POST al servicio REST.
+     *
+     * @param newCompany la entidad {@code Company} que se desea guardar.
+     * @return {@code true} si la operación fue exitosa (código HTTP 200 o 201),
+     *         o {@code false} en caso contrario o si ocurre una excepción.
+     */
     @Override
     public boolean save(Company newCompany) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -54,6 +66,14 @@ public class CompanyRepositoryH2 implements ICompanyRepository {
         }
     }
 
+    /**
+     * Obtiene la información completa de una empresa según su NIT (Número de Identificación Tributaria),
+     * consultando un servicio externo a través de una solicitud HTTP GET.
+     *
+     * @param nit el NIT de la empresa cuya información se desea recuperar.
+     * @return un objeto {@code Company} con los datos de la empresa si la respuesta fue exitosa;
+     *         en caso contrario, se retorna una instancia por defecto con datos ficticios.
+     */
     @Override
     public Company companyInfo(String nit) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -90,6 +110,14 @@ public class CompanyRepositoryH2 implements ICompanyRepository {
                 new Company("exampleCompany", "contact", "", "", "", enumSector.HEALTH, "", "", "");
     }
 
+    /**
+     * Obtiene el identificador único de un sector a partir de su nombre, mediante
+     * una solicitud HTTP GET al servicio REST.
+     *
+     * @param sectorName el nombre del sector (por ejemplo, "TECHNOLOGY", "HEALTH", etc.).
+     * @return una cadena con el identificador del sector si la operación fue exitosa;
+     *         una cadena vacía en caso de error o si el sector no existe.
+     */
     @Override
     public String getSectorIdByName(String sectorName) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -126,16 +154,38 @@ public class CompanyRepositoryH2 implements ICompanyRepository {
         return sectorId;
     }
 
-    // Clases auxiliares para la serialización/deserialización de JSON
+    /**
+    * Clase auxiliar utilizada para la serialización y deserialización de objetos {@code Company}
+    * en formato JSON al comunicarse con servicios REST.
+    *
+    * Representa la estructura esperada en las solicitudes y respuestas del servicio.
+    */
     private static class CompanyDto {
+        /** Identificador único del usuario. */
         private String userId;
+
+        /** Correo electrónico asociado al usuario. */
         private String userEmail;
+
+        /** Contraseña del usuario. */
         private String userPassword;
+
+        /** Nombre de la empresa. */
         private String companyName;
+
+        /** Nombre del contacto principal. */
         private String contactName;
+
+        /** Apellido del contacto principal. */
         private String contactLastName;
+
+        /** Número telefónico del contacto principal. */
         private String contactPhone;
+
+        /** Cargo del contacto principal dentro de la empresa. */
         private String contactPosition;
+
+        /** Sector al que pertenece la empresa. */
         private String companySector;
 
         // Getters y setters
@@ -167,14 +217,27 @@ public class CompanyRepositoryH2 implements ICompanyRepository {
         public void setCompanySector(String companySector) { this.companySector = companySector; }
     }
 
+    /**
+    * Clase auxiliar utilizada para deserializar la respuesta JSON
+    * que contiene el identificador de un sector.
+    *
+    * Se emplea en la obtención de información específica del sector desde el servicio REST.
+    */
     private static class SectorResponse {
+        /** Identificador único del sector. */
         private String sectorId;
 
         public String getSectorId() { return sectorId; }
         public void setSectorId(String sectorId) { this.sectorId = sectorId; }
     }
 
-    // Métodos de mapeo entre entidad y DTO
+    /**
+    * Convierte un objeto {@code Company} a su representación {@code CompanyDto},
+    * adecuada para ser serializada en formato JSON al comunicarse con el servicio REST.
+    *
+    * @param company la entidad {@code Company} que se desea convertir.
+    * @return una instancia de {@code CompanyDto} con los campos correspondientes mapeados.
+    */
     private CompanyDto mapToCompanyDto(Company company) {
         CompanyDto dto = new CompanyDto();
         dto.setUserId(company.getId());
@@ -189,6 +252,16 @@ public class CompanyRepositoryH2 implements ICompanyRepository {
         return dto;
     }
 
+    /**
+    * Convierte un objeto {@code CompanyDto}, recibido de una respuesta JSON del servicio REST,
+    * en una instancia de {@code Company}.
+    *
+    * Si el campo {@code companySector} no corresponde con ningún valor válido del enum {@code enumSector},
+    * se asigna por defecto el sector {@code OTHER}.
+    *
+    * @param dto el objeto {@code CompanyDto} que se desea convertir.
+    * @return una nueva instancia de {@code Company} con los datos mapeados desde el DTO.
+    */
     private Company mapFromCompanyDto(CompanyDto dto) {
         enumSector sector;
         try {

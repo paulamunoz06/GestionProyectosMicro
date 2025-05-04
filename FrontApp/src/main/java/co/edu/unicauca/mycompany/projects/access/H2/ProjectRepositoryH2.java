@@ -24,7 +24,20 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+/**
+ * Implementación del repositorio de proyectos que interactúa con un servicio REST
+ * mediante peticiones HTTP para realizar operaciones de persistencia y consulta
+ * sobre entidades de tipo Project.
+ * 
+ */
 public class ProjectRepositoryH2 implements IProjectRepository{
+    /**
+     * Guarda un nuevo proyecto enviando una solicitud HTTP POST al servicio REST.
+     *
+     * @param newProject el objeto {@code Project} que se desea guardar.
+     * @return {@code true} si la operación fue exitosa (código HTTP 200 o 201),
+     *         {@code false} en caso contrario o si ocurre una excepción.
+     */
     @Override
     public boolean save(Project newProject) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -94,6 +107,13 @@ public class ProjectRepositoryH2 implements IProjectRepository{
         }
     }
 
+    /**
+     * Verifica si un proyecto con el ID especificado ya existe en el servicio REST.
+     *
+     * @param projectId el ID del proyecto a verificar.
+     * @return {@code true} si el proyecto existe, {@code false} si no existe
+     *         o si ocurre un error al realizar la solicitud.
+     */
     @Override
     public boolean existProjectId(String projectId) {
         if (projectId == null || projectId.isEmpty()) {
@@ -125,6 +145,12 @@ public class ProjectRepositoryH2 implements IProjectRepository{
         }
     }
 
+    /**
+     * Obtiene una lista de todos los proyectos registrados consultando un servicio REST.
+     *
+     * @return una lista de objetos {@code Project} que representa todos los proyectos.
+     *         Si ocurre un error al obtener la lista, se retorna una lista vacía.
+     */
     @Override
     public List<Project> listAll() {
         HttpClient httpClient = HttpClients.createDefault();
@@ -162,6 +188,13 @@ public class ProjectRepositoryH2 implements IProjectRepository{
         return projectList;
     }
 
+    /**
+     * Obtiene la lista de proyectos disponibles para un estudiante específico.
+     *
+     * @param studentId el ID del estudiante para el cual se obtienen los proyectos disponibles.
+     * @return una lista de objetos {@code Project} que representan los proyectos disponibles para el estudiante.
+     *         Si ocurre un error al obtener la lista, se retorna {@code null}.
+     */
     @Override
     public List<Project> listProjectsAvailable(String studentId) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -195,6 +228,13 @@ public class ProjectRepositoryH2 implements IProjectRepository{
         return listReturn;
     }
 
+    /**
+     * Obtiene un proyecto específico mediante su ID.
+     *
+     * @param projectId el ID del proyecto que se desea obtener.
+     * @return el objeto {@code Project} correspondiente al proyecto con el ID proporcionado.
+     *         Si ocurre un error al obtener el proyecto, se retorna {@code null}.
+     */
     @Override
     public Project getProject(String projectId) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -228,6 +268,14 @@ public class ProjectRepositoryH2 implements IProjectRepository{
         return project;
     }
 
+    /**
+     * Permite a un estudiante aplicar a un proyecto específico.
+     *
+     * @param studentId el ID del estudiante que aplica al proyecto.
+     * @param projectId el ID del proyecto al cual el estudiante desea aplicar.
+     * @return {@code true} si la solicitud fue exitosa (código HTTP 200), 
+     *         {@code false} en caso contrario o si ocurre un error.
+     */
     @Override
     public boolean apply(String studentId, String projectId) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -256,6 +304,14 @@ public class ProjectRepositoryH2 implements IProjectRepository{
         return true;
     }
 
+    /**
+     * Obtiene la cantidad de proyectos en los cuales un estudiante está involucrado.
+     *
+     * @param studentId el ID del estudiante para el cual se obtiene el número de proyectos.
+     * @return una lista de enteros donde cada número representa la cantidad de proyectos 
+     *         del estudiante en diferentes estados.
+     *         Si ocurre un error, se retorna {@code null}.
+     */
     @Override
     public List<Integer> countProjectsStudent(String studentId) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -292,6 +348,13 @@ public class ProjectRepositoryH2 implements IProjectRepository{
         return listReturn;
     }
 
+    /**
+     * Obtiene la cantidad de proyectos que están en un estado específico.
+     *
+     * @param status el estado de los proyectos para contar.
+     * @return el número de proyectos que están en el estado especificado.
+     *         Si ocurre un error al obtener el número de proyectos, se retorna 0.
+     */
     @Override
     public int countByStatus(String status) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -327,6 +390,11 @@ public class ProjectRepositoryH2 implements IProjectRepository{
         return projectCount; // Retornar el número de proyectos o 0 en caso de error
     }
 
+    /**
+     * Obtiene el número total de proyectos registrados en el sistema.
+     *
+     * @return el número total de proyectos. Si ocurre un error al obtener el total, se retorna 0.
+     */
     @Override
     public int countTotalProjects() {
         HttpClient httpClient = HttpClients.createDefault();
@@ -362,6 +430,14 @@ public class ProjectRepositoryH2 implements IProjectRepository{
         return totalProjects; // Retornar el número total de proyectos o 0 en caso de error
     }
 
+    /**
+     * Actualiza el estado de un proyecto específico.
+     *
+     * @param projectId el ID del proyecto cuyo estado se desea actualizar.
+     * @param newStatus el nuevo estado que se asignará al proyecto.
+     * @return {@code true} si el estado del proyecto fue actualizado exitosamente (código HTTP 200),
+     *         {@code false} si hubo un error al intentar actualizar el estado o si el servidor retorna un código diferente a 200.
+     */
     @Override
     public boolean updateProjectStatus(String projectId, String newStatus) {
         HttpClient httpClient = HttpClients.createDefault();

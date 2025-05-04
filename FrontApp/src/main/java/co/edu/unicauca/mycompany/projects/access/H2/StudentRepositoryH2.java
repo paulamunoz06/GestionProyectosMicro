@@ -13,8 +13,19 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
+/**
+ * Implementación del repositorio de estudiantes que interactúa con un servicio REST
+ * para realizar operaciones relacionadas con los estudiantes.
+ */
 public class StudentRepositoryH2 implements IStudentRepository{
 
+     /**
+     * Obtiene un estudiante por su ID desde el servicio REST.
+     *
+     * @param id el ID del estudiante que se desea obtener.
+     * @return un objeto {@link Student} que representa al estudiante solicitado.
+     *         Si ocurre un error al obtener el estudiante o si el estudiante no existe, se retorna {@code null}.
+     */
     @Override
     public Student getStudent(String id) {
         HttpClient httpClient = HttpClients.createDefault();

@@ -1,13 +1,9 @@
 package co.edu.unicauca.mycompany.projects.access;
 
 import co.edu.unicauca.mycompany.projects.domain.entities.Student;
-import java.util.List;
 
 /**
  * Interfaz que define el contrato para el repositorio de estudiantes.
- * 
- * Proporciona métodos para guardar, listar y obtener información de estudiantes.
- * 
  */
 public interface IStudentRepository {
     /**

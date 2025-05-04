@@ -1,15 +1,10 @@
 package co.edu.unicauca.mycompany.projects.access;
 
-import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import java.util.List;
 
 /**
  * Interfaz que define el contrato para el repositorio de proyectos.
- * 
- * Proporciona métodos para guardar, listar, obtener y gestionar proyectos,
- * así como la posibilidad de aplicar a ellos.
- * 
  */
 public interface IProjectRepository {
     /**
