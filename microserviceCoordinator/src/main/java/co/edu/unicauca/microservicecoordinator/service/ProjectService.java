@@ -2,9 +2,12 @@ package co.edu.unicauca.microservicecoordinator.service;
 
 import co.edu.unicauca.microservicecoordinator.entities.Project;
 import co.edu.unicauca.microservicecoordinator.entities.EnumProjectState;
+import co.edu.unicauca.microservicecoordinator.infra.config.RabbitMQConfig;
 import co.edu.unicauca.microservicecoordinator.infra.dto.ProjectDto;
 import co.edu.unicauca.microservicecoordinator.repository.IProjectRepository;
+import org.springframework.amqp.rabbit.annotation.RabbitListener;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -32,9 +35,10 @@ public class ProjectService implements IProjectService {
      * @return Un Optional que contiene el proyecto si existe, o un Optional vacío si no se encuentra
      */
     @Override
-    public Optional<Project> findById(Long id) {
-        return Optional.empty();
+    public Optional<Project> findById(String id) {
+        return projectRepository.findById(id);
     }
+
 
     /**
      * Recupera todos los proyectos almacenados en el sistema.
@@ -125,4 +129,15 @@ public class ProjectService implements IProjectService {
     public int countTotalProjects() {
         return (int) projectRepository.count();
     }
+
+
+    @RabbitListener(queues = RabbitMQConfig.CREATEPROJECT_QUEUE)
+    public void receiveProject(ProjectDto project) {
+        // Aquí puedes guardar el proyecto o hacer lo que necesites
+        System.out.println("Proyecto recibido: " + project.getProTitle());
+        Project project1 = projectToClass(project);
+        projectRepository.save(project1);
+    }
+
+
 }

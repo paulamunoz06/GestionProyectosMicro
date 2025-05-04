@@ -86,6 +86,9 @@ public class ProjectServiceTest {
                 "COORD001"
         );
 
+        // Mock repository to verify company exists
+        when(companyRepository.findById("C001")).thenReturn(Optional.of(new Company()));
+
         // Mock the ProjectRegistrationService to return our project
         when(projectRegistrationService.registerEntity(any(ProjectDto.class))).thenReturn(project);
 
@@ -98,6 +101,7 @@ public class ProjectServiceTest {
         assertEquals("Test Project", createdProject.getProTitle());
 
         // Verify interactions
+        verify(companyRepository).findById("C001");
         verify(projectRegistrationService).registerEntity(any(ProjectDto.class));
     }
 

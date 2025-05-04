@@ -104,6 +104,10 @@ public class ProjectRegistrationService extends AbstractEntityRegistrationServic
         projectDto.setProBudget(project.getProBudget());
         projectDto.setProState(project.getProState().toString());
         projectDto.setCompanyId(project.getIdcompany());
+        projectDto.setIdcompany(project.getIdcompany());
+        projectDto.setProCoordinator(project.getProCoordinator());
+
+        System.out.print(projectDto);
 
         rabbitTemplate.convertAndSend(RabbitMQConfig.CREATEPROJECT_QUEUE, projectDto);
     }

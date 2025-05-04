@@ -4,14 +4,12 @@ import co.edu.unicauca.mycompany.projects.access.IProjectRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import co.edu.unicauca.mycompany.projects.infra.Messages;
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import javax.swing.JOptionPane;
@@ -28,11 +26,19 @@ import org.apache.http.util.EntityUtils;
  * Implementación del repositorio de proyectos que interactúa con un servicio REST
  * mediante peticiones HTTP para realizar operaciones de persistencia y consulta
  * sobre entidades de tipo Project.
- * 
+ *
  */
 public class ProjectRepositoryH2 implements IProjectRepository{
     /**
      * Guarda un nuevo proyecto enviando una solicitud HTTP POST al servicio REST.
+     *
+     * @param newProject el objeto {@code Project} que se desea guardar.
+     * @return {@code true} si la operación fue exitosa (código HTTP 200 o 201),
+     *         {@code false} en caso contrario o si ocurre una excepción.
+     */
+    /**
+     * Guarda un nuevo proyecto enviando una solicitud HTTP POST al servicio REST.
+     * Se ha modificado para manejar correctamente el ID de la compañía.
      *
      * @param newProject el objeto {@code Project} que se desea guardar.
      * @return {@code true} si la operación fue exitosa (código HTTP 200 o 201),
@@ -44,20 +50,105 @@ public class ProjectRepositoryH2 implements IProjectRepository{
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRITE_DATES_AS_TIMESTAMPS, false);
         mapper.setDateFormat(new com.fasterxml.jackson.databind.util.StdDateFormat());
+        Logger logger = Logger.getLogger(ProjectRepositoryH2.class.getName());
 
         try {
-            Long companyIdLong;
-            try {
-                companyIdLong = Long.parseLong(newProject.getIdcompany());
-            } catch (NumberFormatException e) {
-                Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, "Invalid company ID format", e);
+            // Obtener el ID de la compañía - primero verificamos si ya tenemos el ID real
+            String companyId = newProject.getIdcompany();
+            logger.info("Initial companyId: " + companyId);
+
+            if (companyId == null || companyId.trim().isEmpty()) {
+                logger.severe("Company ID is null or empty");
                 return false;
             }
 
-            String apiUrl = "http://localhost:8080/project/register?companyId=" + companyIdLong;
+            // Si parece ser un email (contiene @), debemos primero obtener el ID real
+            if (companyId.contains("@")) {
+                // Necesitamos obtener el ID real de la compañía usando el email
+                String companyEmail = companyId; // Guardamos el email
+                logger.info("Detected email in companyId field: " + companyEmail);
+
+                try {
+                    // Crear una petición para obtener la compañía por email
+                    String companyUrl = "http://localhost:8080/company/email/" + companyEmail;
+                    logger.info("Making request to: " + companyUrl);
+
+                    HttpGet getCompanyRequest = new HttpGet(companyUrl);
+                    getCompanyRequest.setHeader("Accept", "application/json");
+
+                    HttpResponse companyResponse = httpClient.execute(getCompanyRequest);
+                    int companyStatusCode = companyResponse.getStatusLine().getStatusCode();
+                    logger.info("Company API response status code: " + companyStatusCode);
+
+                    if (companyStatusCode == 200) {
+                        String companyResponseBody = EntityUtils.toString(companyResponse.getEntity());
+                        logger.info("Company API response body: " + companyResponseBody);
+
+                        // Intentar analizar la respuesta JSON
+                        try {
+                            JsonNode companyNode = mapper.readTree(companyResponseBody);
+                            logger.info("JSON parsed successfully. Root node type: " + companyNode.getNodeType());
+
+                            // Depurar todos los campos en el nivel raíz
+                            Iterator<String> fieldNames = companyNode.fieldNames();
+                            logger.info("Fields in JSON response:");
+                            while (fieldNames.hasNext()) {
+                                String fieldName = fieldNames.next();
+                                logger.info("Field: " + fieldName + ", Value: " + companyNode.get(fieldName));
+                            }
+
+                            // Primero verificar si el ID está en la raíz
+                            if (companyNode.has("id") && !companyNode.get("id").isNull()) {
+                                companyId = companyNode.get("id").asText();
+                                logger.info("Found ID in root: " + companyId);
+                            }
+                            // Comprobar si está en 'userId' (basado en el mapeo de CompanyDto)
+                            else if (companyNode.has("userId") && !companyNode.get("userId").isNull()) {
+                                companyId = companyNode.get("userId").asText();
+                                logger.info("Found ID in userId field: " + companyId);
+                            }
+                            // Buscar en cualquier nodo anidado que pueda contener el ID
+                            else {
+                                logger.info("ID not found in root level, searching nested nodes");
+                                // Esta es una búsqueda más extensiva que puede encontrar el ID en cualquier nivel
+                                companyId = findIdInJsonNode(companyNode);
+
+                                if (companyId != null) {
+                                    logger.info("Found ID in nested structure: " + companyId);
+                                } else {
+                                    logger.severe("No se pudo encontrar el ID en ninguna parte de la respuesta JSON");
+                                    return false;
+                                }
+                            }
+
+                            // Actualizar el ID en el objeto Project
+                            newProject.setIdcompany(companyId);
+                            logger.info("Updated project with company ID: " + companyId);
+
+                        } catch (Exception e) {
+                            logger.severe("Error parsing JSON response: " + e.getMessage());
+                            e.printStackTrace();
+                            return false;
+                        }
+                    } else {
+                        logger.severe("Error al obtener la compañía por email. Código: " + companyStatusCode);
+                        return false;
+                    }
+                } catch (Exception e) {
+                    logger.severe("Error procesando la respuesta del servicio de compañía: " + e.getMessage());
+                    e.printStackTrace();
+                    return false;
+                }
+            }
+
+            // A este punto, companyId debería ser el ID real, ya sea porque era válido desde el principio
+            // o porque lo hemos obtenido a partir del email
+            logger.info("Final companyId for API call: " + companyId);
+
+            String apiUrl = "http://localhost:8080/project/register?companyId=" + companyId;
+            logger.info("Project register URL: " + apiUrl);
 
             HttpPost request = new HttpPost(apiUrl);
-
             request.setHeader("Content-Type", "application/json");
             request.setHeader("Accept", "application/json");
 
@@ -70,6 +161,7 @@ public class ProjectRepositoryH2 implements IProjectRepository{
             projectDto.put("proAbstract", newProject.getProAbstract());
             projectDto.put("proGoals", newProject.getProGoals());
 
+            // Formatear la fecha correctamente
             if (newProject.getProDate() != null) {
                 java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("yyyy-MM-dd");
                 projectDto.put("proDate", sdf.format(newProject.getProDate()));
@@ -81,32 +173,72 @@ public class ProjectRepositoryH2 implements IProjectRepository{
             projectDto.put("proDeadLine", newProject.getProDeadLine());
             projectDto.put("proBudget", newProject.getProBudget());
             projectDto.put("proState", "RECIBIDO");
-            projectDto.put("companyId", companyIdLong.toString());
+            projectDto.put("companyId", companyId); // Usar el ID correcto
 
             String projectJson = mapper.writeValueAsString(projectDto);
-
-            System.out.println("Sending project data: " + projectJson);
-            System.out.println("To URL: " + apiUrl);
+            logger.info("Sending project data: " + projectJson);
 
             StringEntity entity = new StringEntity(projectJson, "UTF-8");
             request.setEntity(entity);
 
             HttpResponse response = httpClient.execute(request);
-
             int statusCode = response.getStatusLine().getStatusCode();
-
             String responseBody = EntityUtils.toString(response.getEntity());
-            System.out.println("Server response code: " + statusCode);
-            System.out.println("Server response: " + responseBody);
+
+            logger.info("Project API response code: " + statusCode);
+            logger.info("Project API response: " + responseBody);
 
             return statusCode == 201 || statusCode == 200;
 
         } catch (IOException ex) {
-            Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, "Error saving project", ex);
+            logger.severe("Error saving project: " + ex.getMessage());
+            ex.printStackTrace();
             return false;
         }
     }
 
+    /**
+     * Método auxiliar para buscar recursivamente un campo de ID en un nodo JSON
+     * @param node El nodo JSON a explorar
+     * @return El valor del ID si se encuentra, o null si no se encuentra
+     */
+    private String findIdInJsonNode(JsonNode node) {
+        Logger logger = Logger.getLogger(ProjectRepositoryH2.class.getName());
+
+        // Verificar campos de ID comunes en este nodo
+        String[] possibleIdFields = {"id", "userId", "user_id", "companyId", "company_id"};
+
+        for (String field : possibleIdFields) {
+            if (node.has(field) && !node.get(field).isNull() && !node.get(field).asText().isEmpty()) {
+                return node.get(field).asText();
+            }
+        }
+
+        // Si este es un objeto, buscar recursivamente en todos sus campos
+        if (node.isObject()) {
+            Iterator<Map.Entry<String, JsonNode>> fields = node.fields();
+            while (fields.hasNext()) {
+                Map.Entry<String, JsonNode> entry = fields.next();
+                String fieldValue = findIdInJsonNode(entry.getValue());
+                if (fieldValue != null) {
+                    return fieldValue;
+                }
+            }
+        }
+
+        // Si este es un array, buscar recursivamente en todos sus elementos
+        if (node.isArray()) {
+            for (JsonNode element : node) {
+                String fieldValue = findIdInJsonNode(element);
+                if (fieldValue != null) {
+                    return fieldValue;
+                }
+            }
+        }
+
+        // No se encontró ningún ID
+        return null;
+    }
     /**
      * Verifica si un proyecto con el ID especificado ya existe en el servicio REST.
      *
@@ -242,7 +374,7 @@ public class ProjectRepositoryH2 implements IProjectRepository{
         Project project = null;
         try {
             // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/project/" + projectId;
+            String apiUrl = "http://localhost:8081/coordinator/project/" + projectId;
             // Crear una solicitud GET
 
             HttpGet request = new HttpGet(apiUrl);
@@ -273,7 +405,7 @@ public class ProjectRepositoryH2 implements IProjectRepository{
      *
      * @param studentId el ID del estudiante que aplica al proyecto.
      * @param projectId el ID del proyecto al cual el estudiante desea aplicar.
-     * @return {@code true} si la solicitud fue exitosa (código HTTP 200), 
+     * @return {@code true} si la solicitud fue exitosa (código HTTP 200),
      *         {@code false} en caso contrario o si ocurre un error.
      */
     @Override
@@ -308,7 +440,7 @@ public class ProjectRepositoryH2 implements IProjectRepository{
      * Obtiene la cantidad de proyectos en los cuales un estudiante está involucrado.
      *
      * @param studentId el ID del estudiante para el cual se obtiene el número de proyectos.
-     * @return una lista de enteros donde cada número representa la cantidad de proyectos 
+     * @return una lista de enteros donde cada número representa la cantidad de proyectos
      *         del estudiante en diferentes estados.
      *         Si ocurre un error, se retorna {@code null}.
      */
