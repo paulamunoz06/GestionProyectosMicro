@@ -3,6 +3,7 @@ package co.edu.unicauca.mycompany.projects.domain.services;
 import co.edu.unicauca.mycompany.projects.access.IProjectRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
+import co.edu.unicauca.mycompany.projects.domain.entities.enumProjectState;
 import co.edu.unicauca.mycompany.projects.infra.Messages;
 import co.edu.unicauca.mycompany.projects.infra.Subject;
 import java.util.ArrayList;
@@ -122,14 +123,32 @@ public class ProjectService extends Subject{
     * @param newStatus  El nuevo estado que se asignará al proyecto.
     * @return true si la actualización fue exitosa, false en caso contrario.
     */
-    public boolean updateProjectStatus(String projectId, String newStatus) {
-        boolean success = repository.updateProjectStatus(projectId, newStatus);
-
+    public boolean updateProjectStatus(Project project, String newStatus, CompanyService companyService) {
+        boolean success = repository.updateProjectStatus(project.getProId(), newStatus);
+        System.out.println("success: "+ success); 
         if (success) {
+            project.setProState(enumProjectState.valueOf(newStatus));
+            Company company = companyService.getCompany(project.getIdcompany());
+            String mensaje = Messages.mensajeCambioEstado(company.getCompanyName(), project.getProTitle(), project.getProState().toString());
+            EmailService.sendEmail(company.getEmail(), "Notificación de Cambio de Estado en Proyecto de Software", mensaje);
             notifyAllObserves(); // Notificar a los observadores que hubo un cambio
         }
 
         return success;
+    }
+    
+    
+    public void notifyCompany(Project project, CompanyService companyService) {
+        Company company = companyService.getCompany(project.getIdcompany()); // Buscar empresa
+
+        if (company != null) {
+            String mensaje = Messages.mensajeCambioEstado(company.getCompanyName(), project.getProTitle(), "ACEPTADO");
+            
+            EmailService.sendEmail(company.getEmail(), "Notificación de Cambio de Estado en Proyecto de Software", mensaje);
+        } else {
+            System.out.println("Error: No se encontró la empresa asociada al proyecto.");
+            System.out.println("ID de la empresa buscada: " + project.getIdcompany());
+        }
     }
     
     /**

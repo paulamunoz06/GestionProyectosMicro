@@ -1,6 +1,6 @@
 package co.edu.unicauca.mycompany.projects.domain.entities;
 
-import co.edu.unicauca.mycompany.projects.infra.state.ProjectStatePatron;
+
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -45,7 +45,7 @@ public class Project {
     private enumProjectState proState;
 
     /** Patrón de estado del proyecto para manejar su ciclo de vida. */
-    private ProjectStatePatron proStatePatron;
+    //private ProjectStatePatron proStatePatron;
 
     /** Lista de estudiantes asignados al proyecto. */
         private List<Student> approved;
@@ -84,7 +84,7 @@ public class Project {
         this.postulated = new ArrayList<>(); 
         this.proCoordinator = null; 
         this.idcompany = idcompany;
-        this.proStatePatron = proStatePatron;
+//        this.proStatePatron = proStatePatron;
     }
 
     public Project() {
@@ -251,12 +251,12 @@ public class Project {
     public void setProState(enumProjectState proState) {
         this.proState = proState;
     }
-
+    /*
     public void setProStatePatron(ProjectStatePatron proStatePatron) {
         this.proStatePatron = proStatePatron;  
         this.proState = enumProjectState.valueOf(proStatePatron.toString()); 
     }
-
+*/
 
     /**
      * Obtiene la lista de estudiantes asignados al proyecto.

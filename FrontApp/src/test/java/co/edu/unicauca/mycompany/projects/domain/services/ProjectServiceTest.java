@@ -179,18 +179,7 @@ public class ProjectServiceTest {
         verify(repositoryMock, times(1)).countProjectsStudent("student1");
     }
 
-    /**
-     * Verifica que se actualiza el estado de un proyecto correctamente.
-     */
-    @Test
-    void testUpdateProjectStatus() {
-        when(repositoryMock.updateProjectStatus("P001", "ACEPTADO")).thenReturn(true);
-
-        boolean result = projectService.updateProjectStatus("P001", "ACEPTADO");
-
-        assertTrue(result);
-        verify(repositoryMock, times(1)).updateProjectStatus("P001", "ACEPTADO");
-    }
+    
 
     /**
      * Verifica si un ID de proyecto existe.

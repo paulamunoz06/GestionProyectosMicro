@@ -5,11 +5,6 @@ import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
 import co.edu.unicauca.mycompany.projects.domain.services.ProjectService;
 import co.edu.unicauca.mycompany.projects.infra.Messages;
-import co.edu.unicauca.mycompany.projects.infra.state.AceptadoState;
-import co.edu.unicauca.mycompany.projects.infra.state.CerradoState;
-import co.edu.unicauca.mycompany.projects.infra.state.EjecucionState;
-import co.edu.unicauca.mycompany.projects.infra.state.ProjectStatePatron;
-import co.edu.unicauca.mycompany.projects.infra.state.RechazadoState;
 import javax.swing.JFrame;
 
 
@@ -214,12 +209,11 @@ public class GUIEstado extends javax.swing.JFrame {
      */
     private void btnAceptadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptadoActionPerformed
         // Cambiar estado del proyecto
-        ProjectStatePatron estado = new AceptadoState(companyService);
-        estado.handleStateChange(proyecto); // Ahora esto cambia el estado y notifica por correo
-        dispose();
-        if (estado.updateDatabase(proyecto, projectService)) {
+        if (projectService.updateProjectStatus(proyecto, "ACEPTADO", companyService)) {
+            dispose();
             Messages.mensajeVario("El estado del proyecto ha sido cambiado a Aceptado.");
-        } 
+        }
+        
     }//GEN-LAST:event_btnAceptadoActionPerformed
 
     /**
@@ -230,12 +224,11 @@ public class GUIEstado extends javax.swing.JFrame {
      */
     private void btnRechazadoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRechazadoActionPerformed
         // Cambiar estado del proyecto
-        ProjectStatePatron estado = new RechazadoState(companyService);
-        estado.handleStateChange(proyecto); // Ahora esto cambia el estado y notifica por correo
-        dispose();
-        if (estado.updateDatabase(proyecto, projectService)) {
+        if (projectService.updateProjectStatus(proyecto, "RECHAZADO", companyService)) {
+            dispose();
             Messages.mensajeVario("El estado del proyecto ha sido cambiado a Rechazado.");
-        } 
+        }
+        
     }//GEN-LAST:event_btnRechazadoActionPerformed
 
     /**
@@ -245,12 +238,12 @@ public class GUIEstado extends javax.swing.JFrame {
      * @param evt Evento de acción generado al presionar el botón.
      */
     private void btnEjecucionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnEjecucionActionPerformed
-        ProjectStatePatron estado = new EjecucionState(companyService);
-        estado.handleStateChange(proyecto); // Ahora esto cambia el estado y notifica por correo
-        dispose();
-        if (estado.updateDatabase(proyecto, projectService)) {
+        
+        if (projectService.updateProjectStatus(proyecto, "EJECUCION", companyService)) {
+            dispose();
             Messages.mensajeVario("El estado del proyecto ha sido cambiado a Ejecucion.");
-        } 
+        }
+        
     }//GEN-LAST:event_btnEjecucionActionPerformed
 
      /**
@@ -260,12 +253,12 @@ public class GUIEstado extends javax.swing.JFrame {
      * @param evt Evento de acción generado al presionar el botón.
      */
     private void btnCerradoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerradoActionPerformed
-        ProjectStatePatron estado = new CerradoState(companyService);
-        estado.handleStateChange(proyecto); // Ahora esto cambia el estado y notifica por correo
-        dispose();
-        if (estado.updateDatabase(proyecto, projectService)) {
+      
+        if (projectService.updateProjectStatus(proyecto, "CERRADO", companyService)) {
+            dispose();
             Messages.mensajeVario("El estado del proyecto ha sido cambiado a Cerrado.");
-        } 
+        }
+        
     }//GEN-LAST:event_btnCerradoActionPerformed
 
     private void btnRecibidoActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnRecibidoActionPerformed
