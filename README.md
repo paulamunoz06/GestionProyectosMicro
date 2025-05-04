@@ -6,8 +6,11 @@
 
 ### Microservicios del sistema
 -**Login Microservice**: se encarga de todo lo relacionado con el inicio de sesión.
+
 -**Company Microservice**: se encarga de manejar las necesidades de las empresas, como el registro de empresas y la publicacion de necesidades.
--**Student Microservice**: se encarga de manejar las necesidades de los estudiantes, como ver sus proyetos disponibles para postulación y demás
+
+-**Student Microservice**: se encarga de manejar las necesidades de los estudiantes, como ver sus proyetos disponibles para postulación y demás.
+
 -**Coordinator Microservice**: se encarga de manejar las necesidades de los coordinadores, como ver todos los proyectos, evaluarlos, y notificar a las empresas de los cambios realizados.
 ## Requisitos
 ### Funcionales
