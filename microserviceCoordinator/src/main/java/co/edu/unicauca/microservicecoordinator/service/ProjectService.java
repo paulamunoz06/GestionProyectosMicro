@@ -35,9 +35,10 @@ public class ProjectService implements IProjectService {
      * @return Un Optional que contiene el proyecto si existe, o un Optional vacío si no se encuentra
      */
     @Override
-    public Optional<Project> findById(Long id) {
-        return Optional.empty();
+    public Optional<Project> findById(String id) {
+        return projectRepository.findById(id);
     }
+
 
     /**
      * Recupera todos los proyectos almacenados en el sistema.

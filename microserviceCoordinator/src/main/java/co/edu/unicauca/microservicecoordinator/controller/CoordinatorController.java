@@ -5,11 +5,13 @@ import co.edu.unicauca.microservicecoordinator.infra.dto.ProjectDto;
 import co.edu.unicauca.microservicecoordinator.service.CoordinatorService;
 import co.edu.unicauca.microservicecoordinator.service.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * Controlador REST que gestiona las operaciones relacionadas con la coordinación de proyectos.
@@ -79,6 +81,26 @@ public class CoordinatorController {
             return ResponseEntity.ok(updatedProject);
         } else {
             return ResponseEntity.badRequest().build();
+        }
+    }
+
+    /**
+     * Obtiene un proyecto por su ID.
+     *
+     * @param idProject ID del proyecto.
+     * @return El proyecto correspondiente o un error si no existe.
+     */
+    @GetMapping("/project/{idProject}")
+    public ResponseEntity<?> getProjectById(@PathVariable String idProject) {
+        try {
+            Optional<Project> project = projectService.findById(idProject);
+            if (project.isEmpty()) {
+                return ResponseEntity.notFound().build();
+            } else {
+                return ResponseEntity.ok(projectService.projectToDto(project.get()));
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(Map.of("error", e.getMessage()));
         }
     }
 }

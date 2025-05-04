@@ -11,7 +11,7 @@ import java.util.Optional;
 public interface IProjectService {
     //Obtener proyecto por Id
     @Transactional
-    Optional<Project> findById(Long id);
+    Optional<Project> findById(String id);
 
     //Obtener todos los proyectos
     @Transactional

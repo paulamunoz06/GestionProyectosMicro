@@ -374,7 +374,7 @@ public class ProjectRepositoryH2 implements IProjectRepository{
         Project project = null;
         try {
             // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/project/" + projectId;
+            String apiUrl = "http://localhost:8081/coordinator/project/" + projectId;
             // Crear una solicitud GET
 
             HttpGet request = new HttpGet(apiUrl);
