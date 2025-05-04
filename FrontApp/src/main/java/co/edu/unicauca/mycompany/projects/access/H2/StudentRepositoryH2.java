@@ -1,6 +1,7 @@
-package co.edu.unicauca.mycompany.projects.access;
 
-import co.edu.unicauca.mycompany.projects.domain.entities.Project;
+package co.edu.unicauca.mycompany.projects.access.H2;
+
+import co.edu.unicauca.mycompany.projects.access.IStudentRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.Student;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -12,7 +13,8 @@ import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-public class StudentRepository implements IStudentRepository {
+public class StudentRepositoryH2 implements IStudentRepository{
+
     @Override
     public Student getStudent(String id) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -37,11 +39,12 @@ public class StudentRepository implements IStudentRepository {
                 student = mapper.readValue(jsonResponse, Student.class);
             } else {
                 // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, "Error al obtener un proyecto. Código de estado: " + statusCode);
+                Logger.getLogger(StudentRepositoryH2.class.getName()).log(Level.SEVERE, null, "Error al obtener un proyecto. Código de estado: " + statusCode);
             }
         } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(StudentRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
         }
         return student;
     }
+    
 }

@@ -1,8 +1,12 @@
-package co.edu.unicauca.mycompany.projects.access;
+package co.edu.unicauca.mycompany.projects.access.H2;
 
+import co.edu.unicauca.mycompany.projects.access.ICompanyRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.domain.entities.enumSector;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
@@ -12,11 +16,8 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+public class CompanyRepositoryH2 implements ICompanyRepository {
 
-public class CompanyRepository implements ICompanyRepository {
     @Override
     public boolean save(Company newCompany) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -48,7 +49,7 @@ public class CompanyRepository implements ICompanyRepository {
             return statusCode == 201 || statusCode == 200;
 
         } catch (IOException ex) {
-            Logger.getLogger(CompanyRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CompanyRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
             return false;
         }
     }
@@ -78,11 +79,11 @@ public class CompanyRepository implements ICompanyRepository {
                 companyReturn = mapFromCompanyDto(mapper.readValue(jsonResponse, CompanyDto.class));
             } else {
                 // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(CompanyRepository.class.getName()).log(Level.SEVERE, null,
+                Logger.getLogger(CompanyRepositoryH2.class.getName()).log(Level.SEVERE, null,
                         "Error al obtener información de la empresa. Código de estado: " + statusCode);
             }
         } catch (IOException ex) {
-            Logger.getLogger(CompanyRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CompanyRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
         }
         
         return companyReturn != null ? companyReturn :
@@ -115,11 +116,11 @@ public class CompanyRepository implements ICompanyRepository {
                 sectorId = sectorResponse.getSectorId();
             } else {
                 // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(CompanyRepository.class.getName()).log(Level.SEVERE, null,
+                Logger.getLogger(CompanyRepositoryH2.class.getName()).log(Level.SEVERE, null,
                         "Error al obtener el sector. Código de estado: " + statusCode);
             }
         } catch (IOException ex) {
-            Logger.getLogger(CompanyRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(CompanyRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
         }
 
         return sectorId;

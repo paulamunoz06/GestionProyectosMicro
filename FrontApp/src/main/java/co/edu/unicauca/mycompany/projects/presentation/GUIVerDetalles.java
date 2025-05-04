@@ -1,8 +1,7 @@
 package co.edu.unicauca.mycompany.projects.presentation;
 
-import co.edu.unicauca.mycompany.projects.access.CompanyRepository;
-import co.edu.unicauca.mycompany.projects.access.Factory;
-import co.edu.unicauca.mycompany.projects.access.ICompanyRepository;
+import co.edu.unicauca.mycompany.projects.access.CompanyRepositoryFactory;
+import co.edu.unicauca.mycompany.projects.access.RepositoryType;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
@@ -31,7 +30,7 @@ public class GUIVerDetalles extends javax.swing.JFrame {
      * @param projectService
      */
     public GUIVerDetalles(Project project, ProjectService projectService) {
-        CompanyService companyService = new CompanyService(Factory.getInstance().getRepositoryCompany("COMPANY"));
+        CompanyService companyService = new CompanyService(CompanyRepositoryFactory.getInstance().getRepository(RepositoryType.H2));
         this.project = project;
         this.projectService = projectService;
 

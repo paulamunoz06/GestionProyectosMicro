@@ -1,25 +1,30 @@
-package co.edu.unicauca.mycompany.projects.access;
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package co.edu.unicauca.mycompany.projects.access.H2;
 
+import co.edu.unicauca.mycompany.projects.access.IUserRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
-public class UserRepository implements IUserRepository {
+/**
+ *
+ * @author paula
+ */
+public class UserRepositoryH2 implements IUserRepository{
 
     @Override
     public int iniciarSesion(String usuario, char[] pwd) {

@@ -1,13 +1,12 @@
-package co.edu.unicauca.mycompany.projects.access;
+package co.edu.unicauca.mycompany.projects.access.H2;
 
+import co.edu.unicauca.mycompany.projects.access.IProjectRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
-import co.edu.unicauca.mycompany.projects.domain.entities.Company;
-import co.edu.unicauca.mycompany.projects.domain.entities.Student;
 import co.edu.unicauca.mycompany.projects.infra.Messages;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.fasterxml.jackson.databind.SerializationFeature;
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import java.io.IOException;
 import java.util.Date;
 import java.util.HashMap;
@@ -25,8 +24,7 @@ import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.HttpClients;
 import org.apache.http.util.EntityUtils;
 
-public class ProjectRepository implements IProjectRepository {
-
+public class ProjectRepositoryH2 implements IProjectRepository{
     @Override
     public boolean save(Project newProject) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -39,7 +37,7 @@ public class ProjectRepository implements IProjectRepository {
             try {
                 companyIdLong = Long.parseLong(newProject.getIdcompany());
             } catch (NumberFormatException e) {
-                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Invalid company ID format", e);
+                Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, "Invalid company ID format", e);
                 return false;
             }
 
@@ -91,7 +89,7 @@ public class ProjectRepository implements IProjectRepository {
             return statusCode == 201 || statusCode == 200;
 
         } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Error saving project", ex);
+            Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, "Error saving project", ex);
             return false;
         }
     }
@@ -122,7 +120,7 @@ public class ProjectRepository implements IProjectRepository {
 
             return false;
         } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Error checking if project exists", ex);
+            Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, "Error checking if project exists", ex);
             return false;
         }
     }
@@ -153,11 +151,11 @@ public class ProjectRepository implements IProjectRepository {
                 Project[] projectsArray = mapper.readValue(jsonResponse, Project[].class);
                 projectList = List.of(projectsArray); // Convertir a lista inmutable
             } else {
-                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE,
+                Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE,
                         "Error al obtener la lista de proyectos. Código de estado: " + statusCode);
             }
         } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE,
+            Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE,
                     "Error de IO al obtener la lista de proyectos", ex);
         }
 
@@ -189,10 +187,10 @@ public class ProjectRepository implements IProjectRepository {
                 });
             } else {
                 // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, "Error al obtener la lista de proyectos disponibles. Código de estado: " + statusCode);
+                Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, null, "Error al obtener la lista de proyectos disponibles. Código de estado: " + statusCode);
             }
         } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listReturn;
     }
@@ -222,10 +220,10 @@ public class ProjectRepository implements IProjectRepository {
                 project = mapper.readValue(jsonResponse, Project.class);
             } else {
                 // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, "Error al obtener un proyecto. Código de estado: " + statusCode);
+                Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, null, "Error al obtener un proyecto. Código de estado: " + statusCode);
             }
         } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
         }
         return project;
     }
@@ -250,10 +248,10 @@ public class ProjectRepository implements IProjectRepository {
                 return true;
             } else {
                 // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, "Error al aplicar a un proyecto. Código de estado: " + statusCode);
+                Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, null, "Error al aplicar a un proyecto. Código de estado: " + statusCode);
             }
         } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
         }
         return true;
     }
@@ -286,10 +284,10 @@ public class ProjectRepository implements IProjectRepository {
 
             } else {
                 // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, "Error al obtener la cantidad de proyectos. Código de estado: " + statusCode);
+                Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, null, "Error al obtener la cantidad de proyectos. Código de estado: " + statusCode);
             }
         } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, null, ex);
+            Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
         }
         return listReturn;
     }
@@ -320,10 +318,10 @@ public class ProjectRepository implements IProjectRepository {
                 projectCount = mapper.readValue(jsonResponse, Integer.class);
             } else {
                 // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Error al obtener el número de proyectos. Código de estado: " + statusCode);
+                Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, "Error al obtener el número de proyectos. Código de estado: " + statusCode);
             }
         } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Error de IO al obtener el número de proyectos", ex);
+            Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, "Error de IO al obtener el número de proyectos", ex);
         }
 
         return projectCount; // Retornar el número de proyectos o 0 en caso de error
@@ -355,10 +353,10 @@ public class ProjectRepository implements IProjectRepository {
                 totalProjects = mapper.readValue(jsonResponse, Integer.class);
             } else {
                 // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Error al obtener el número total de proyectos. Código de estado: " + statusCode);
+                Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, "Error al obtener el número total de proyectos. Código de estado: " + statusCode);
             }
         } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE, "Error de IO al obtener el número total de proyectos", ex);
+            Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, "Error de IO al obtener el número total de proyectos", ex);
         }
 
         return totalProjects; // Retornar el número total de proyectos o 0 en caso de error
@@ -398,12 +396,11 @@ public class ProjectRepository implements IProjectRepository {
             }
 
         } catch (IOException ex) {
-            Logger.getLogger(ProjectRepository.class.getName()).log(Level.SEVERE,
+            Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE,
                     "Error de IO al actualizar el estado del proyecto", ex);
             JOptionPane.showMessageDialog(null, "Error de conexión con el servidor.", "Error", JOptionPane.ERROR_MESSAGE);
             return false;
         }
 
     }
-
 }

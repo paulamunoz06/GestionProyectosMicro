@@ -1,9 +1,11 @@
 package co.edu.unicauca.mycompany.projects.presentation;
 
-import co.edu.unicauca.mycompany.projects.access.Factory;
 import co.edu.unicauca.mycompany.projects.access.ICompanyRepository;
 import co.edu.unicauca.mycompany.projects.access.IProjectRepository;
 import co.edu.unicauca.mycompany.projects.access.IUserRepository;
+import co.edu.unicauca.mycompany.projects.access.ProjectRepositoryFactory;
+import co.edu.unicauca.mycompany.projects.access.RepositoryType;
+import co.edu.unicauca.mycompany.projects.access.UserRepositoryFactory;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
@@ -374,7 +376,7 @@ public class GUIDashboardEmpresa extends javax.swing.JFrame implements Dashboard
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnCerrarSesiónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesiónActionPerformed
-        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("USER");
+        IUserRepository repositoryUser = UserRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         
         GUIinicioSesion instance = new GUIinicioSesion(new UserService(repositoryUser));
         instance.setVisible(true);
@@ -409,7 +411,7 @@ public class GUIDashboardEmpresa extends javax.swing.JFrame implements Dashboard
         String idCompany = company.getId();
         
         // Instanciar projectService 
-        IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("MARIADB");
+        IProjectRepository projectRepository = ProjectRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         ProjectService projectService = new ProjectService(projectRepository);
         
         // Validar y convertir proDeadLine

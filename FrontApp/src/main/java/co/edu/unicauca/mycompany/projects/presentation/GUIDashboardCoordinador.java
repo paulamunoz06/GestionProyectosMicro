@@ -1,8 +1,10 @@
 package co.edu.unicauca.mycompany.projects.presentation;
 
-import co.edu.unicauca.mycompany.projects.access.Factory;
 import co.edu.unicauca.mycompany.projects.access.IProjectRepository;
 import co.edu.unicauca.mycompany.projects.access.IUserRepository;
+import co.edu.unicauca.mycompany.projects.access.ProjectRepositoryFactory;
+import co.edu.unicauca.mycompany.projects.access.RepositoryType;
+import co.edu.unicauca.mycompany.projects.access.UserRepositoryFactory;
 import co.edu.unicauca.mycompany.projects.domain.entities.Coordinator;
 import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
 import co.edu.unicauca.mycompany.projects.domain.services.ProjectService;
@@ -259,8 +261,8 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
      * @param evt Evento de acción generado al presionar el botón.
      */
     private void btnCoordiNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCoordiNameActionPerformed
-        IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("PROJECT");
-        
+
+        IProjectRepository projectRepository = ProjectRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         GUIDashboardCoordinadorInicio gui = new GUIDashboardCoordinadorInicio(coordinator, new ProjectService(projectRepository));
         gui.setVisible(true);
         
@@ -272,7 +274,7 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void btnCerrarSesiónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesiónActionPerformed
-        IUserRepository repositoryUser = Factory.getInstance().getRepositoryUser("USER");
+        IUserRepository repositoryUser = UserRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         
         GUIinicioSesion instance = new GUIinicioSesion(new UserService(repositoryUser));
         instance.setVisible(true);

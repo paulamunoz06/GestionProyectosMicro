@@ -1,18 +1,18 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package co.edu.unicauca.mycompany.projects.presentation;
 
-import co.edu.unicauca.mycompany.projects.access.Factory;
 import co.edu.unicauca.mycompany.projects.access.ICompanyRepository;
 import co.edu.unicauca.mycompany.projects.access.ICoordinatorRepository;
 import co.edu.unicauca.mycompany.projects.access.IProjectRepository;
 import co.edu.unicauca.mycompany.projects.access.IStudentRepository;
+import co.edu.unicauca.mycompany.projects.access.RepositoryType;
 import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
 import co.edu.unicauca.mycompany.projects.domain.services.CoordinatorService;
 import co.edu.unicauca.mycompany.projects.domain.services.ProjectService;
 import co.edu.unicauca.mycompany.projects.domain.services.StudentService;
+import co.edu.unicauca.mycompany.projects.access.StudentRepositoryFactory;
+import co.edu.unicauca.mycompany.projects.access.CoordinatorRepositoryFactory;
+import co.edu.unicauca.mycompany.projects.access.CompanyRepositoryFactory;
+import co.edu.unicauca.mycompany.projects.access.ProjectRepositoryFactory;
 
 /**
  *
@@ -26,16 +26,16 @@ public class DashboardFactory {
     ProjectService projectService;
     public DashboardFactory(){
         // Obtener instancias de los repositorios a través de la fábrica
-        IStudentRepository studentRepository = Factory.getInstance().getRepositoryStudent("STUDENT");
+        IStudentRepository studentRepository = StudentRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         studentService = new StudentService(studentRepository);
         
-        ICoordinatorRepository coordinatorRepository = Factory.getInstance().getRepositoryCoordinator("COORDINATOR");
+        ICoordinatorRepository coordinatorRepository = CoordinatorRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         coordinatorService = new CoordinatorService(coordinatorRepository);
 
-        ICompanyRepository companyRepository = Factory.getInstance().getRepositoryCompany("COMPANY");
+        ICompanyRepository companyRepository = CompanyRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         companyService = new CompanyService(companyRepository);
         
-        IProjectRepository projectRepository = Factory.getInstance().getRepositoryProject("PROJECT");
+        IProjectRepository projectRepository = ProjectRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         projectService = new ProjectService(projectRepository);
     }
     public Dashboard crearDashboard(int result, String idEntity){

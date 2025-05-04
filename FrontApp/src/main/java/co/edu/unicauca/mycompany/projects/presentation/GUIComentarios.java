@@ -1,7 +1,8 @@
 package co.edu.unicauca.mycompany.projects.presentation;
 
-import co.edu.unicauca.mycompany.projects.access.Factory;
+import co.edu.unicauca.mycompany.projects.access.CompanyRepositoryFactory;
 import co.edu.unicauca.mycompany.projects.access.ICompanyRepository;
+import co.edu.unicauca.mycompany.projects.access.RepositoryType;
 import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 import co.edu.unicauca.mycompany.projects.domain.entities.Coordinator;
 import co.edu.unicauca.mycompany.projects.domain.entities.Project;
@@ -51,7 +52,7 @@ public class GUIComentarios extends javax.swing.JFrame {
         this.proyecto = proyecto;
         this.coordinator = coordinator;
         this.projectService = projectService;
-        ICompanyRepository companyRepository = Factory.getInstance().getRepositoryCompany("MARIADB"); 
+        ICompanyRepository companyRepository = CompanyRepositoryFactory.getInstance().getRepository(RepositoryType.H2); 
         this.companyService = new CompanyService(companyRepository); // Se inicializa correctamente
         
         initComponents();
