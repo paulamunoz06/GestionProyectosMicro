@@ -13,9 +13,16 @@ public class RabbitMQConfig {
 
     public static final String UPDATEPROJECT_QUEUE = "updateProjectQueue";
 
+    public static final String CREATEPROJECT_QUEUE = "createProjectQueue";
+
     @Bean
     public Queue studentPostulationQueue() {
         return new Queue(STUDENTPOSTULATION_QUEUE, true);
+    }
+
+    @Bean
+    public Queue createProjectQueue() {
+        return new Queue(CREATEPROJECT_QUEUE, true);
     }
 
     @Bean
