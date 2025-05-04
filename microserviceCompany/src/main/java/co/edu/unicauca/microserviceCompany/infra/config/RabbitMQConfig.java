@@ -30,6 +30,11 @@ public class RabbitMQConfig {
     public static final String USER_QUEUE = "userQueue";
 
     /**
+     * Nombre de la cola para las actualizaciones de proyectos provenientes del coordinador.
+     */
+    public static final String UPDATEPROJECT_QUEUE = "updateProjectQueue";
+
+    /**
      * Define la cola de RabbitMQ utilizada para operaciones relacionadas con usuarios.
      * Esta cola está configurada para ser persistente, es decir, los mensajes no se perderán
      * incluso si el servidor de RabbitMQ se reinicia.
@@ -64,6 +69,19 @@ public class RabbitMQConfig {
     @Bean
     public Queue projectCompanyQueue() {
         return new Queue(PROJECTCOMPANYINFO_QUEUE, true);
+    }
+
+    /**
+     * Define la cola de RabbitMQ utilizada para recibir actualizaciones de proyectos
+     * desde el microservicio Coordinador.
+     * Esta cola está configurada para ser persistente, es decir, los mensajes no se perderán
+     * incluso si el servidor de RabbitMQ se reinicia.
+     *
+     * @return una nueva instancia de {@link Queue} configurada para la cola de actualización de proyectos.
+     */
+    @Bean
+    public Queue updateProjectQueue() {
+        return new Queue(UPDATEPROJECT_QUEUE, true);
     }
 
     /**

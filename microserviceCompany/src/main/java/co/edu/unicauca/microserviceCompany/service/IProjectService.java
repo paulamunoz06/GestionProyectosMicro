@@ -1,12 +1,10 @@
-//IProjectService.java
 package co.edu.unicauca.microserviceCompany.service;
 
 import co.edu.unicauca.microserviceCompany.entity.Project;
-import co.edu.unicauca.microserviceCompany.infra.config.RabbitMQConfig;
 import co.edu.unicauca.microserviceCompany.infra.dto.CompanyDto;
 import co.edu.unicauca.microserviceCompany.infra.dto.ProjectDto;
 
-import org.springframework.amqp.rabbit.annotation.RabbitListener;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.Optional;
@@ -26,6 +24,16 @@ public interface IProjectService {
      */
     @Transactional
     Project createProject(ProjectDto projectDto);
+
+    /**
+     * Actualiza un proyecto existente con la información proporcionada en el DTO.
+     *
+     * @param projectDto DTO con los datos actualizados del proyecto.
+     * @return El proyecto actualizado.
+     * @throws IllegalArgumentException Si hay datos inválidos en el DTO.
+     * @throws EntityNotFoundException Si el proyecto a actualizar no existe.
+     */
+    Project updateProject(ProjectDto projectDto) throws IllegalArgumentException, EntityNotFoundException;
 
     /**
      * Busca un proyecto por su ID.

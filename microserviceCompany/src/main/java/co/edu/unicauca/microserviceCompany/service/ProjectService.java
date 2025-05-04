@@ -184,4 +184,73 @@ public class ProjectService implements IProjectService {
 
         return project;
     }
+
+    /**
+     * Actualiza un proyecto existente con la información proporcionada en el DTO.
+     *
+     * @param projectDto DTO con los datos actualizados del proyecto.
+     * @return El proyecto actualizado.
+     * @throws IllegalArgumentException Si hay datos inválidos en el DTO.
+     * @throws EntityNotFoundException Si el proyecto a actualizar no existe.
+     */
+    @Override
+    @Transactional
+    public Project updateProject(ProjectDto projectDto) throws IllegalArgumentException, EntityNotFoundException {
+        if (projectDto == null) {
+            throw new IllegalArgumentException("La información del proyecto no puede ser nula");
+        }
+
+        if (projectDto.getProId() == null || projectDto.getProId().isEmpty()) {
+            throw new IllegalArgumentException("ID del proyecto es nulo o vacío");
+        }
+
+        Optional<Project> projectOpt = projectRepository.findById(projectDto.getProId());
+        if (projectOpt.isEmpty()) {
+            throw new EntityNotFoundException("El proyecto con ID " + projectDto.getProId() + " no existe");
+        }
+
+        Project project = projectOpt.get();
+
+        // Actualizar solo los campos no nulos del DTO
+        if (projectDto.getProTitle() != null && !projectDto.getProTitle().isEmpty()) {
+            project.setProTitle(projectDto.getProTitle());
+        }
+
+        if (projectDto.getProDescription() != null) {
+            project.setProDescription(projectDto.getProDescription());
+        }
+
+        if (projectDto.getProAbstract() != null) {
+            project.setProAbstract(projectDto.getProAbstract());
+        }
+
+        if (projectDto.getProGoals() != null) {
+            project.setProGoals(projectDto.getProGoals());
+        }
+
+        if (projectDto.getProDeadLine() != 0) {
+            project.setProDeadLine(projectDto.getProDeadLine());
+        }
+
+        if (projectDto.getProBudget() != null) {
+            project.setProBudget(projectDto.getProBudget());
+        }
+
+        // Actualizar estado si viene especificado en el DTO
+        if (projectDto.getProState() != null && !projectDto.getProState().isEmpty()) {
+            try {
+                project.setProState(EnumProjectState.valueOf(projectDto.getProState()));
+            } catch (IllegalArgumentException e) {
+                throw new IllegalArgumentException("Estado de proyecto inválido: " + projectDto.getProState());
+            }
+        }
+
+        // Guardar el proyecto actualizado
+        Project updatedProject = projectRepository.save(project);
+
+        // Notificar a otros microservicios sobre la actualización del proyecto
+        rabbitTemplate.convertAndSend(RabbitMQConfig.PROJECTCOMPANYINFO_QUEUE, projectToDto(updatedProject));
+
+        return updatedProject;
+    }
 }

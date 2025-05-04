@@ -144,4 +144,42 @@ public class ProjectController {
                     .body(Map.of("error", e.getMessage()));
         }
     }
+
+    /**
+     * Endpoint para actualizar un proyecto existente.
+     *
+     * Este método recibe un objeto {@link ProjectDto} con los datos actualizados del proyecto
+     * y el ID del proyecto a actualizar. Si el proyecto no se encuentra, se devuelve un error
+     * HTTP 404. Si el proyecto se actualiza exitosamente, se devuelve el proyecto actualizado.
+     *
+     * @param projectId ID del proyecto a actualizar.
+     * @param projectDto Objeto que contiene los datos actualizados del proyecto.
+     * @return ResponseEntity con el estado de la operación y los datos del proyecto actualizado.
+     */
+    @PutMapping("/{projectId}")
+    public ResponseEntity<?> updateProject(@PathVariable String projectId, @RequestBody ProjectDto projectDto) {
+        try {
+            // Verificar si el proyecto existe
+            Optional<Project> projectOpt = projectService.findById(projectId);
+            if (projectOpt.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND)
+                        .body(Map.of("error", "Proyecto no encontrado con ID: " + projectId));
+            }
+
+            // Asegurarse de que el ID en el path coincida con el ID en el DTO
+            projectDto.setProId(projectId);
+
+            // Actualizar el proyecto
+            Project updatedProject = projectService.updateProject(projectDto);
+
+            return ResponseEntity.ok(projectService.projectToDto(updatedProject));
+
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                    .body(Map.of("error", e.getMessage()));
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al actualizar el proyecto: " + e.getMessage()));
+        }
+    }
 }
