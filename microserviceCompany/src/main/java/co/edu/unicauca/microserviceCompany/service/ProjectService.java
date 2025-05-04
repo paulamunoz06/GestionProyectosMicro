@@ -64,6 +64,7 @@ public class ProjectService implements IProjectService {
     @Transactional
     public Project createProject(ProjectDto projectDto) {
         try {
+
             // Validar que el projectDto no sea nulo
             if (projectDto == null) {
                 throw new IllegalArgumentException("La información del proyecto no puede ser nula");
@@ -91,6 +92,7 @@ public class ProjectService implements IProjectService {
             } else {
                 // Verificar que la compañía con ese ID existe
                 Optional<Company> companyById = companyRepository.findById(companyIdOrEmail);
+
                 if (companyById.isEmpty()) {
                     throw new EntityNotFoundException("La compañía con ID " + companyIdOrEmail + " no existe");
                 }
@@ -100,6 +102,10 @@ public class ProjectService implements IProjectService {
             if (projectDto.getIdcompany() != null) {
                 projectDto.setIdcompany(projectDto.getCompanyId());
             }
+            // Asegurarse de que tanto companyId como idcompany estén correctamente configurados
+            projectDto.setCompanyId(companyIdOrEmail);
+            projectDto.setIdcompany(companyIdOrEmail);
+
 
             // Continuar con el registro usando el servicio de registro
             return projectRegistrationService.registerEntity(projectDto);
@@ -158,6 +164,7 @@ public class ProjectService implements IProjectService {
      * @param project Entidad {@link Project} a convertir.
      * @return El DTO correspondiente al proyecto.
      */
+
     @Override
     public ProjectDto projectToDto(Project project) {
         ProjectDto projectDto = new ProjectDto();
@@ -171,10 +178,12 @@ public class ProjectService implements IProjectService {
         projectDto.setProDeadLine(project.getProDeadLine());
         projectDto.setProBudget(project.getProBudget());
         projectDto.setProState(project.getProState().toString());
+        projectDto.setProCoordinator(project.getProCoordinator());
 
         // Asignar el ID de la compañía si existe
         if (project.getIdcompany() != null) {
             projectDto.setCompanyId(project.getIdcompany());
+            projectDto.setIdcompany(project.getIdcompany()); // Asegurar que idcompany también está establecido
         }
 
         return projectDto;

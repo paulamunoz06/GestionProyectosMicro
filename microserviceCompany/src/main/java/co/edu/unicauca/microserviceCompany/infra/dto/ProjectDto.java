@@ -72,6 +72,24 @@ public class ProjectDto {
      */
     private String idcompany;
 
+    @Override
+    public String toString() {
+        return "ProjectDto{" +
+                "proId=" + proId +
+                ", proTitle='" + proTitle + '\'' +
+                ", proDescription='" + proDescription + '\'' +
+                ", proAbstract='" + proAbstract + '\'' +
+                ", proGoals='" + proGoals + '\'' +
+                ", proDate=" + proDate +
+                ", proDeadLine=" + proDeadLine +
+                ", proBudget=" + proBudget +
+                ", proState='" + proState + '\'' +
+                ", companyId=" + companyId +
+                ", idcompany=" + idcompany +
+                ", proCoordinator=" + proCoordinator +
+                '}';
+    }
+
     /**
      * Identificador del coordinador del proyecto.
      */
