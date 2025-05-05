@@ -30,6 +30,11 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
 
+/**
+ * Pruebas unitarias para el servicio ProjectService.
+ * Se verifica el comportamiento de los métodos relacionados con la manipulación de proyectos
+ * como la creación, búsqueda, actualización, conversión entre entidades y DTOs, y la obtención de información de la empresa asociada.
+ */
 @ExtendWith(MockitoExtension.class)
 public class ProjectServiceTest {
 
@@ -60,6 +65,11 @@ public class ProjectServiceTest {
                 projectService, "projectRegistrationService", projectRegistrationService);
     }
 
+    /**
+     * Verifica que se pueda crear un proyecto correctamente.
+     * Se simula la creación de un proyecto a partir de un DTO y se verifica que el proyecto creado no sea nulo
+     * y tenga los valores correctos.
+     */
     @Test
     public void shouldCreateProject() throws Exception {
         // Given
@@ -105,6 +115,11 @@ public class ProjectServiceTest {
         verify(projectRegistrationService).registerEntity(any(ProjectDto.class));
     }
 
+
+    /**
+     * Verifica que se pueda encontrar un proyecto por su ID.
+     * Se espera que al buscar un proyecto con un ID válido, se retorne el proyecto correcto.
+     */
     @Test
     public void shouldFindProjectById() {
         // Given
@@ -133,12 +148,19 @@ public class ProjectServiceTest {
         verify(projectRepository).findById(projectId);
     }
 
+    /**
+     * Verifica que se lance una excepción IllegalArgumentException al intentar buscar un proyecto con un ID nulo.
+     */
     @Test
     public void shouldThrowExceptionWhenFindingProjectWithNullId() {
         // When & Then
         assertThrows(IllegalArgumentException.class, () -> projectService.findById(null));
     }
 
+    /**
+     * Verifica que se pueda obtener la información de la empresa asociada a un proyecto.
+     * Se espera que se retorne un DTO de la empresa con los datos correctos.
+     */
     @Test
     public void shouldGetCompanyInfo() throws Exception {
         // Given
@@ -174,6 +196,10 @@ public class ProjectServiceTest {
         verify(companyService).companyToDto(company);
     }
 
+    /**
+     * Verifica que se pueda convertir un proyecto en un DTO correctamente.
+     * Se espera que los valores del proyecto sean correctamente mapeados al DTO.
+     */
     @Test
     public void shouldConvertProjectToDto() {
         // Given
@@ -207,6 +233,10 @@ public class ProjectServiceTest {
         assertEquals("C001", dto.getCompanyId());
     }
 
+    /**
+     * Verifica que se pueda convertir un DTO de proyecto en una entidad de proyecto correctamente.
+     * Se espera que todos los valores del DTO sean correctamente mapeados a la entidad.
+     */
     @Test
     public void shouldConvertDtoToProject() {
         // Given
@@ -242,6 +272,11 @@ public class ProjectServiceTest {
         assertEquals(now, project.getProDate());
     }
 
+    /**
+     * Verifica que se pueda actualizar un proyecto correctamente.
+     * Se espera que los valores del proyecto se actualicen con los valores del DTO, mientras que los valores no modificados
+     * permanezcan intactos.
+     */
     @Test
     public void shouldUpdateProject() {
         // Given
@@ -290,6 +325,10 @@ public class ProjectServiceTest {
         verify(rabbitTemplate).convertAndSend(anyString(), any(ProjectDto.class));
     }
 
+    /**
+     * Verifica que se lance una excepción EntityNotFoundException al intentar actualizar un proyecto inexistente.
+     * Se espera que la llamada al repositorio no intente guardar el proyecto en caso de no encontrarlo.
+     */
     @Test
     public void shouldThrowExceptionWhenUpdatingNonExistentProject() {
         // Given
@@ -306,12 +345,18 @@ public class ProjectServiceTest {
         verify(projectRepository, never()).save(any(Project.class));
     }
 
+    /**
+     * Verifica que se lance una excepción IllegalArgumentException al intentar actualizar un proyecto con un DTO nulo.
+     */
     @Test
     public void shouldThrowExceptionWhenUpdatingWithNullDto() {
         // When & Then
         assertThrows(IllegalArgumentException.class, () -> projectService.updateProject(null));
     }
 
+    /**
+     * Verifica que se lance una excepción IllegalArgumentException al intentar actualizar un proyecto con un ID nulo.
+     */
     @Test
     public void shouldThrowExceptionWhenUpdatingWithNullId() {
         // Given

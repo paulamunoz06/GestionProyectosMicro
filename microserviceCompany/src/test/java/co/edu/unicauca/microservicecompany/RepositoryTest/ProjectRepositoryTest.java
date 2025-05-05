@@ -15,6 +15,10 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+/**
+ * Pruebas unitarias para la interfaz IProjectRepository utilizando una base de datos en memoria.
+ * Se verifica el comportamiento de los métodos relacionados con la persistencia y consulta de proyectos.
+ */
 @DataJpaTest
 public class ProjectRepositoryTest {
 
@@ -24,6 +28,10 @@ public class ProjectRepositoryTest {
     @Autowired
     private IProjectRepository projectRepository;
 
+    /**
+     * Verifica que se pueda guardar un proyecto correctamente en la base de datos.
+     * Se espera que el proyecto guardado no sea nulo y que sus datos coincidan con los proporcionados.
+     */
     @Test
     public void shouldSaveProject() {
         // Given
@@ -48,6 +56,10 @@ public class ProjectRepositoryTest {
         assertThat(savedProject.getProTitle()).isEqualTo("Test Project");
     }
 
+    /**
+     * Verifica que se pueda encontrar un proyecto existente por su ID.
+     * Se espera que el proyecto encontrado tenga el título esperado.
+     */
     @Test
     public void shouldFindProjectById() {
         // Given
@@ -73,6 +85,10 @@ public class ProjectRepositoryTest {
         assertThat(found.get().getProTitle()).isEqualTo("Another Test Project");
     }
 
+    /**
+     * Verifica que no se pueda encontrar un proyecto por un ID que no existe.
+     * Se espera que el resultado sea vacío.
+     */
     @Test
     public void shouldNotFindProjectById() {
         // When
@@ -82,6 +98,10 @@ public class ProjectRepositoryTest {
         assertThat(found).isEmpty();
     }
 
+    /**
+     * Verifica que se pueda obtener una lista de proyectos disponibles para un estudiante
+     * que no haya postulado ni aprobado el proyecto. El proyecto debe estar disponible para ese estudiante.
+     */
     @Test
     public void shouldFindAvailableProjectsForStudent() {
         // Given
@@ -134,6 +154,10 @@ public class ProjectRepositoryTest {
         assertThat(availableProjects).extracting(Project::getProId).contains("P003");
     }
 
+    /**
+     * Verifica que se pueda contar correctamente el número total de proyectos en la base de datos.
+     * Se espera que el número de proyectos sea al menos 2, considerando los proyectos existentes en el entorno de pruebas.
+     */
     @Test
     public void shouldCountAllProjects() {
         // Given
@@ -174,6 +198,10 @@ public class ProjectRepositoryTest {
         assertThat(count).isGreaterThanOrEqualTo(2);
     }
 
+    /**
+     * Verifica que se pueda contar correctamente el número de proyectos postulados por un estudiante.
+     * Se espera que el número de proyectos postulados para el estudiante especificado sea correcto.
+     */
     @Test
     public void shouldCountPostulatedProjects() {
         // Given
@@ -216,6 +244,10 @@ public class ProjectRepositoryTest {
         assertThat(count).isEqualTo(1);
     }
 
+    /**
+     * Verifica que se pueda contar correctamente el número de proyectos aprobados por un estudiante.
+     * Se espera que el número de proyectos aprobados para el estudiante especificado sea correcto.
+     */
     @Test
     public void shouldCountApprovedProjects() {
         // Given

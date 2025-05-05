@@ -27,6 +27,10 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Pruebas unitarias para el controlador ProjectController usando MockMvc.
+ * Se prueba el registro, recuperación, existencia, y actualización de proyectos.
+ */
 @WebMvcTest(ProjectController.class)
 public class ProjectControllerTest {
 
@@ -42,6 +46,10 @@ public class ProjectControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Verifica que un proyecto se registre correctamente si la compañía existe.
+     * Espera una respuesta 201 (Created) y contenido con los datos del proyecto.
+     */
     @Test
     public void shouldRegisterProject() throws Exception {
         // Given
@@ -89,6 +97,10 @@ public class ProjectControllerTest {
         verify(projectService).projectToDto(any(Project.class));
     }
 
+    /**
+     * Verifica que se retorne 404 Not Found al intentar registrar un proyecto
+     * con una compañía inexistente.
+     */
     @Test
     public void shouldReturnNotFoundWhenRegisteringProjectWithNonExistentCompany() throws Exception {
         // Given
@@ -112,6 +124,10 @@ public class ProjectControllerTest {
         verify(projectService, never()).createProject(any(ProjectDto.class));
     }
 
+    /**
+     * Verifica que se retorne 400 Bad Request al intentar registrar un proyecto
+     * con datos inválidos que provocan una excepción.
+     */
     @Test
     public void shouldReturnBadRequestWhenRegisteringProjectWithInvalidData() throws Exception {
         // Given
@@ -139,6 +155,10 @@ public class ProjectControllerTest {
         verify(projectService).createProject(any(ProjectDto.class));
     }
 
+    /**
+     * Verifica que un proyecto pueda ser recuperado por su ID.
+     * Se espera una respuesta 200 (OK) con los detalles del proyecto.
+     */
     @Test
     public void shouldGetProjectById() throws Exception {
         // Given
@@ -173,6 +193,9 @@ public class ProjectControllerTest {
         verify(projectService).projectToDto(project);
     }
 
+    /**
+     * Verifica que se retorne 404 Not Found al buscar un proyecto inexistente.
+     */
     @Test
     public void shouldReturnNotFoundWhenProjectDoesNotExist() throws Exception {
         // Given
@@ -188,6 +211,9 @@ public class ProjectControllerTest {
         verify(projectService, never()).projectToDto(any(Project.class));
     }
 
+    /**
+     * Verifica que se retorne true cuando un proyecto existe.
+     */
     @Test
     public void shouldCheckIfProjectExists() throws Exception {
         // Given
@@ -203,6 +229,9 @@ public class ProjectControllerTest {
         verify(projectService).findById(projectId);
     }
 
+    /**
+     * Verifica que se retorne false cuando un proyecto no existe.
+     */
     @Test
     public void shouldCheckIfProjectDoesNotExist() throws Exception {
         // Given
@@ -218,6 +247,9 @@ public class ProjectControllerTest {
         verify(projectService).findById(projectId);
     }
 
+    /**
+     * Verifica que se pueda obtener la información de la compañía asociada a un proyecto.
+     */
     @Test
     public void shouldGetCompanyByProjectId() throws Exception {
         // Given
@@ -239,6 +271,10 @@ public class ProjectControllerTest {
         verify(projectService).getCompanyInfo(projectId);
     }
 
+    /**
+     * Verifica que un proyecto se actualice correctamente si existe.
+     * Se espera una respuesta 200 (OK) con los datos actualizados.
+     */
     @Test
     public void shouldUpdateProject() throws Exception {
         // Given
@@ -281,6 +317,9 @@ public class ProjectControllerTest {
         verify(projectService).projectToDto(updatedProject);
     }
 
+    /**
+     * Verifica que se retorne 404 Not Found al intentar actualizar un proyecto inexistente.
+     */
     @Test
     public void shouldReturnNotFoundWhenUpdatingNonExistentProject() throws Exception {
         // Given
@@ -303,6 +342,11 @@ public class ProjectControllerTest {
         verify(projectService, never()).updateProject(any(ProjectDto.class));
     }
 
+
+    /**
+     * Verifica que se retorne 400 Bad Request al intentar actualizar un proyecto
+     * con datos inválidos.
+     */
     @Test
     public void shouldReturnBadRequestWhenUpdatingWithInvalidData() throws Exception {
         // Given

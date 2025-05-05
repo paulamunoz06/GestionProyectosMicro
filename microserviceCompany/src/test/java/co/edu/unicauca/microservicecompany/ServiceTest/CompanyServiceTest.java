@@ -22,6 +22,11 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
+/**
+ * Pruebas unitarias para el servicio CompanyService.
+ * Se verifica el comportamiento de los métodos relacionados con la manipulación de empresas
+ * como la búsqueda por ID, búsqueda por email, conversión entre entidades y DTOs, y la gestión de sectores.
+ */
 @ExtendWith(MockitoExtension.class)
 public class CompanyServiceTest {
 
@@ -64,6 +69,10 @@ public class CompanyServiceTest {
         testCompanyDto.setCompanySector("TECHNOLOGY");
     }
 
+    /**
+     * Verifica que al buscar una empresa por un ID válido, se retorne la empresa correcta.
+     * Se espera que el resultado sea una empresa con el nombre "Test Company".
+     */
     @Test
     void findById_WithValidId_ShouldReturnCompany() {
         // Arrange
@@ -78,6 +87,10 @@ public class CompanyServiceTest {
         verify(companyRepository, times(1)).findById("comp123");
     }
 
+    /**
+     * Verifica que al buscar una empresa con un ID nulo, se lance una excepción EntityNotFoundException.
+     * Se espera que no se realice ninguna llamada al repositorio.
+     */
     @Test
     void findById_WithNullId_ShouldThrowException() {
         // Act & Assert
@@ -87,6 +100,11 @@ public class CompanyServiceTest {
         verify(companyRepository, never()).findById(any());
     }
 
+
+    /**
+     * Verifica que al buscar una empresa por un correo electrónico válido, se retorne la empresa correcta.
+     * Se espera que el resultado sea una empresa con el ID "comp123".
+     */
     @Test
     void findByEmail_WithValidEmail_ShouldReturnCompany() {
         // Arrange
@@ -101,6 +119,10 @@ public class CompanyServiceTest {
         verify(companyRepository, times(1)).findByEmail("test@company.com");
     }
 
+    /**
+     * Verifica que al buscar una empresa con un correo electrónico vacío, se lance una excepción EntityNotFoundException.
+     * Se espera que no se realice ninguna llamada al repositorio.
+     */
     @Test
     void findByEmail_WithEmptyEmail_ShouldThrowException() {
         // Act & Assert
@@ -110,6 +132,11 @@ public class CompanyServiceTest {
         verify(companyRepository, never()).findByEmail(any());
     }
 
+
+    /**
+     * Verifica que se puedan recuperar todas las empresas almacenadas.
+     * Se espera que el tamaño de la lista de empresas sea 2.
+     */
     @Test
     void findAllCompanies_ShouldReturnAllCompanies() {
         // Arrange
@@ -133,6 +160,11 @@ public class CompanyServiceTest {
         verify(companyRepository, times(1)).findAll();
     }
 
+
+    /**
+     * Verifica que la conversión de una entidad Company a un DTO CompanyDto funcione correctamente.
+     * Se espera que todos los campos de la entidad sean correctamente mapeados al DTO.
+     */
     @Test
     void companyToDto_ShouldConvertCompanyToDto() {
         // Act
@@ -150,6 +182,10 @@ public class CompanyServiceTest {
         assertEquals("", result.getUserPassword()); // Password should be empty for security
     }
 
+    /**
+     * Verifica que la conversión de un DTO CompanyDto a una entidad Company funcione correctamente.
+     * Se espera que todos los campos del DTO sean correctamente mapeados a la entidad.
+     */
     @Test
     void companyToEntity_ShouldConvertDtoToCompany() {
         // Act
@@ -166,6 +202,10 @@ public class CompanyServiceTest {
         assertEquals(EnumSector.TECHNOLOGY, result.getCompanySector());
     }
 
+    /**
+     * Verifica que al buscar el ID de un sector con un nombre válido, se retorne el ID del sector correspondiente.
+     * Se espera que el resultado sea "TECHNOLOGY".
+     */
     @Test
     void getSectorIdByName_WithValidSector_ShouldReturnSectorId() {
         // Act
@@ -175,6 +215,10 @@ public class CompanyServiceTest {
         assertEquals("TECHNOLOGY", result);
     }
 
+    /**
+     * Verifica que al buscar el ID de un sector con un nombre no válido, se retorne "OTHER".
+     * Se espera que el resultado sea "OTHER".
+     */
     @Test
     void getSectorIdByName_WithInvalidSector_ShouldReturnOther() {
         // Act

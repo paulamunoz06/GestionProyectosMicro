@@ -23,21 +23,47 @@ import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
+/**
+ * Pruebas unitarias para {@link CompanyController} utilizando {@link @WebMvcTest}.
+ * Se enfoca en la capa de controlador, utilizando {@link MockMvc} para simular peticiones HTTP
+ * y {@link MockBean} para simular la lógica del servicio {@link ICompanyService}.
+ */
 @WebMvcTest(CompanyController.class)
 public class CompanyControllerTest {
 
+    /**
+     * Utilizado para simular peticiones HTTP al controlador sin necesidad de iniciar un servidor real.
+     */
     @Autowired
     private MockMvc mockMvc;
 
+    /**
+     * Utilizado para convertir objetos Java a JSON y viceversa durante las pruebas.
+     */
     @Autowired
     private ObjectMapper objectMapper;
 
+    /**
+     * Simula el comportamiento del servicio real {@link ICompanyService} sin ejecutar la lógica real.
+     */
+    // Crea un mock del servicio real, simula la logica del servicio
     @MockBean
     private ICompanyService companyService;
 
+    /**
+     * Instancia de prueba de la entidad {@link Company}, utilizada en múltiples pruebas.
+     */
     private Company testCompany;
+
+    /**
+     * Instancia de prueba de {@link CompanyDto}, que representa los datos que se enviarían o recibirían del controlador.
+     */
     private CompanyDto testCompanyDto;
 
+    /**
+     * Inicializa los datos de prueba antes de cada método de prueba.
+     * Se ejecuta automáticamente gracias a la anotación {@link BeforeEach}.
+     */
     @BeforeEach
     void setUp() {
         // Setup test company
@@ -65,13 +91,15 @@ public class CompanyControllerTest {
         testCompanyDto.setCompanySector("TECHNOLOGY");
     }
 
+    /**
+     * Verifica que el registro de una compañía con datos válidos
+     * devuelva un código 201 Created y la información correspondiente en el cuerpo de la respuesta.
+     */
     @Test
     void registerCompany_WithValidData_ShouldReturnCreated() throws Exception {
-        // Arrange
         when(companyService.registerCompany(any(CompanyDto.class))).thenReturn(testCompany);
         when(companyService.companyToDto(any(Company.class))).thenReturn(testCompanyDto);
 
-        // Act & Assert
         mockMvc.perform(post("/company/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(testCompanyDto)))
@@ -83,6 +111,10 @@ public class CompanyControllerTest {
         verify(companyService, times(1)).registerCompany(any(CompanyDto.class));
     }
 
+    /**
+     * Verifica que al intentar registrar una compañía con datos inválidos
+     * (por ejemplo, email duplicado), se devuelva un código 400 Bad Request con un mensaje de error.
+     */
     @Test
     void registerCompany_WithInvalidData_ShouldReturnBadRequest() throws Exception {
         // Arrange
@@ -99,6 +131,10 @@ public class CompanyControllerTest {
         verify(companyService, times(1)).registerCompany(any(CompanyDto.class));
     }
 
+    /**
+     * Verifica que al solicitar una compañía existente por su ID,
+     * se devuelva un código 200 OK y la información correspondiente de la compañía.
+     */
     @Test
     void getCompanyById_WithExistingId_ShouldReturnCompany() throws Exception {
         // Arrange
@@ -114,6 +150,10 @@ public class CompanyControllerTest {
         verify(companyService, times(1)).findById("comp123");
     }
 
+    /**
+     * Verifica que al solicitar una compañía inexistente por su ID,
+     * se devuelva un código 404 Not Found.
+     */
     @Test
     void getCompanyById_WithNonExistingId_ShouldReturnNotFound() throws Exception {
         // Arrange
@@ -126,6 +166,10 @@ public class CompanyControllerTest {
         verify(companyService, times(1)).findById("nonexistent");
     }
 
+    /**
+     * Verifica que al solicitar una compañía existente por su email,
+     * se devuelva un código 200 OK y la información correspondiente de la compañía.
+     */
     @Test
     void getCompanyByEmail_WithExistingEmail_ShouldReturnCompany() throws Exception {
         // Arrange
@@ -141,6 +185,10 @@ public class CompanyControllerTest {
         verify(companyService, times(1)).findByEmail("test@company.com");
     }
 
+    /**
+     * Verifica que al solicitar una compañía inexistente por su email,
+     * se devuelva un código 404 Not Found.
+     */
     @Test
     void getCompanyByEmail_WithNonExistingEmail_ShouldReturnNotFound() throws Exception {
         // Arrange
@@ -153,6 +201,10 @@ public class CompanyControllerTest {
         verify(companyService, times(1)).findByEmail("nonexistent@email.com");
     }
 
+    /**
+     * Verifica que se devuelvan todas las compañías registradas
+     * con un código 200 OK y una lista en formato JSON.
+     */
     @Test
     void getAllCompanies_ShouldReturnAllCompanies() throws Exception {
         // Arrange
@@ -186,6 +238,10 @@ public class CompanyControllerTest {
         verify(companyService, times(1)).findAllCompanies();
     }
 
+    /**
+     * Verifica que se obtenga correctamente el ID de un sector dado su nombre,
+     * devolviendo un código 200 OK.
+     */
     @Test
     void getSectorIdByName_WithValidSector_ShouldReturnSectorId() throws Exception {
         // Arrange
@@ -199,6 +255,10 @@ public class CompanyControllerTest {
         verify(companyService, times(1)).getSectorIdByName("TECHNOLOGY");
     }
 
+    /**
+     * Verifica que se devuelva correctamente la cantidad total de compañías registradas,
+     * con un código 200 OK y un campo `count` en la respuesta.
+     */
     @Test
     void getCompanyCount_ShouldReturnCount() throws Exception {
         // Arrange
