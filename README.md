@@ -1,15 +1,32 @@
-# Gestión de Proyectos Académicos para Empresas
+# Sistema de Gestión de Proyectos Académicos
 
-## Descripción
+Este sistema está compuesto por múltiples microservicios independientes que colaboran entre sí para permitir la gestión de proyectos académicos entre estudiantes, empresas y coordinadores.
 
 ## Arquitectura
 
+El sistema sigue una arquitectura **basada en microservicios** con comunicación entre ellos a través de **REST** y/o **mensajería asincrónica**. Cada microservicio se implementa con **Spring Boot**, emplea **JPA/Hibernate** para persistencia, y está organizado en paquetes por responsabilidad (Controller, Service, Repository, Entity, DTO, etc.).
+
 ### Microservicios del sistema
--**Login Microservice**: se encarga de todo lo relacionado con el inicio de sesión.
 
--**Company Microservice**: se encarga de manejar las necesidades de las empresas, como el registro de empresas y la publicacion de necesidades.
+- **Login Microservice**  
+  Se encarga de todo lo relacionado con el inicio de sesión, autenticación y autorización de usuarios.
 
--**Student Microservice**: se encarga de manejar las necesidades de los estudiantes, como ver sus proyetos disponibles para postulación y demás.
+- **Company Microservice**  
+  Maneja las necesidades de las empresas:
+  - Registro de empresas.
+  - Publicación y gestión de proyectos.
+
+- **Student Microservice**  
+  Maneja la lógica relacionada con los estudiantes:
+  - Consulta de proyectos disponibles.
+  - Postulación a proyectos.
+  - Visualización del historial y estado de postulaciones.
+
+- **Coordinator Microservice**  
+  Da soporte a los coordinadores:
+  - Visualización de todos los proyectos.
+  - Evaluación de postulaciones y aprobación/rechazo.
+  - Notificación a empresas sobre el estado de los proyectos.
 
 -**Coordinator Microservice**: se encarga de manejar las necesidades de los coordinadores, como ver todos los proyectos, evaluarlos, y notificar a las empresas de los cambios realizados.
 ## Requisitos
@@ -29,14 +46,6 @@
 - [Modelo C4](https://drive.google.com/file/d/1I6pi0R7gYwSiqrWNn6MVyKbS7FnPlVaR/view?usp=sharing)
 - [Levantamiento de Requisitos](https://docs.google.com/spreadsheets/d/1hG2GuJDQpcxUXRv70Yiytuf38SZNCaiGbclfKXcRKBk/edit?usp=sharing)
 - [Test de Usabilidad](https://docs.google.com/spreadsheets/d/1pmMF3Gd32J0-KrMs3bDB2ZYqA62sIhG9D5hBbXWHq5U/edit?gid=946668092#gid=946668092)
-
-## Pruebas Unitarias
-
-## Instalación y Uso
-### Requisitos Previos
-- **JDK 21 o superior**
-
-### Configuración
 
 ## Créditos
 **Desarrollado por:**
