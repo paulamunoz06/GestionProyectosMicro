@@ -49,7 +49,7 @@ El sistema sigue una arquitectura **basada en microservicios** con comunicación
 
 ## Créditos
 **Desarrollado por:**
-- Ana Sofía Arango Yanza
+- Ana Sofia Arango Yanza
 - Juan Diego Gómez Garcés
 - Paula Andrea Muñoz Delgado
 - Cristhian Camilo Unas Ocaña
