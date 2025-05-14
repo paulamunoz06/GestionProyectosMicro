@@ -82,9 +82,9 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
         lblCoordinatorCorreo = new javax.swing.JLabel();
         btnCoordiName = new javax.swing.JButton();
         jButton7 = new javax.swing.JButton();
-        lbCoordinatorTitle = new javax.swing.JLabel();
         jPanelGraficoCoordinator = new javax.swing.JPanel();
         btnCambiarGrafica = new javax.swing.JButton();
+        lbCoordinatorTitle = new javax.swing.JLabel();
 
         jTableCoordinador.setForeground(new java.awt.Color(255, 255, 255));
         jTableCoordinador.setModel(new javax.swing.table.DefaultTableModel(
@@ -205,10 +205,6 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
         });
         jPanel4.add(jButton7, new org.netbeans.lib.awtextra.AbsoluteConstraints(0, 300, 210, 50));
 
-        lbCoordinatorTitle.setFont(new java.awt.Font("Segoe UI Semibold", 1, 36)); // NOI18N
-        lbCoordinatorTitle.setForeground(new java.awt.Color(38, 42, 65));
-        lbCoordinatorTitle.setText("Bienvenido Coordinador x");
-
         jPanelGraficoCoordinator.setBackground(new java.awt.Color(255, 255, 255));
 
         javax.swing.GroupLayout jPanelGraficoCoordinatorLayout = new javax.swing.GroupLayout(jPanelGraficoCoordinator);
@@ -219,7 +215,7 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
         );
         jPanelGraficoCoordinatorLayout.setVerticalGroup(
             jPanelGraficoCoordinatorLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 467, Short.MAX_VALUE)
+            .addGap(0, 430, Short.MAX_VALUE)
         );
 
         btnCambiarGrafica.setBackground(new java.awt.Color(90, 111, 228));
@@ -227,11 +223,16 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
         btnCambiarGrafica.setForeground(new java.awt.Color(255, 255, 255));
         btnCambiarGrafica.setText("Ver Gráfica de Pastel");
         btnCambiarGrafica.setBorder(null);
+        btnCambiarGrafica.setFocusPainted(false);
         btnCambiarGrafica.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnCambiarGraficaActionPerformed(evt);
             }
         });
+
+        lbCoordinatorTitle.setFont(new java.awt.Font("Segoe UI Semibold", 1, 36)); // NOI18N
+        lbCoordinatorTitle.setForeground(new java.awt.Color(38, 42, 65));
+        lbCoordinatorTitle.setText("Bienvenido Coordinador x");
 
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
@@ -239,26 +240,29 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(31, 31, 31)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(jPanel2Layout.createSequentialGroup()
-                        .addComponent(lbCoordinatorTitle)
-                        .addGap(198, 198, 198)
+                        .addGap(31, 31, 31)
+                        .addComponent(lbCoordinatorTitle))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(352, 352, 352)
                         .addComponent(btnCambiarGrafica, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addComponent(jPanelGraficoCoordinator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 72, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addGap(31, 31, 31)
+                        .addComponent(jPanelGraficoCoordinator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)))
+                .addGap(72, 72, 72))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
+            .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 606, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
-                    .addComponent(lbCoordinatorTitle)
-                    .addComponent(btnCambiarGrafica, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addComponent(lbCoordinatorTitle)
                 .addGap(18, 18, 18)
                 .addComponent(jPanelGraficoCoordinator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnCambiarGrafica, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addGap(19, 19, 19))
         );
 
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
@@ -339,7 +343,6 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
 
         jPanelGraficoCoordinator.revalidate(); // Actualiza el layout
         jPanelGraficoCoordinator.repaint();    // Vuelve a dibujar
-
     }//GEN-LAST:event_btnCambiarGraficaActionPerformed
 
     /**
