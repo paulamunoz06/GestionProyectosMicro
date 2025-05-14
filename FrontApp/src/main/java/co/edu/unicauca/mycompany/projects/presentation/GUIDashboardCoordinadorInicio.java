@@ -13,18 +13,23 @@ import co.edu.unicauca.mycompany.projects.domain.services.ProjectService;
 import co.edu.unicauca.mycompany.projects.domain.services.UserService;
 
 /**
- * Interfaz gráfica del panel de inicio para coordinadores.
- * Permite la visualización de datos y gráficos relacionados con los proyectos gestionados.
+ * Interfaz gráfica del panel de inicio para coordinadores. Permite la
+ * visualización de datos y gráficos relacionados con los proyectos gestionados.
  */
-public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements Dashboard{
+public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements Dashboard {
 
     /**
      * Coordinador que ha iniciado sesión.
      */
     private final Coordinator coordinator;
+    private final ProjectService projectService;
+    
+    private boolean mostrandoGraficaPastel = false;
+
 
     /**
-     * Constructor del panel de inicio para coordinadores.Inicializa los servicios, obtiene los datos del coordinador y configura la interfaz.
+     * Constructor del panel de inicio para coordinadores.Inicializa los
+     * servicios, obtiene los datos del coordinador y configura la interfaz.
      *
      * @param coordinator Instancia de la clase coordinador
      * @param projectService Instancia servicio de proyectos
@@ -32,7 +37,7 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
     public GUIDashboardCoordinadorInicio(Coordinator coordinator, ProjectService projectService) {
         // Obtener los datos del coordinador a partir del ID proporcionado
         this.coordinator = coordinator;
-
+        this.projectService = projectService;
         // Inicializar los componentes gráficos de la interfaz
         initComponents();
 
@@ -44,18 +49,19 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
     }
 
     /**
-     * Configura la apariencia y elementos visuales del dashboard.
-     * Hace visible la ventana, la centra en la pantalla y deshabilita la opción de redimensionar.
+     * Configura la apariencia y elementos visuales del dashboard. Hace visible
+     * la ventana, la centra en la pantalla y deshabilita la opción de
+     * redimensionar.
      */
     public final void initVisual() {
         this.setVisible(true);
-        setLocationRelativeTo(null); 
+        setLocationRelativeTo(null);
         setResizable(false);
         btnCoordiName.setText("Coordinador " + coordinator.getId());
         lbCoordinatorTitle.setText("Bienvenido Coordinador " + coordinator.getId());
         lblCoordinatorCorreo.setText(coordinator.getEmail());
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -78,6 +84,7 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
         jButton7 = new javax.swing.JButton();
         lbCoordinatorTitle = new javax.swing.JLabel();
         jPanelGraficoCoordinator = new javax.swing.JPanel();
+        btnCambiarGrafica = new javax.swing.JButton();
 
         jTableCoordinador.setForeground(new java.awt.Color(255, 255, 255));
         jTableCoordinador.setModel(new javax.swing.table.DefaultTableModel(
@@ -215,6 +222,17 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
             .addGap(0, 467, Short.MAX_VALUE)
         );
 
+        btnCambiarGrafica.setBackground(new java.awt.Color(90, 111, 228));
+        btnCambiarGrafica.setFont(new java.awt.Font("Segoe UI", 1, 14)); // NOI18N
+        btnCambiarGrafica.setForeground(new java.awt.Color(255, 255, 255));
+        btnCambiarGrafica.setText("Ver Gráfica de Pastel");
+        btnCambiarGrafica.setBorder(null);
+        btnCambiarGrafica.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnCambiarGraficaActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -222,8 +240,11 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31)
-                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(lbCoordinatorTitle)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(lbCoordinatorTitle)
+                        .addGap(198, 198, 198)
+                        .addComponent(btnCambiarGrafica, javax.swing.GroupLayout.PREFERRED_SIZE, 158, javax.swing.GroupLayout.PREFERRED_SIZE))
                     .addComponent(jPanelGraficoCoordinator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(0, 72, Short.MAX_VALUE))
         );
@@ -232,7 +253,9 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(lbCoordinatorTitle)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(lbCoordinatorTitle)
+                    .addComponent(btnCambiarGrafica, javax.swing.GroupLayout.PREFERRED_SIZE, 35, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jPanelGraficoCoordinator, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -255,18 +278,18 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Maneja el evento cuando el usuario presiona el botón "Proyectos".
-     * Abre la ventana del dashboard del coordinador y cierra la ventana actual.
+     * Maneja el evento cuando el usuario presiona el botón "Proyectos". Abre la
+     * ventana del dashboard del coordinador y cierra la ventana actual.
      *
      * @param evt Evento de acción generado al presionar el botón.
      */
     private void btnProyectosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnProyectosActionPerformed
         IProjectRepository projectRepository = ProjectRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         ICompanyRepository companyRepository = CompanyRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
-        
+
         GUIDashboardCoordinador gui = new GUIDashboardCoordinador(coordinator, new ProjectService(projectRepository), new CompanyService(companyRepository), btnProyectos);
         gui.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnProyectosActionPerformed
 
@@ -276,26 +299,48 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
 
     private void btnCerrarSesiónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesiónActionPerformed
         IUserRepository repositoryUser = UserRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
-        
+
         GUIinicioSesion instance = new GUIinicioSesion(new UserService(repositoryUser));
         instance.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnCerrarSesiónActionPerformed
 
     /**
-     * Maneja el evento cuando el usuario presiona el botón con el nombre del coordinador.
-     * Abre la ventana del dashboard inicial del coordinador y cierra la ventana actual.
+     * Maneja el evento cuando el usuario presiona el botón con el nombre del
+     * coordinador. Abre la ventana del dashboard inicial del coordinador y
+     * cierra la ventana actual.
      *
      * @param evt Evento de acción generado al presionar el botón.
      */
     private void btnCoordiNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCoordiNameActionPerformed
-        
+
     }//GEN-LAST:event_btnCoordiNameActionPerformed
 
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton7ActionPerformed
+
+    private void btnCambiarGraficaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCambiarGraficaActionPerformed
+        // TODO add your handling code here:
+        jPanelGraficoCoordinator.removeAll(); // Limpia el panel
+
+        if (mostrandoGraficaPastel) {
+            // Cambiar a gráfica de barras
+            new GraphicProjectsCoordinatorObserver(coordinator, projectService, jPanelGraficoCoordinator).update();
+            btnCambiarGrafica.setText("Ver Gráfica de Pastel");
+            mostrandoGraficaPastel = false;
+        } else {
+            // Cambiar a gráfica de pastel
+            new GraphicPieChartProjectsCoordinatorObserver(coordinator, projectService, jPanelGraficoCoordinator).update();
+            btnCambiarGrafica.setText("Ver Gráfica de Barras");
+            mostrandoGraficaPastel = true;
+        }
+
+        jPanelGraficoCoordinator.revalidate(); // Actualiza el layout
+        jPanelGraficoCoordinator.repaint();    // Vuelve a dibujar
+
+    }//GEN-LAST:event_btnCambiarGraficaActionPerformed
 
     /**
      * @param args the command line arguments
@@ -340,11 +385,12 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
         //</editor-fold>
         IProjectRepository repository = ProjectRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         ProjectService projectService = new ProjectService(repository);
-        GUIDashboardCoordinadorInicio instance = new  GUIDashboardCoordinadorInicio(new Coordinator("C01", "coord@example.com", "1234"),  projectService);
+        GUIDashboardCoordinadorInicio instance = new GUIDashboardCoordinadorInicio(new Coordinator("C01", "coord@example.com", "1234"), projectService);
         instance.setVisible(true);
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JButton btnCambiarGrafica;
     private javax.swing.JButton btnCerrarSesión;
     private javax.swing.JButton btnCoordiName;
     private javax.swing.JButton btnProyectos;
@@ -360,7 +406,8 @@ public class GUIDashboardCoordinadorInicio extends javax.swing.JFrame implements
     private javax.swing.JLabel lblCoordinatorCorreo;
     // End of variables declaration//GEN-END:variables
     /**
-     * Se encarga de mostrar la interfaz, se hace para poder utilizar la fabrica y el principio abierto cerrado
+     * Se encarga de mostrar la interfaz, se hace para poder utilizar la fabrica
+     * y el principio abierto cerrado
      */
     @Override
     public void mostrar() {
