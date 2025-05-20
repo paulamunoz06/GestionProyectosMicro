@@ -1,10 +1,12 @@
-package co.edu.unicauca.microservicecoordinator.infraestructure.persistence.repository;
+package co.edu.unicauca.microservicecoordinator.adapter.out.persistence;
 
+import co.edu.unicauca.microservicecoordinator.application.port.out.ProjectRepositoryPort;
 import co.edu.unicauca.microservicecoordinator.domain.model.EnumProjectState;
 import co.edu.unicauca.microservicecoordinator.domain.model.Project;
-import co.edu.unicauca.microservicecoordinator.domain.repository.ProjectRepository;
 import co.edu.unicauca.microservicecoordinator.domain.valueObject.ProjectId;
 import co.edu.unicauca.microservicecoordinator.infraestructure.persistence.entity.JpaProjectEntity;
+import co.edu.unicauca.microservicecoordinator.infraestructure.persistence.repository.JpaProjectRepository;
+import co.edu.unicauca.microservicecoordinator.infraestructure.persistence.repository.ProjectJpaMapper;
 import co.edu.unicauca.microservicecoordinator.presentation.dto.ProjectDto;
 import co.edu.unicauca.microservicecoordinator.presentation.dto.ProjectDtoMapper;
 import org.springframework.context.annotation.Primary;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Repository
 @Primary
-public class ProjectRepositoryImpl implements ProjectRepository{
+public class ProjectRepositoryImpl implements ProjectRepositoryPort {
 
     private final JpaProjectRepository jpaRepository;
 

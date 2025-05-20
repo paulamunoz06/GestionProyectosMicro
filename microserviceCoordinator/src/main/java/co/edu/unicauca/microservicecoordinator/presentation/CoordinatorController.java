@@ -1,10 +1,10 @@
 package co.edu.unicauca.microservicecoordinator.presentation;
 
-import co.edu.unicauca.microservicecoordinator.domain.model.Project;
+import co.edu.unicauca.microservicecoordinator.application.port.in.CoordinatorServicePort;
+import co.edu.unicauca.microservicecoordinator.application.port.in.ProjectServicePort;
 import co.edu.unicauca.microservicecoordinator.presentation.dto.ProjectDto;
-import co.edu.unicauca.microservicecoordinator.application.CoordinatorService;
-import co.edu.unicauca.microservicecoordinator.application.ProjectService;
-import co.edu.unicauca.microservicecoordinator.presentation.dto.ProjectDtoMapper;
+import co.edu.unicauca.microservicecoordinator.adapter.in.rest.CoordinatorService;
+import co.edu.unicauca.microservicecoordinator.adapter.in.rest.ProjectService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,12 +19,12 @@ import java.util.Optional;
 public class CoordinatorController {
 
     @Autowired
-    private final ProjectService projectService;
+    private final ProjectServicePort projectService;
 
     @Autowired
-    private CoordinatorService coordinatorService;
+    private CoordinatorServicePort coordinatorService;
 
-    public CoordinatorController(ProjectService service, CoordinatorService coordinatorService) {
+    public CoordinatorController(ProjectServicePort service, CoordinatorServicePort coordinatorService) {
         this.projectService = service;
         this.coordinatorService = coordinatorService;
     }

@@ -1,9 +1,7 @@
 package co.edu.unicauca.microservicecoordinator.infraestructure.persistence.repository;
 
-import co.edu.unicauca.microservicecoordinator.domain.model.Coordinator;
 import co.edu.unicauca.microservicecoordinator.domain.model.EnumProjectState;
-import co.edu.unicauca.microservicecoordinator.domain.model.Project;
-import co.edu.unicauca.microservicecoordinator.application.CoordinatorService;
+import co.edu.unicauca.microservicecoordinator.adapter.in.rest.CoordinatorService;
 import co.edu.unicauca.microservicecoordinator.domain.valueObject.ProjectDeadline;
 import co.edu.unicauca.microservicecoordinator.domain.valueObject.ProjectId;
 import co.edu.unicauca.microservicecoordinator.domain.valueObject.ProjectRegistrationDate;

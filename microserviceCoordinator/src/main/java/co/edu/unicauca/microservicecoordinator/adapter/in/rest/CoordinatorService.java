@@ -1,8 +1,9 @@
-package co.edu.unicauca.microservicecoordinator.application;
+package co.edu.unicauca.microservicecoordinator.adapter.in.rest;
 
+import co.edu.unicauca.microservicecoordinator.application.port.in.CoordinatorServicePort;
+import co.edu.unicauca.microservicecoordinator.application.port.out.ProjectRepositoryPort;
 import co.edu.unicauca.microservicecoordinator.domain.model.EnumProjectState;
 import co.edu.unicauca.microservicecoordinator.domain.model.Project;
-import co.edu.unicauca.microservicecoordinator.domain.repository.ProjectRepository;
 import co.edu.unicauca.microservicecoordinator.infraestructure.config.RabbitMQConfig;
 import co.edu.unicauca.microservicecoordinator.domain.model.exceptions.InvalidStateTransitionException;
 import co.edu.unicauca.microservicecoordinator.presentation.dto.ProjectDto;
@@ -13,17 +14,18 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 
 @Service
-public class CoordinatorService {
+public class CoordinatorService implements CoordinatorServicePort{
 
     @Autowired
     private RabbitTemplate rabbitTemplate;
 
-    private final ProjectRepository projectRepository;
+    private final ProjectRepositoryPort projectRepository;
 
-    public CoordinatorService(ProjectRepository projectRepository) {
+    public CoordinatorService(ProjectRepositoryPort projectRepository) {
         this.projectRepository = projectRepository;
     }
 
+    @Override
     public ProjectDto evaluateProject(String proId, String proStatusStr) {
         Optional<Project> optionalProject = projectRepository.findById(proId).map(ProjectDtoMapper::projectToClass);
         if (optionalProject.isPresent()) {
