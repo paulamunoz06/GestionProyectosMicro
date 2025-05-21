@@ -1,6 +1,7 @@
 package co.edu.unicauca.microservicecoordinator.entities;
 
 import co.edu.unicauca.microservicecoordinator.infra.state.*;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
@@ -70,6 +71,7 @@ public class Project {
      * Fecha de registro del proyecto.
      */
     @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "PRODATE", nullable = false)
     private LocalDate proDate;
 
