@@ -15,20 +15,19 @@ public interface IUserRepository {
      * @return Un código de estado indicando el resultado del inicio de sesión.
      */
     int iniciarSesion(String usuario, char[] pwd);
-    
+
     /**
-     * Guarda un nuevo usuario en el repositorio.
-     * 
-     * @param newUser Objeto User con la información del usuario a registrar.
-     * @return true si el usuario se guardó con éxito, false en caso contrario.
+     * Funcion que se encarga de obtener el el token JWT desde KEYCLOAK
+     * @param username
+     * @param password
+     * @return
      */
-    boolean save(User newUser);
-    
+    private String obtenerToken(String username, String password);
+
     /**
-     * Verifica si un usuario con el ID especificado existe en el repositorio.
-     * 
-     * @param id Identificador del usuario.
-     * @return true si el usuario existe, false en caso contrario.
+     * Se encarga de extraer el rol de un token JWT y convertirlo al entero correspondiente dependiendo del rol
+     * @param token es JWT token
+     * @return entero correspondiente
      */
-    boolean existId(String id);
+    private int extraerRolDesdeToken(String token);
 }

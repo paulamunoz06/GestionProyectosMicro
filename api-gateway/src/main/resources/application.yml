@@ -7,10 +7,10 @@ spring:
   cloud:
     gateway:
       routes:
-        - id: microservice-a
-          uri: http://localhost:8082
+        - id: microservice-company
+          uri: http://localhost:8085
           predicates:
-            - Path=/a/**
+            - Path=/company/**
           filters:
             - StripPrefix=1
         - id: microservice-b

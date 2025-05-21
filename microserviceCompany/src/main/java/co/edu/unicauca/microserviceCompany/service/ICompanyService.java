@@ -30,7 +30,7 @@ public interface ICompanyService {
      * @return La empresa actualizada.
      * @throws Exception Si ocurre un error durante la actualización.
      */
-    Company updateCompany(Company company) throws Exception;
+    Company updateCompany(String companyId, CompanyDto companyDto) throws Exception;
 
     /**
      * Busca una empresa por su ID.

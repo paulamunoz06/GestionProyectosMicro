@@ -6,6 +6,7 @@ import co.edu.unicauca.microserviceCompany.service.ICompanyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -13,6 +14,10 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.core.annotation.AuthenticationPrincipal; // Importar
+import org.springframework.security.oauth2.jwt.Jwt;
 /**
  * Controlador REST para gestionar las operaciones relacionadas con las empresas en el sistema.
  *
@@ -20,6 +25,8 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping("/company")
 public class CompanyController {
+
+    private static final Logger logger = LoggerFactory.getLogger(CompanyController.class);
 
     /**
      * Servicio que maneja la lógica de negocio relacionada con las empresas.
@@ -40,17 +47,34 @@ public class CompanyController {
      * @return ResponseEntity con el estado de la operación y los datos de la empresa registrada.
      */
     @PostMapping("/register")
-    public ResponseEntity<?> registerCompany(@RequestBody CompanyDto companyDto) {
+    @PreAuthorize("hasRole('company')")
+    public ResponseEntity<?> registerCompany(@RequestBody CompanyDto companyDto, @AuthenticationPrincipal Jwt jwt) {
         try {
+            String userId = jwt.getSubject();
+            String userEmail = jwt.getClaimAsString("email");
+
+            if (userId == null || userId.isEmpty() || userEmail == null || userEmail.isEmpty()) {
+                logger.warn("Token JWT incompleto: falta subject o email.");
+                return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                        .body(Map.of("error", "Información de usuario (ID o email) faltante en el token."));
+            }
+
+            companyDto.setUserId(userId);
+            companyDto.setUserEmail(userEmail);
+            // companyDto.setUserPassword(null); // Ya no existe este campo
+
+            logger.info("Usuario {} intentando registrar empresa: {}", userId, companyDto.getCompanyName());
             Company registeredCompany = companyService.registerCompany(companyDto);
             return ResponseEntity.status(HttpStatus.CREATED)
                     .body(companyService.companyToDto(registeredCompany));
         } catch (IllegalArgumentException e) {
+            logger.warn("Error de argumento al registrar empresa: {}", e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                     .body(Map.of("error", e.getMessage()));
         } catch (Exception e) {
+            logger.error("Error interno al registrar la empresa: ", e); // Log completo
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(Map.of("error", "Error al registrar la empresa: " + e.getMessage()));
+                    .body(Map.of("error", "Error interno al registrar la empresa."));
         }
     }
 
@@ -65,16 +89,20 @@ public class CompanyController {
      * @return ResponseEntity con los detalles de la empresa o una respuesta 404 si no se encuentra.
      */
     @GetMapping("/{companyId}")
-    public ResponseEntity<?> getCompanyById(@PathVariable String companyId) {
+    @PreAuthorize("hasRole('company') or hasRole('coordinator')")
+    public ResponseEntity<?> getCompanyById(@PathVariable String companyId,
+                                                @AuthenticationPrincipal Jwt jwt) { // jwt para logging/info
         try {
+            logger.info("Usuario {} solicitando empresa con ID: {}", jwt.getSubject(), companyId);
             Optional<Company> company = companyService.findById(companyId);
             if (company.isEmpty()) {
                 return ResponseEntity.notFound().build();
             }
             return ResponseEntity.ok(companyService.companyToDto(company.get()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", e.getMessage()));
+            logger.error("Error al obtener empresa por ID {}: ", companyId, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR) // Considerar INTERNAL_SERVER_ERROR para errores inesperados
+                    .body(Map.of("error", "Error al obtener la empresa."));
         }
     }
 
@@ -97,8 +125,9 @@ public class CompanyController {
             }
             return ResponseEntity.ok(companyService.companyToDto(company.get()));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", e.getMessage()));
+            logger.error("Error al obtener empresa por email {}: ", email, e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al obtener la empresa por email."));
         }
     }
 
@@ -111,16 +140,18 @@ public class CompanyController {
      * @return ResponseEntity con la lista de todas las empresas.
      */
     @GetMapping("/all")
+    @PreAuthorize("hasRole('coordinator')")
     public ResponseEntity<?> getAllCompanies() {
         try {
             List<Company> companies = companyService.findAllCompanies();
             List<CompanyDto> companyDtos = companies.stream()
-                    .map(company -> companyService.companyToDto(company))
+                    .map(companyService::companyToDto)
                     .collect(Collectors.toList());
             return ResponseEntity.ok(companyDtos);
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", e.getMessage()));
+            logger.error("Error al obtener todas las empresas: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al obtener todas las empresas."));
         }
     }
 
@@ -133,14 +164,14 @@ public class CompanyController {
      * @param sectorName Nombre del sector a consultar.
      * @return ResponseEntity con el ID del sector.
      */
-    @GetMapping("/sector/{sectorName}")
     public ResponseEntity<?> getSectorIdByName(@PathVariable String sectorName) {
         try {
             String sectorId = companyService.getSectorIdByName(sectorName);
             return ResponseEntity.ok(Map.of("sectorId", sectorId));
-        } catch (Exception e) {
+        } catch (Exception e) { // Ser más específico con la excepción si es posible
+            logger.warn("Error al obtener ID del sector para '{}': {}", sectorName, e.getMessage());
             return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", e.getMessage()));
+                    .body(Map.of("error", "Error al procesar el nombre del sector."));
         }
     }
 
@@ -158,8 +189,9 @@ public class CompanyController {
             int count = companyService.countAllCompanies();
             return ResponseEntity.ok(Map.of("count", count));
         } catch (Exception e) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST)
-                    .body(Map.of("error", e.getMessage()));
+            logger.error("Error al obtener el conteo de empresas: ", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(Map.of("error", "Error al obtener el conteo de empresas."));
         }
     }
 }

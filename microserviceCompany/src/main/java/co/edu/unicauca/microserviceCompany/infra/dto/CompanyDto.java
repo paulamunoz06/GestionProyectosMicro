@@ -26,12 +26,6 @@ public class CompanyDto {
     private String userEmail;
 
     /**
-     * La contraseña del usuario asociado a la empresa.
-     * Esta información no debe ser transferida de forma directa en producción por razones de seguridad.
-     */
-    private String userPassword;
-
-    /**
      * El nombre de la empresa.
      */
     private String companyName;

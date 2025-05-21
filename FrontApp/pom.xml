@@ -13,6 +13,11 @@
             <type>jar</type>
         </dependency>
         <dependency>
+            <groupId>org.json</groupId>
+            <artifactId>json</artifactId>
+            <version>20230227</version> <!-- Puedes usar una versión más reciente si lo deseas -->
+        </dependency>
+        <dependency>
             <groupId>org.apache.httpcomponents</groupId>
             <artifactId>httpclient</artifactId>
             <version>4.5.13</version> <!-- O la versión más reciente disponible -->

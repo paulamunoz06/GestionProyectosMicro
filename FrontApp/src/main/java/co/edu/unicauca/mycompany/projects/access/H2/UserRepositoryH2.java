@@ -1,20 +1,17 @@
 package co.edu.unicauca.mycompany.projects.access.H2;
 
 import co.edu.unicauca.mycompany.projects.access.IUserRepository;
-import co.edu.unicauca.mycompany.projects.domain.entities.User;
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.net.URI;
 import java.io.IOException;
+import java.net.http.HttpRequest;
 import java.nio.charset.StandardCharsets;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.Map;
-import org.apache.http.HttpResponse;
+import java.net.http.HttpResponse;
 import org.apache.http.HttpStatus;
-import org.apache.http.client.HttpClient;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
+import java.net.http.HttpClient;
+import org.json.JSONObject;
 
 /**
  * Implementación del repositorio de usuarios que interactúa con un servicio REST
@@ -38,53 +35,73 @@ public class UserRepositoryH2 implements IUserRepository{
      */
     @Override
     public int iniciarSesion(String usuario, char[] pwd) {
-        // 1. Cliente HTTP y mapper Jackson
-        HttpClient httpClient = HttpClients.createDefault();
-        ObjectMapper mapper = new ObjectMapper();
-
-        try {
-            String apiUrl = "http://localhost:8082/api/login/user";
-
-            // 2. Creamos la petición POST
-            HttpPost request = new HttpPost(apiUrl);
-            request.addHeader("Content-Type", "application/json");
-            request.addHeader("Accept", "application/json");
-
-            // 3. Preparamos el JSON con usuario y contraseña
-            Map<String, String> creds = new HashMap<>();
-            creds.put("id", usuario);
-            creds.put("password", new String(pwd));
-            String jsonCreds = mapper.writeValueAsString(creds);
-
-            StringEntity entity = new StringEntity(jsonCreds, ContentType.APPLICATION_JSON);
-            request.setEntity(entity);
-
-            // 4. Ejecutamos la petición
-            HttpResponse response = httpClient.execute(request);
-            int statusCode = response.getStatusLine().getStatusCode();
-
-            if (statusCode == HttpStatus.SC_OK) {
-                // 5. Leemos la respuesta JSON y la mapeamos a User
-                String jsonResponse = EntityUtils.toString(response.getEntity(), StandardCharsets.UTF_8);
-                User user = mapper.readValue(jsonResponse, User.class);
-                return user.getRole();
+        try{
+            String token = obtenerToken(usuario, new String(pwd));
+            if (token == null) {
+                return extraerRolDesdeToken(token);
             }
             else {
-                throw new RuntimeException("Error en login. Código HTTP: " + statusCode);
+                throw new RuntimeException("Error en login. El codigo al intentar obtener el token es distinto de 200 ");
             }
-
-        } catch (IOException ex) {
-            throw new RuntimeException("Error de E/S al invocar el servicio de login", ex);
         }
+        catch (Exception e){
+            System.out.println(e.getMessage());
+            return -1;
+        }
+
     }
 
-    @Override
-    public boolean save(User newUser) {
-        return false;
+    private int extraerRolDesdeToken(String token) {
+        String[] partes = token.split("\\.");
+        if (partes.length < 2) {
+            throw new IllegalArgumentException("Token JWT inválido.");
+        }
+
+        String payload = new String(Base64.getUrlDecoder().decode(partes[1]));
+        JSONObject json = new JSONObject(payload);
+
+        if (json.has("realm_access")) {
+            JSONObject realmAccess = json.getJSONObject("realm_access");
+            if (realmAccess.has("roles")) {
+                for (Object rol : realmAccess.getJSONArray("roles")) {
+                    if ("coordinator".equals(rol.toString())) {
+                        return 2;
+                    } else if ("company".equals(rol.toString())) {
+                        return 3;
+                    }
+                    else if ("student".equals(rol.toString())) {
+                        return 1;
+                    }
+                }
+            }
+        }
+
+        return -1;
     }
 
-    @Override
-    public boolean existId(String id) {
-        return false;
+    public String obtenerToken(String username, String password) throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        String requestBody = "client_id=sistema-desktop&grant_type=password&username=" + username + "&password=" + password;
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create("http://localhost:8080/realms/sistema/protocol/openid-connect/token"))
+                .header("Content-Type", "application/x-www-form-urlencoded")
+                .POST(HttpRequest.BodyPublishers.ofString(requestBody))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        System.out.println("Código de respuesta: " + response.statusCode());
+        System.out.println("Cuerpo de respuesta: " + response.body());
+        if (response.statusCode() != 200) {
+            return null;
+        }
+        JSONObject json = new JSONObject(response.body());
+
+        // Verificamos que existe el campo
+        if (!json.has("access_token")) {
+            throw new RuntimeException("La respuesta no contiene access_token.");
+        }
+
+        return json.getString("access_token");
     }
 }
