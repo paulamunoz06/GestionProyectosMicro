@@ -147,41 +147,6 @@ public class CompanyService implements ICompanyService {
         return companyRepository.save(company);
     }
 
-    // Método de actualización alternativo (más común para APIs)
-    @Transactional
-    public Company updateCompany(String companyId, CompanyDto companyDto) throws Exception {
-        if (!StringUtils.hasText(companyId)) {
-            throw new IllegalArgumentException("El ID de la empresa para actualizar no puede ser nulo o vacío.");
-        }
-        if (companyDto == null) {
-            throw new IllegalArgumentException("El DTO de la empresa para actualizar no puede ser nulo.");
-        }
-
-        Company existingCompany = companyRepository.findById(companyId)
-                .orElseThrow(() -> new EntityNotFoundException("No se encontró empresa con ID: " + companyId));
-
-        // Actualizar campos permitidos de existingCompany con companyDto
-        if (StringUtils.hasText(companyDto.getCompanyName())) existingCompany.setCompanyName(companyDto.getCompanyName());
-        if (StringUtils.hasText(companyDto.getContactName())) existingCompany.setContactName(companyDto.getContactName());
-        if (StringUtils.hasText(companyDto.getContactLastName())) existingCompany.setContactLastName(companyDto.getContactLastName());
-        if (StringUtils.hasText(companyDto.getContactPhone())) existingCompany.setContactPhone(companyDto.getContactPhone());
-        if (StringUtils.hasText(companyDto.getContactPosition())) existingCompany.setContactPosition(companyDto.getContactPosition());
-        if (StringUtils.hasText(companyDto.getCompanySector())) {
-            try {
-                existingCompany.setCompanySector(EnumSector.valueOf(companyDto.getCompanySector().toUpperCase()));
-            } catch (IllegalArgumentException e) {
-                logger.warn("Sector inválido durante actualización: {}", companyDto.getCompanySector());
-            }
-        }
-        // El email asociado al usuario (ID) generalmente no se cambia aquí.
-        // Si tienes un email de contacto de la empresa *distinto* al del usuario, podrías actualizarlo.
-        // if (StringUtils.hasText(companyDto.getUserEmail()) && !existingCompany.getEmail().equals(companyDto.getUserEmail())) {
-        //    existingCompany.setEmail(companyDto.getUserEmail());
-        // }
-
-        return companyRepository.save(existingCompany);
-    }
-
 
     /**
      * Busca una empresa por su ID.
@@ -301,15 +266,6 @@ public class CompanyService implements ICompanyService {
         return (int) companyRepository.count();
     }
 
-    @Override
-    public boolean existsBySector(EnumSector sector) {
-        if (sector == null) {
-            return false;
-        }
-        // Asumiendo que tienes un método en ICompanyRepository como:
-        // boolean existsByCompanySector(EnumSector companySector);
-        return companyRepository.existsByCompanySector(sector);
-    }
 
     @Override
     public String getSectorIdByName(String sectorName) {

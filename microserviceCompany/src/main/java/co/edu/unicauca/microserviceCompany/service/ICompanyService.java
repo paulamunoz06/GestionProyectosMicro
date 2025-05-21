@@ -30,7 +30,7 @@ public interface ICompanyService {
      * @return La empresa actualizada.
      * @throws Exception Si ocurre un error durante la actualización.
      */
-    Company updateCompany(String companyId, CompanyDto companyDto) throws Exception;
+    Company updateCompany(Company company) throws Exception;
 
     /**
      * Busca una empresa por su ID.
@@ -85,14 +85,6 @@ public interface ICompanyService {
      * @return El número total de empresas.
      */
     int countAllCompanies();
-
-    /**
-     * Verifica si existe alguna empresa en un sector específico.
-     *
-     * @param sector Sector a verificar.
-     * @return true si existen empresas en ese sector, false en caso contrario.
-     */
-    boolean existsBySector(EnumSector sector);
 
     /**
      * Obtiene el identificador de un sector a partir de su nombre.
