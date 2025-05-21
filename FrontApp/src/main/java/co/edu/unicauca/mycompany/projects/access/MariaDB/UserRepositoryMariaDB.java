@@ -131,4 +131,14 @@ public class UserRepositoryMariaDB extends MariaDBConnection implements IUserRep
 
         return false; // En caso de error, asumimos que no existe
     }
+
+    @Override
+    public String obtenerToken(String username, String password) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public int extraerRolDesdeToken(String token) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

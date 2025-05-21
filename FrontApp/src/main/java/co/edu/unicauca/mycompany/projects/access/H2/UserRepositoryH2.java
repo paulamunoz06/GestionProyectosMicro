@@ -1,6 +1,7 @@
 package co.edu.unicauca.mycompany.projects.access.H2;
 
 import co.edu.unicauca.mycompany.projects.access.IUserRepository;
+import co.edu.unicauca.mycompany.projects.domain.entities.User;
 import java.net.URI;
 import java.io.IOException;
 import java.net.http.HttpRequest;
@@ -37,7 +38,7 @@ public class UserRepositoryH2 implements IUserRepository{
     public int iniciarSesion(String usuario, char[] pwd) {
         try{
             String token = obtenerToken(usuario, new String(pwd));
-            if (token == null) {
+            if (token != null) {
                 return extraerRolDesdeToken(token);
             }
             else {
@@ -51,7 +52,7 @@ public class UserRepositoryH2 implements IUserRepository{
 
     }
 
-    private int extraerRolDesdeToken(String token) {
+    public int extraerRolDesdeToken(String token) {
         String[] partes = token.split("\\.");
         if (partes.length < 2) {
             throw new IllegalArgumentException("Token JWT inválido.");
@@ -60,17 +61,23 @@ public class UserRepositoryH2 implements IUserRepository{
         String payload = new String(Base64.getUrlDecoder().decode(partes[1]));
         JSONObject json = new JSONObject(payload);
 
-        if (json.has("realm_access")) {
-            JSONObject realmAccess = json.getJSONObject("realm_access");
-            if (realmAccess.has("roles")) {
-                for (Object rol : realmAccess.getJSONArray("roles")) {
-                    if ("coordinator".equals(rol.toString())) {
-                        return 2;
-                    } else if ("company".equals(rol.toString())) {
-                        return 3;
-                    }
-                    else if ("student".equals(rol.toString())) {
-                        return 1;
+        if (json.has("resource_access")) {
+            JSONObject resourceAccess = json.getJSONObject("resource_access");
+
+            // Verificamos si contiene el cliente "sistema-desktop"
+            if (resourceAccess.has("sistema-desktop")) {
+                JSONObject sistemaDesktop = resourceAccess.getJSONObject("sistema-desktop");
+
+                if (sistemaDesktop.has("roles")) {
+                    for (Object rol : sistemaDesktop.getJSONArray("roles")) {
+                        String rolStr = rol.toString();
+                        if ("coordinator".equals(rolStr)) {
+                            return 2;
+                        } else if ("company".equals(rolStr)) {
+                            return 3;
+                        } else if ("student".equals(rolStr)) {
+                            return 1;
+                        }
                     }
                 }
             }
@@ -79,7 +86,9 @@ public class UserRepositoryH2 implements IUserRepository{
         return -1;
     }
 
-    public String obtenerToken(String username, String password) throws IOException, InterruptedException {
+    
+    @Override
+    public String obtenerToken(String username, String password) throws IOException, InterruptedException{
         HttpClient client = HttpClient.newHttpClient();
         String requestBody = "client_id=sistema-desktop&grant_type=password&username=" + username + "&password=" + password;
 
@@ -103,5 +112,15 @@ public class UserRepositoryH2 implements IUserRepository{
         }
 
         return json.getString("access_token");
+    }
+
+    @Override
+    public boolean save(User newUser) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean existId(String id) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

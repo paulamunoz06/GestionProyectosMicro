@@ -1,6 +1,7 @@
 package co.edu.unicauca.mycompany.projects.access;
 
 import co.edu.unicauca.mycompany.projects.domain.entities.User;
+import java.io.IOException;
 
 /**
  * Interfaz que define las operaciones para gestionar usuarios en el sistema.
@@ -22,12 +23,16 @@ public interface IUserRepository {
      * @param password
      * @return
      */
-    private String obtenerToken(String username, String password);
+    String obtenerToken(String username, String password) throws IOException, InterruptedException;
 
     /**
      * Se encarga de extraer el rol de un token JWT y convertirlo al entero correspondiente dependiendo del rol
      * @param token es JWT token
      * @return entero correspondiente
      */
-    private int extraerRolDesdeToken(String token);
+    int extraerRolDesdeToken(String token);
+    
+    public boolean save(User newUser);
+    
+    public boolean existId(String id);
 }
