@@ -9,11 +9,12 @@ import co.edu.unicauca.mycompany.projects.domain.entities.Coordinator;
 import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
 import co.edu.unicauca.mycompany.projects.domain.services.ProjectService;
 import co.edu.unicauca.mycompany.projects.domain.services.UserService;
+import co.edu.unicauca.mycompany.projects.infra.Observer;
 import javax.swing.JButton;
 
 /**
- * Interfaz gráfica del panel principal para coordinadores.
- * Permite la gestión y visualización de proyectos asignados.
+ * Interfaz gráfica del panel principal para coordinadores. Permite la gestión y
+ * visualización de proyectos asignados.
  */
 public class GUIDashboardCoordinador extends javax.swing.JFrame {
 
@@ -32,41 +33,73 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
      */
     private CompanyService companyService;
 
+    private ProjectService projectService;
+
+    private TableProjectsCoordinatorObserver tablaProjects;
+
     /**
-     * Constructor de la interfaz gráfica del panel de coordinador.
-     * Inicializa los componentes gráficos y configura los observadores de datos.
+     * Constructor de la interfaz gráfica del panel de coordinador. Inicializa
+     * los componentes gráficos y configura los observadores de datos.
      *
      * @param coordinator Coordinador que ha iniciado sesión.
      * @param projectService Servicio de gestión de proyectos.
      * @param companyService Servicio de gestión de empresas.
-     * @param btnProyectosInicio Botón de acceso a los proyectos desde la vista principal.
+     * @param btnProyectosInicio Botón de acceso a los proyectos desde la vista
+     * principal.
      */
     public GUIDashboardCoordinador(Coordinator coordinator, ProjectService projectService, CompanyService companyService, JButton btnProyectosInicio) {
         this.coordinator = coordinator;
         this.btnProyectosInicio = btnProyectosInicio;
-
+        this.projectService = projectService;
+        
         // Inicializar los componentes gráficos de la interfaz
         initComponents();
 
         // Configurar la apariencia y datos visuales
         initVisual();
-
+        
         // Agregar un observador para actualizar la tabla de proyectos disponibles
-        projectService.addObserver(new TableProjectsCoordinatorObserver(coordinator, projectService, jTableCoordinator, jScrollPane1, companyService));
+        this.tablaProjects = new TableProjectsCoordinatorObserver(coordinator, projectService, jTableCoordinator, jScrollPane1, companyService);
+        projectService.addObserver(tablaProjects);
+        
+        fillPeriods();
+    }
+
+    private void fillPeriods() {
+        //cboPeriodosAcademicos.removeAllItems();
+        cboPeriodosAcademicos.addItem("Todos");
+        cboPeriodosAcademicos.addItem("2025.1");
+        cboPeriodosAcademicos.addItem("2024.2");
+        cboPeriodosAcademicos.addItem("2024.1");
+        cboPeriodosAcademicos.addItem("2023.2");
+        cboPeriodosAcademicos.addItem("2023.1");
+        cboPeriodosAcademicos.addItem("2022.2");
+        cboPeriodosAcademicos.addItem("2022.1");
+        cboPeriodosAcademicos.addItem("2021.2");
+        cboPeriodosAcademicos.addItem("2021.1");
+        cboPeriodosAcademicos.addItem("2020.2");
+        cboPeriodosAcademicos.addItem("2020.1");
+        cboPeriodosAcademicos.setSelectedIndex(0);
+
+    }
+
+    private void actualizarTablaSegunPeriodo() {
+        String periodoSeleccionado = (String) cboPeriodosAcademicos.getSelectedItem().toString();
+        tablaProjects.actualizarTablaPorPeriodo(periodoSeleccionado);
     }
 
     /**
-     * Configura la apariencia y visualización inicial de la interfaz.
-     * Ajusta la posición, tamaño y muestra información del coordinador.
+     * Configura la apariencia y visualización inicial de la interfaz. Ajusta la
+     * posición, tamaño y muestra información del coordinador.
      */
     public final void initVisual() {
-        this.setVisible(true); 
-        setResizable(false); 
-        setLocationRelativeTo(null); 
+        this.setVisible(true);
+        setResizable(false);
+        setLocationRelativeTo(null);
         btnCoordiName.setText("Coordinador " + coordinator.getId());
         lblCoordinatorCorreo.setText(coordinator.getEmail());
     }
-    
+
     /**
      * This method is called from within the constructor to initialize the form.
      * WARNING: Do NOT modify this code. The content of this method is always
@@ -88,6 +121,7 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
         jLabel10 = new javax.swing.JLabel();
         jScrollPane1 = new javax.swing.JScrollPane();
         jTableCoordinator = new javax.swing.JTable();
+        cboPeriodosAcademicos = new javax.swing.JComboBox<>();
 
         labelCoordiName.setBackground(new java.awt.Color(255, 255, 255));
         labelCoordiName.setFont(new java.awt.Font("Segoe UI Semibold", 1, 22)); // NOI18N
@@ -215,6 +249,12 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
         jScrollPane1.setViewportView(jTableCoordinator);
         jTableCoordinator.getAccessibleContext().setAccessibleDescription("");
 
+        cboPeriodosAcademicos.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cboPeriodosAcademicosActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel2Layout = new javax.swing.GroupLayout(jPanel2);
         jPanel2.setLayout(jPanel2Layout);
         jPanel2Layout.setHorizontalGroup(
@@ -223,16 +263,23 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
                 .addComponent(jPanel4, javax.swing.GroupLayout.PREFERRED_SIZE, 211, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addGap(31, 31, 31)
                 .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jLabel10)
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 784, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addGap(0, 26, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 784, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(0, 26, Short.MAX_VALUE))
+                    .addGroup(jPanel2Layout.createSequentialGroup()
+                        .addComponent(jLabel10)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(cboPeriodosAcademicos, javax.swing.GroupLayout.PREFERRED_SIZE, 135, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(89, 89, 89))))
         );
         jPanel2Layout.setVerticalGroup(
             jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jPanel4, javax.swing.GroupLayout.DEFAULT_SIZE, 597, Short.MAX_VALUE)
             .addGroup(jPanel2Layout.createSequentialGroup()
                 .addGap(26, 26, 26)
-                .addComponent(jLabel10)
+                .addGroup(jPanel2Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(jLabel10)
+                    .addComponent(cboPeriodosAcademicos, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
                 .addGap(18, 18, 18)
                 .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
@@ -255,8 +302,9 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     /**
-     * Maneja el evento cuando el usuario presiona el botón con el nombre del coordinador.
-     * Abre la ventana del dashboard inicial del coordinador y cierra la ventana actual.
+     * Maneja el evento cuando el usuario presiona el botón con el nombre del
+     * coordinador. Abre la ventana del dashboard inicial del coordinador y
+     * cierra la ventana actual.
      *
      * @param evt Evento de acción generado al presionar el botón.
      */
@@ -265,7 +313,7 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
         IProjectRepository projectRepository = ProjectRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
         GUIDashboardCoordinadorInicio gui = new GUIDashboardCoordinadorInicio(coordinator, new ProjectService(projectRepository));
         gui.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnCoordiNameActionPerformed
 
@@ -275,10 +323,10 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
 
     private void btnCerrarSesiónActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCerrarSesiónActionPerformed
         IUserRepository repositoryUser = UserRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
-        
+
         GUIinicioSesion instance = new GUIinicioSesion(new UserService(repositoryUser));
         instance.setVisible(true);
-        
+
         this.dispose();
     }//GEN-LAST:event_btnCerrarSesiónActionPerformed
 
@@ -289,6 +337,11 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
         // TODO add your handling code here:
     }//GEN-LAST:event_jButton8ActionPerformed
+
+    private void cboPeriodosAcademicosActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cboPeriodosAcademicosActionPerformed
+        // TODO add your handling code here:
+        actualizarTablaSegunPeriodo();
+    }//GEN-LAST:event_cboPeriodosAcademicosActionPerformed
 
     /**
      * @param args the command line arguments
@@ -328,6 +381,7 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnCerrarSesión;
     private javax.swing.JButton btnCoordiName;
+    private javax.swing.JComboBox<String> cboPeriodosAcademicos;
     private javax.swing.JButton jButton5;
     private javax.swing.JButton jButton7;
     private javax.swing.JButton jButton8;
