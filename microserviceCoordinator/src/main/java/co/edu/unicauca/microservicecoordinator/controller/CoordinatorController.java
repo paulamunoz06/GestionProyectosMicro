@@ -19,7 +19,7 @@ import java.util.Optional;
  *
  */
 @RestController
-@RequestMapping("/coordinator")
+@RequestMapping("/")
 public class CoordinatorController {
 
     /**

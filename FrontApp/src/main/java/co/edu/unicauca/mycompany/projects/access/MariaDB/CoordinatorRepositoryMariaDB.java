@@ -52,6 +52,11 @@ public class CoordinatorRepositoryMariaDB extends MariaDBConnection implements I
         }
         return coordinator;
     }
+
+    @Override
+    public void setToken(String token) {
+        System.out.println("This class doesn't use a token");
+    }
 }
 
 

@@ -24,18 +24,22 @@ public class DashboardFactory {
     CoordinatorService coordinatorService;
     CompanyService companyService;
     ProjectService projectService;
-    public DashboardFactory(){
+    public DashboardFactory(String token){
         // Obtener instancias de los repositorios a través de la fábrica
         IStudentRepository studentRepository = StudentRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
+        studentRepository.setToken(token);
         studentService = new StudentService(studentRepository);
         
         ICoordinatorRepository coordinatorRepository = CoordinatorRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
+        coordinatorRepository.setToken(token);
         coordinatorService = new CoordinatorService(coordinatorRepository);
 
         ICompanyRepository companyRepository = CompanyRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
+        companyRepository.setToken(token);
         companyService = new CompanyService(companyRepository);
         
         IProjectRepository projectRepository = ProjectRepositoryFactory.getInstance().getRepository(RepositoryType.H2);
+        projectRepository.setToken(token);
         projectService = new ProjectService(projectRepository);
     }
     public Dashboard crearDashboard(int result, String idEntity){
@@ -55,9 +59,9 @@ public class DashboardFactory {
      * 
      * @return Instancia de Factory.
      */
-    public static DashboardFactory getInstance() {
+    public static DashboardFactory getInstance(String token) {
         if (instance == null) {
-            instance = new DashboardFactory();
+            instance = new DashboardFactory(token);
         }
         return instance;
     }

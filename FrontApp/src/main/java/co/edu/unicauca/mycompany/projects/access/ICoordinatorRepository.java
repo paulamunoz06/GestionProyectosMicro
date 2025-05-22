@@ -5,7 +5,7 @@ import co.edu.unicauca.mycompany.projects.domain.entities.Coordinator;
 /**
  * Interfaz que define las operaciones para gestionar coordinadores en el repositorio.
  */
-public interface ICoordinatorRepository {
+public interface ICoordinatorRepository extends IsetToken{
     /**
      * Obtiene la información detallada de un coordinador a partir de su identificador.
      * 

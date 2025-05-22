@@ -23,7 +23,7 @@ import org.springframework.security.oauth2.jwt.Jwt;
  *
  */
 @RestController
-@RequestMapping("/company")
+@RequestMapping("/")
 public class CompanyController {
 
     private static final Logger logger = LoggerFactory.getLogger(CompanyController.class);

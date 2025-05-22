@@ -6,6 +6,7 @@ import co.edu.unicauca.mycompany.projects.access.RepositoryType;
 import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
 import co.edu.unicauca.mycompany.projects.domain.services.UserService;
 import co.edu.unicauca.mycompany.projects.infra.Messages;
+import java.io.IOException;
 
 /**
  * Controlador para la vista de inicio de sesión.
@@ -41,7 +42,7 @@ public class ControllerInicioSesion {
      * @param userName Es el nombre de usuario como string
      * @param enteredPassword Es la contraseña como char[]
      */
-    public void actionButtomLogin(String userName, char[] enteredPassword) {
+    public void actionButtomLogin(String userName, char[] enteredPassword) throws IOException, InterruptedException {
         if(userName.isEmpty() || enteredPassword.length == 0){
             Messages.mensajeVario("Ambos campos son obligatorios");
             return;
@@ -52,7 +53,7 @@ public class ControllerInicioSesion {
             return;
         }
 
-        Dashboard dashboard = DashboardFactory.getInstance().crearDashboard(result, userName);
+        Dashboard dashboard = DashboardFactory.getInstance(service.getToken()).crearDashboard(result, userName);
 
         if (dashboard != null) {
             view.dispose();

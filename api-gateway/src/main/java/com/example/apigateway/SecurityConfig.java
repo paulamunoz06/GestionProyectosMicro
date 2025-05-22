@@ -28,9 +28,10 @@ public class SecurityConfig {
     public SecurityWebFilterChain springSecurityFilterChain(ServerHttpSecurity http) {
         http
                 .authorizeExchange(exchanges -> exchanges
+                        //TODO: verificar roles permitidos para cada endpoint
 
-                        // COMPANY Service
-                        .pathMatchers("/company/register").hasRole("company")
+                        // COMPANY MicroService
+                        .pathMatchers("/company/register").permitAll()
                         .pathMatchers("/company/{companyId}").authenticated()
                         .pathMatchers("/company/email/**").hasRole("coordinator")
                         .pathMatchers("/company/all").hasRole("coordinator")
@@ -38,45 +39,29 @@ public class SecurityConfig {
                         .pathMatchers("/company/count").hasRole("coordinator")
                         .pathMatchers("/company/**").authenticated()
 
-                        // STUDENT Service (Ejemplos)
-                        // .pathMatchers(HttpMethod.POST, "/student/register").hasAnyRole("STUDENT", "ADMIN_APP")
-                        // .pathMatchers("/student/profile/{studentId}").access( (authentication, context) ->
-                        //    hasAccess(authentication, context.getVariables().get("studentId").toString(), "STUDENT")
-                        // )
-                        // .pathMatchers("/student/**").hasAnyRole("COORDINATOR", "ADMIN_APP")
+                        .pathMatchers("/company/project/register").hasAnyRole("coordinator", "company")
+                        .pathMatchers("/company/project/exists/**").hasAnyRole("coordinator", "company")
+                        .pathMatchers("/company/project/*/company").hasAnyRole("coordinator", "company")
+                        .pathMatchers("/company/project/*").hasAnyRole("coordinator", "company")
+                        // COORDINATOR MicroService
+                        .pathMatchers("/coordinator/projects").hasRole("coordinator")
+                        .pathMatchers("/coordinator/projects/count-by-status/**").hasRole("coordinator")
+                        .pathMatchers("/coordinator/projects/count-total").hasRole("coordinator")
+                        .pathMatchers("/coordinator/projects/update-status").hasRole("coordinator")
+                        .pathMatchers("/coordinator/project/**").hasRole("coordinator")
 
-                        // COORDINATOR Service (Ejemplos)
-                        // .pathMatchers("/coordinator/projects/approve").hasRole("COORDINATOR")
-                        // .pathMatchers("/coordinator/**").hasRole("COORDINATOR")
+                        // STUDENT MicroService
+                        .pathMatchers("/student/{idStudent}").permitAll()
+                        .pathMatchers("/student/{studentId}/project/{projectId}").permitAll()
+                        .pathMatchers("/student/{studentId}/projects").permitAll()
 
-                        .anyExchange().authenticated() // Todas las demás rutas no especificadas requieren autenticación
+
+
+
+                        .anyExchange().authenticated() // Todas las rutas deben estar autenticadas
                 )
-                .oauth2ResourceServer(oauth2 -> oauth2
-                        .jwt(jwtSpec -> jwtSpec.jwtAuthenticationConverter(grantedAuthoritiesExtractor()))
-                )
-                .csrf(ServerHttpSecurity.CsrfSpec::disable); // Deshabilitar CSRF para APIs stateless
+                .oauth2ResourceServer(ServerHttpSecurity.OAuth2ResourceServerSpec::jwt);
         return http.build();
     }
-
-    // Convertidor para extraer roles del JWT
-    Converter<Jwt, Mono<AbstractAuthenticationToken>> grantedAuthoritiesExtractor() {
-        JwtAuthenticationConverter jwtAuthenticationConverter = new JwtAuthenticationConverter();
-        jwtAuthenticationConverter.setJwtGrantedAuthoritiesConverter(new KeycloakRealmRoleConverterWebFlux());
-        return new ReactiveJwtAuthenticationConverterAdapter(jwtAuthenticationConverter);
-    }
 }
 
-// Convertidor de roles de Keycloak para Realm Roles
-class KeycloakRealmRoleConverterWebFlux implements Converter<Jwt, Collection<GrantedAuthority>> {
-    @Override
-    @SuppressWarnings("unchecked")
-    public Collection<GrantedAuthority> convert(Jwt jwt) {
-        final Map<String, Object> realmAccess = (Map<String, Object>) jwt.getClaims().getOrDefault("realm_access", Map.of());
-        final List<String> roles = (List<String>) realmAccess.getOrDefault("roles", List.of());
-
-        return roles.stream()
-                .map(roleName -> "ROLE_" + roleName.toUpperCase()) // Spring Security espera el prefijo ROLE_
-                .map(SimpleGrantedAuthority::new)
-                .collect(Collectors.toList());
-    }
-}

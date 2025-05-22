@@ -5,6 +5,8 @@ import co.edu.unicauca.mycompany.projects.access.IStudentRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.Student;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import org.apache.http.HttpResponse;
@@ -17,7 +19,7 @@ import org.apache.http.util.EntityUtils;
  * Implementación del repositorio de estudiantes que interactúa con un servicio REST
  * para realizar operaciones relacionadas con los estudiantes.
  */
-public class StudentRepositoryH2 implements IStudentRepository{
+public class StudentRepositoryH2 extends Token implements IStudentRepository{
 
      /**
      * Obtiene un estudiante por su ID desde el servicio REST.
@@ -30,13 +32,17 @@ public class StudentRepositoryH2 implements IStudentRepository{
     public Student getStudent(String id) {
         HttpClient httpClient = HttpClients.createDefault();
         ObjectMapper mapper = new ObjectMapper();
+        String apiUrl = IUrl.ApiGatewayUrl + "/estudiante/"+id ;
         Student student = null;
         try {
-            // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8083/student/" + id ;
             // Crear una solicitud GET
             HttpGet request = new HttpGet(apiUrl);
-
+            if (this.token == null || this.token.isEmpty()){
+                System.out.println("Token is null, is not valid ");
+                return null;
+            }
+            request.setHeader("Authorization","Bearer "+this.token);
+            
             // Ejecutar la solicitud y obtener la respuesta
             HttpResponse response = httpClient.execute(request);
 
@@ -56,6 +62,11 @@ public class StudentRepositoryH2 implements IStudentRepository{
             Logger.getLogger(StudentRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
         }
         return student;
+    }
+
+    @Override
+    public void setToken(String token) {
+        this.token = token;
     }
     
 }

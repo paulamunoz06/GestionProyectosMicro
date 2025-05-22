@@ -19,7 +19,7 @@ import java.util.Optional;
  * Controlador REST para gestionar operaciones relacionadas con estudiantes y sus proyectos.
  */
 @RestController
-@RequestMapping("/student")
+@RequestMapping("/")
 public class StudentController {
 
     @Autowired

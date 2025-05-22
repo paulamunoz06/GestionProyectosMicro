@@ -84,5 +84,10 @@ public class StudentRepositoryMariaDB extends MariaDBConnection implements IStud
         // Retornar el estudiante encontrado o `null` si no se halló en la base de datos
         return student;
     }
+
+    @Override
+    public void setToken(String token) {
+        System.out.println("This class doesn't use a token");
+    }
 }
 

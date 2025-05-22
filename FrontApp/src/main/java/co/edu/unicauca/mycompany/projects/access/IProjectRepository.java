@@ -6,7 +6,8 @@ import java.util.List;
 /**
  * Interfaz que define el contrato para el repositorio de proyectos.
  */
-public interface IProjectRepository {
+public interface IProjectRepository extends IsetToken{
+
     /**
      * Guarda un nuevo proyecto en el repositorio.
      * 

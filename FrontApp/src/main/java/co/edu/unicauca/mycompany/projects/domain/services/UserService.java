@@ -2,6 +2,7 @@ package co.edu.unicauca.mycompany.projects.domain.services;
 
 import co.edu.unicauca.mycompany.projects.access.IUserRepository;
 import co.edu.unicauca.mycompany.projects.domain.entities.User;
+import java.io.IOException;
 
 /**
  * Servicio encargado de la gestión de usuarios, incluyendo el inicio y cierre de sesión.
@@ -13,7 +14,9 @@ public class UserService {
 
     /** Repositorio que maneja las operaciones de acceso a datos de los usuarios. */
     private IUserRepository repository;
-
+    
+    /** Token de JWT */
+    private String token;
     /**
      * Constructor de la clase UserService.
      * 
@@ -30,8 +33,10 @@ public class UserService {
      * @param prmPassword Contraseña ingresada como un array de caracteres.
      * @return Un código de estado que indica el resultado del intento de inicio de sesión.
      */
-    public int iniciarSesion(String prmUserName, char[] prmPassword) {
-        return repository.iniciarSesion(prmUserName,prmPassword);
+    public int iniciarSesion(String prmUserName, char[] prmPassword) throws IOException, InterruptedException {
+        int result = repository.iniciarSesion(prmUserName,prmPassword);
+        token = repository.obtenerToken(prmUserName, new String(prmPassword));
+        return result;
     }
 
     /**
@@ -69,5 +74,8 @@ public class UserService {
         validator = new DataValidationUser(newUser);
         return validator.isValid();
     }
-
+    
+    public String getToken(){
+        return token;
+    }
 }

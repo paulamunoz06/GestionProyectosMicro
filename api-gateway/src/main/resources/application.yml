@@ -1,5 +1,5 @@
 server:
-  port: 8081
+  port: 8086
 
 spring:
   application:
@@ -13,10 +13,10 @@ spring:
             - Path=/company/**
           filters:
             - StripPrefix=1
-        - id: microservice-b
-          uri: http://localhost:8083
+        - id: microservice-coordinator
+          uri: http://localhost:8081
           predicates:
-            - Path=/b/**
+            - Path=/coordinator/**
           filters:
             - StripPrefix=1
   security:

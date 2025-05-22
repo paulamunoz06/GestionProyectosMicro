@@ -1,6 +1,7 @@
 package co.edu.unicauca.mycompany.projects.presentation;
 
 import co.edu.unicauca.mycompany.projects.domain.services.UserService;
+import java.io.IOException;
 import javax.swing.Icon;
 import javax.swing.ImageIcon;
 
@@ -236,7 +237,16 @@ public class GUIinicioSesion extends javax.swing.JFrame {
     private void jButton_iniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton_iniciarSesionActionPerformed
         String userName = jTextUserName.getText().trim();
         char[] enteredPassword = jPasswordField.getPassword();
-        controller.actionButtomLogin(userName, enteredPassword);
+        try{
+            controller.actionButtomLogin(userName, enteredPassword);
+        }
+        catch(IOException e){
+            System.out.println("Erro inicio sesion: " + e.getMessage());
+        }
+        catch(InterruptedException eI){
+            System.out.println("Erro inicio sesion: " + eI.getMessage());
+        }
+        
     }//GEN-LAST:event_jButton_iniciarSesionActionPerformed
 
     private void jTextUserNameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jTextUserNameActionPerformed

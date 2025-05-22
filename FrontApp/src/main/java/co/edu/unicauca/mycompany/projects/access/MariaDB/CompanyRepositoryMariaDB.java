@@ -150,4 +150,9 @@ public class CompanyRepositoryMariaDB extends MariaDBConnection implements IComp
         return sectorId;
     }
 
+    @Override
+    public void setToken(String token) {
+        System.out.println("This class doesn't use a token");
+    }
+
 }

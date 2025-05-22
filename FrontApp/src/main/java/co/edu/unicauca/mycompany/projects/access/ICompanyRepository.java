@@ -5,7 +5,7 @@ import co.edu.unicauca.mycompany.projects.domain.entities.Company;
 /**
  * Interface que define el contrato para el repositorio de compañías.
  */
-public interface ICompanyRepository {
+public interface ICompanyRepository extends IsetToken{
     /**
      * Guarda una nueva compañía en el repositorio.
      * 

@@ -504,4 +504,9 @@ public class ProjectRepositoryMariaDB extends MariaDBConnection implements IProj
 
         return false; // En caso de error, asumimos que no existe
     }
+
+    @Override
+    public void setToken(String token) {
+        System.out.println("This class doesn't use a token");
+    }
 }

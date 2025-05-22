@@ -21,8 +21,8 @@ import org.apache.http.util.EntityUtils;
  * mediante peticiones HTTP para realizar operaciones de persistencia y consulta
  * sobre entidades de tipo Company
  */
-public class CompanyRepositoryH2 implements ICompanyRepository {
-
+public class CompanyRepositoryH2 extends Token implements ICompanyRepository {
+    private static final Logger LOGGER = Logger.getLogger(CompanyRepositoryH2.class.getName());
     /**
      * Registra una nueva empresa enviando una solicitud HTTP POST al servicio REST.
      *
@@ -35,44 +35,51 @@ public class CompanyRepositoryH2 implements ICompanyRepository {
         HttpClient httpClient = HttpClients.createDefault();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8080/company/register";
+            String apiUrl = IUrl.ApiGatewayUrl + "/company/register";
+            LOGGER.info("Attempting to save company via API Gateway: " + apiUrl);
 
-            // Crear una solicitud POST
             HttpPost request = new HttpPost(apiUrl);
-
-            // Configurar las cabeceras para enviar JSON
             request.setHeader("Content-Type", "application/json");
+            request.setHeader("Accept", "application/json"); // Es buena práctica incluir Accept
 
-            // Convertir el objeto Company a JSON
+            // Añadir token de autorización si está disponible
+            if (this.token != null && !this.token.isEmpty()) {
+                request.setHeader("Authorization", "Bearer " + this.token);
+                LOGGER.info("Authorization header added for /company/register");
+            } else {
+                LOGGER.warning("Token is null or empty. Request to /company/register will be made without Authorization header.");
+                // Dependiendo de la configuración del gateway, esto podría fallar si el token es estrictamente necesario.
+            }
+
             String companyJson = mapper.writeValueAsString(mapToCompanyDto(newCompany));
+            LOGGER.fine("Request body for save: " + companyJson);
 
-            // Adjuntar el cuerpo JSON a la solicitud
-            HttpEntity entity = new StringEntity(companyJson);
+            HttpEntity entity = new StringEntity(companyJson, "UTF-8"); // Especificar UTF-8 es buena práctica
             request.setEntity(entity);
 
-            // Ejecutar la solicitud y obtener la respuesta
             HttpResponse response = httpClient.execute(request);
-
-            // Verificar el código de estado de la respuesta
             int statusCode = response.getStatusLine().getStatusCode();
+            String responseBody = EntityUtils.toString(response.getEntity()); // Leer el cuerpo para logging
 
-            // Considerar exitoso si es 201 (Created) o 200 (OK)
+            LOGGER.info("Response status code for save: " + statusCode);
+            LOGGER.fine("Response body for save: " + responseBody);
+
             return statusCode == 201 || statusCode == 200;
 
         } catch (IOException ex) {
-            Logger.getLogger(CompanyRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "IOException during save operation: " + ex.getMessage(), ex);
             return false;
         }
     }
 
     /**
-     * Obtiene la información completa de una empresa según su NIT (Número de Identificación Tributaria),
-     * consultando un servicio externo a través de una solicitud HTTP GET.
+     * Obtiene la información completa de una empresa según su NIT (o ID),
+     * consultando el API Gateway.
+     * URL: /company/{companyId} (requiere autenticación)
      *
-     * @param nit el NIT de la empresa cuya información se desea recuperar.
+     * @param nit el NIT (o ID) de la empresa cuya información se desea recuperar.
      * @return un objeto {@code Company} con los datos de la empresa si la respuesta fue exitosa;
-     *         en caso contrario, se retorna una instancia por defecto con datos ficticios.
+     * en caso contrario, se retorna una instancia por defecto o null.
      */
     @Override
     public Company companyInfo(String nit) {
@@ -81,33 +88,40 @@ public class CompanyRepositoryH2 implements ICompanyRepository {
         Company companyReturn = null;
 
         try {
-            // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8080/company/" + nit;
-            // Crear una solicitud GET
+            String apiUrl = IUrl.ApiGatewayUrl + "/company/" + nit;
+            LOGGER.info("Attempting to get company info via API Gateway: " + apiUrl);
             HttpGet request = new HttpGet(apiUrl);
+            request.setHeader("Accept", "application/json");
 
-            // Ejecutar la solicitud y obtener la respuesta
+            // Añadir token de autorización si está disponible
+            if (this.token != null && !this.token.isEmpty()) {
+                request.setHeader("Authorization", "Bearer " + this.token);
+                LOGGER.info("Authorization header added for /company/" + nit);
+            } else {
+                LOGGER.warning("Token is null or empty. Request to /company/" + nit + " will be made without Authorization header.");
+                // Esta ruta requiere autenticación, por lo que sin token probablemente falle.
+            }
+
             HttpResponse response = httpClient.execute(request);
-
-            // Verificar el código de estado de la respuesta
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == 200) {
-                // La solicitud fue exitosa, procesar la respuesta
-                String jsonResponse = EntityUtils.toString(response.getEntity());
+            String jsonResponse = EntityUtils.toString(response.getEntity()); // Leer siempre para liberar conexión y log
 
-                // Mapear la respuesta JSON a objeto Company
+            LOGGER.info("Response status code for companyInfo: " + statusCode);
+            LOGGER.fine("Response body for companyInfo: " + jsonResponse);
+
+            if (statusCode == 200) {
                 companyReturn = mapFromCompanyDto(mapper.readValue(jsonResponse, CompanyDto.class));
             } else {
-                // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(CompanyRepositoryH2.class.getName()).log(Level.SEVERE, null,
-                        "Error al obtener información de la empresa. Código de estado: " + statusCode);
+                LOGGER.log(Level.SEVERE, "Error al obtener información de la empresa. Código de estado: " + statusCode + ", Respuesta: " + jsonResponse);
             }
         } catch (IOException ex) {
-            Logger.getLogger(CompanyRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "IOException during companyInfo operation: " + ex.getMessage(), ex);
         }
-        
+
+        // Considera si realmente quieres devolver una instancia por defecto en caso de error total.
+        // Podría ser mejor devolver null y manejarlo en el código que llama.
         return companyReturn != null ? companyReturn :
-                new Company("exampleCompany", "contact", "", "", "", enumSector.HEALTH, "", "", "");
+                new Company("exampleCompany", "contact", "", "", "", enumSector.OTHER, "", "", "");
     }
 
     /**
@@ -118,6 +132,15 @@ public class CompanyRepositoryH2 implements ICompanyRepository {
      * @return una cadena con el identificador del sector si la operación fue exitosa;
      *         una cadena vacía en caso de error o si el sector no existe.
      */
+ /**
+     * Obtiene el identificador único de un sector a partir de su nombre, mediante
+     * una solicitud HTTP GET al API Gateway.
+     * URL: /company/sector/{sectorName} (permitAll)
+     *
+     * @param sectorName el nombre del sector (por ejemplo, "TECHNOLOGY", "HEALTH", etc.).
+     * @return una cadena con el identificador del sector si la operación fue exitosa;
+     * una cadena vacía en caso de error o si el sector no existe.
+     */
     @Override
     public String getSectorIdByName(String sectorName) {
         HttpClient httpClient = HttpClients.createDefault();
@@ -125,33 +148,43 @@ public class CompanyRepositoryH2 implements ICompanyRepository {
         String sectorId = "";
 
         try {
-            // Definir la URL de la API REST
-            String apiUrl = "http://localhost:8080/company/sector/" + sectorName;
-            // Crear una solicitud GET
+            // La URL debe ser codificada si sectorName puede contener caracteres especiales.
+            // Por simplicidad, aquí no se hace, pero considéralo para producción.
+            String apiUrl = IUrl.ApiGatewayUrl + "/company/sector/" + sectorName;
+            LOGGER.info("Attempting to get sector ID via API Gateway: " + apiUrl);
             HttpGet request = new HttpGet(apiUrl);
+            request.setHeader("Accept", "application/json");
 
-            // Ejecutar la solicitud y obtener la respuesta
+            // Aunque es permitAll, enviar el token si está disponible no suele ser un problema
+            // y puede ser útil si la política de seguridad cambia o para auditoría.
+            if (this.token != null && !this.token.isEmpty()) {
+                request.setHeader("Authorization", "Bearer " + this.token);
+                LOGGER.info("Authorization header (optional for permitAll) added for /company/sector/" + sectorName);
+            }
+
             HttpResponse response = httpClient.execute(request);
-
-            // Verificar el código de estado de la respuesta
             int statusCode = response.getStatusLine().getStatusCode();
-            if (statusCode == 200) {
-                // La solicitud fue exitosa, procesar la respuesta
-                String jsonResponse = EntityUtils.toString(response.getEntity());
+            String jsonResponse = EntityUtils.toString(response.getEntity());
 
-                // Extraer el sectorId del JSON de respuesta
+            LOGGER.info("Response status code for getSectorIdByName: " + statusCode);
+            LOGGER.fine("Response body for getSectorIdByName: " + jsonResponse);
+
+            if (statusCode == 200) {
                 SectorResponse sectorResponse = mapper.readValue(jsonResponse, SectorResponse.class);
                 sectorId = sectorResponse.getSectorId();
             } else {
-                // La solicitud falló, mostrar el código de estado
-                Logger.getLogger(CompanyRepositoryH2.class.getName()).log(Level.SEVERE, null,
-                        "Error al obtener el sector. Código de estado: " + statusCode);
+                LOGGER.log(Level.SEVERE, "Error al obtener el sector. Código de estado: " + statusCode + ", Respuesta: " + jsonResponse);
             }
         } catch (IOException ex) {
-            Logger.getLogger(CompanyRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
+            LOGGER.log(Level.SEVERE, "IOException during getSectorIdByName operation: " + ex.getMessage(), ex);
         }
 
         return sectorId;
+    }
+
+    @Override
+    public void setToken(String token) {
+        this.token = token;
     }
 
     /**
@@ -280,6 +313,7 @@ public class CompanyRepositoryH2 implements ICompanyRepository {
                 dto.getUserId(),
                 dto.getUserEmail(),
                 dto.getUserPassword()
-        );
+  
+      );
     }
 }

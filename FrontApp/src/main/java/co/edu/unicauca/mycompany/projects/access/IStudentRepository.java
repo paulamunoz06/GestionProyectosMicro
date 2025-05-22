@@ -5,7 +5,7 @@ import co.edu.unicauca.mycompany.projects.domain.entities.Student;
 /**
  * Interfaz que define el contrato para el repositorio de estudiantes.
  */
-public interface IStudentRepository {
+public interface IStudentRepository extends IsetToken{
     /**
      * Obtiene la información detallada de un estudiante a partir de su identificador.
      * 
