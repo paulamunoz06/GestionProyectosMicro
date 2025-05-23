@@ -30,13 +30,14 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        .requestMatchers(HttpMethod.POST, "/company/public/register-new-company").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/company/register").hasRole("COMPANY")
-                        .requestMatchers(HttpMethod.GET, "/company/{companyId}").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/company/email/**").hasRole("COORDINATOR")
-                        .requestMatchers(HttpMethod.GET, "/company/all").hasRole("COORDINATOR")
-                        .requestMatchers(HttpMethod.GET, "/company/sector/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/company/count").hasRole("COORDINATOR")
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/public/register-new-company").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/register").hasRole("COMPANY")
+                        .requestMatchers(HttpMethod.GET, "/{companyId}").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/email/**").hasRole("COORDINATOR")
+                        .requestMatchers(HttpMethod.GET, "/all").hasRole("COORDINATOR")
+                        .requestMatchers(HttpMethod.GET, "/sector/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/count").hasRole("COORDINATOR")
                         .requestMatchers("/company/**").authenticated()
 
                         // Denegar todo lo demás que no haya sido explícitamente permitido o autenticado

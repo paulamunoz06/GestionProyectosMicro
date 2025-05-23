@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 @RestController
-@RequestMapping("/company") // Ruta base para los endpoints de empresa
+@RequestMapping("/") // Ruta base para los endpoints de empresa
 public class CompanyController {
 
     private static final Logger logger = LoggerFactory.getLogger(CompanyController.class);
