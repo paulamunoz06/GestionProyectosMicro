@@ -19,6 +19,12 @@ spring:
             - Path=/coordinator/**
           filters:
             - StripPrefix=1
+        - id: microservice-student
+          uri: http://localhost:8083
+          predicates:
+            - Path=/student/**
+          filters:
+            - StripPrefix=1
   security:
     oauth2:
       resourceserver:

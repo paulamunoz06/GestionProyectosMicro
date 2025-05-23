@@ -26,7 +26,7 @@ import java.util.stream.Collectors;
 
 @Configuration
 @EnableWebFluxSecurity
-@EnableReactiveMethodSecurity // Habilitar si usas @PreAuthorize en filtros/controladores del Gateway
+@EnableReactiveMethodSecurity
 public class SecurityConfig {
 
     // CADENA DE FILTROS #1: Para el endpoint público de registro de empresa

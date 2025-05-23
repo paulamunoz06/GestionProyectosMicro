@@ -35,7 +35,7 @@ public class CompanyRepositoryH2 extends Token implements ICompanyRepository {
         HttpClient httpClient = HttpClients.createDefault();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            String apiUrl = IUrl.ApiGatewayUrl + "/company/register";
+            String apiUrl = IUrl.ApiGatewayUrl + "/public/register-new-company";
             LOGGER.info("Attempting to save company via API Gateway: " + apiUrl);
 
             HttpPost request = new HttpPost(apiUrl);
