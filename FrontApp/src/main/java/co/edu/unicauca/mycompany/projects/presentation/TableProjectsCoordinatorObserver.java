@@ -44,6 +44,8 @@ public class TableProjectsCoordinatorObserver extends JFrame implements Observer
      * Servicio de gestión de compañías
      */
     private final CompanyService companyService;
+    
+    private JComboBox cboPeriodosAcademicos;
 
     /**
      * Constructor de la clase.
@@ -54,12 +56,13 @@ public class TableProjectsCoordinatorObserver extends JFrame implements Observer
      * @param jScrollPane1 Panel de desplazamiento para la tabla.
      * @param companyService Servicio de gestión de compañías.
      */
-    public TableProjectsCoordinatorObserver(Coordinator coordinator, ProjectService projectService, JTable jTableCoordinator, JScrollPane jScrollPane1, CompanyService companyService) {
+    public TableProjectsCoordinatorObserver(Coordinator coordinator, ProjectService projectService, JTable jTableCoordinator, JScrollPane jScrollPane1, CompanyService companyService, JComboBox cbo) {
         this.coordinator = coordinator;
         this.jTableCoordinator = jTableCoordinator;
         this.projectService = projectService;
         this.jScrollPane1 = jScrollPane1;
         this.companyService = companyService;
+        this.cboPeriodosAcademicos = cbo;
 
         // Cargar datos iniciales
         configurarTabla();
@@ -130,20 +133,20 @@ public class TableProjectsCoordinatorObserver extends JFrame implements Observer
     @Override
     public void update() {
         configurarTabla();
+        cboPeriodosAcademicos.setSelectedIndex(0);
     }
 
     public void actualizarTablaPorPeriodo(String periodo) {
+        initComponents(); // Asegura que la tabla tenga las columnas bien definidas
         DefaultTableModel modelo = (DefaultTableModel) jTableCoordinator.getModel();
         modelo.setRowCount(0);
 
         List<Project> projects = projectService.listProjects();
-
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
 
         for (Project project : projects) {
             Date fechaDate = project.getProDate();
-            String fechaStr = sdf.format(fechaDate);  
-
+            String fechaStr = sdf.format(fechaDate);
             String periodoProyecto = obtenerPeriodoAcademico(fechaStr);
 
             if (periodo.equals("Todos") || periodoProyecto.equals(periodo)) {
@@ -153,7 +156,7 @@ public class TableProjectsCoordinatorObserver extends JFrame implements Observer
                     company.getId(),
                     company.getCompanyName(),
                     project.getProTitle(),
-                    fechaStr, // fecha con formato YYYY-MM-DD
+                    fechaStr,
                     "Acciones"
                 });
             }

@@ -59,7 +59,7 @@ public class GUIDashboardCoordinador extends javax.swing.JFrame {
         initVisual();
         
         // Agregar un observador para actualizar la tabla de proyectos disponibles
-        this.tablaProjects = new TableProjectsCoordinatorObserver(coordinator, projectService, jTableCoordinator, jScrollPane1, companyService);
+        this.tablaProjects = new TableProjectsCoordinatorObserver(coordinator, projectService, jTableCoordinator, jScrollPane1, companyService, cboPeriodosAcademicos);
         projectService.addObserver(tablaProjects);
         
         fillPeriods();
