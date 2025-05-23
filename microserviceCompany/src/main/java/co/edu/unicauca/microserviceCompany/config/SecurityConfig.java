@@ -12,7 +12,6 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.security.oauth2.server.resource.authentication.JwtAuthenticationConverter;
 import org.springframework.security.web.SecurityFilterChain;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -25,72 +24,82 @@ import java.util.stream.Collectors;
 @EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
 public class SecurityConfig {
 
-    private static final String KEYCLOAK_CLIENT = "sistema-desktop";
+    private static final String KEYCLOAK_RESOURCE_CLIENT_ID = "sistema-desktop";
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
-                // 1) Seguridad general
-                .csrf(csrf -> csrf
-                                // Deshabilita CSRF solo para H2-console
-                                .ignoringRequestMatchers(new AntPathRequestMatcher("/h2-console/**"))
-                        // (si quieres CSRF global, elimina .disable() al final)
+                .authorizeHttpRequests(authorize -> authorize
+                        .requestMatchers(HttpMethod.POST, "/company/public/register-new-company").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/company/register").hasRole("COMPANY")
+                        .requestMatchers(HttpMethod.GET, "/company/{companyId}").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/company/email/**").hasRole("COORDINATOR")
+                        .requestMatchers(HttpMethod.GET, "/company/all").hasRole("COORDINATOR")
+                        .requestMatchers(HttpMethod.GET, "/company/sector/**").permitAll()
+                        .requestMatchers(HttpMethod.GET, "/company/count").hasRole("COORDINATOR")
+                        .requestMatchers("/company/**").authenticated()
+
+                        // Denegar todo lo demás que no haya sido explícitamente permitido o autenticado
+                        .anyRequest().denyAll()
                 )
-                .headers(headers -> headers
-                        // Para que la consola H2 funcione en iframe
-                        .frameOptions(frame -> frame.sameOrigin())
-                )
-                .authorizeHttpRequests(auth -> auth
-                        // 2) Permitir H2 Console sin autenticación
-                        .requestMatchers("/h2-console/**").permitAll()
-                        .requestMatchers("/register").permitAll() // Ya no requiere autenticación ni JWT
-
-
-                        // 3) Tus endpoints protegidos
-                        .requestMatchers(HttpMethod.GET,    "/{companyId}").authenticated()
-                        .requestMatchers(HttpMethod.GET,    "/email/**").hasRole("coordinator")
-                        .requestMatchers(HttpMethod.GET,    "/all").hasRole("coordinator")
-                        .requestMatchers(HttpMethod.GET,    "/sector/**").permitAll()
-                        .requestMatchers(HttpMethod.GET,    "/count").hasRole("coordinator")
-
-                        .requestMatchers(HttpMethod.POST,   "/project/register").hasAnyRole("coordinator", "company")
-                        .requestMatchers(HttpMethod.GET,    "/project/exists/{projectId}").hasAnyRole("coordinator", "company")
-                        .requestMatchers(HttpMethod.GET,    "/project/{projectId}/company").hasAnyRole("coordinator", "company")
-                        .requestMatchers(HttpMethod.GET,    "/project/{projectId}").hasAnyRole("coordinator", "company")
-                        .requestMatchers(HttpMethod.PUT,    "/project/{projectId}").hasRole("company")
-
-
-                        // Cualquier otro request requiere autenticación
-                        .anyRequest().authenticated()
-                )
-                // 4) JWT Resource Server
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 )
-                // 5) Sin sesión
-                .sessionManagement(session -> session
-                        .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                );
+                .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                .csrf(csrf -> csrf.disable());
 
         return http.build();
     }
 
-    private JwtAuthenticationConverter jwtAuthenticationConverter() {
+    // Este bean es responsable de tomar el JWT y convertirlo en un objeto Authentication
+    // que Spring Security pueda usar, incluyendo las GrantedAuthorities (roles).
+    @Bean
+    public JwtAuthenticationConverter jwtAuthenticationConverter() {
         JwtAuthenticationConverter converter = new JwtAuthenticationConverter();
+        // Le decimos al convertidor CÓMO extraer las autoridades (roles) del JWT
         converter.setJwtGrantedAuthoritiesConverter(this::extractAuthoritiesFromJwt);
         return converter;
     }
 
-    @SuppressWarnings("unchecked")
+    // Este método privado es llamado por jwtAuthenticationConverter().
+    // Aquí defines la lógica para extraer los roles del token JWT.
+    // ADAPTADO para ser flexible: primero busca Realm Roles, luego Client Roles.
     private Collection<GrantedAuthority> extractAuthoritiesFromJwt(Jwt jwt) {
-        Map<String, Object> resourceAccess = jwt.getClaim("resource_access");
-        if (resourceAccess == null || !resourceAccess.containsKey(KEYCLOAK_CLIENT)) {
+        Map<String, Object> claims = jwt.getClaims();
+        if (claims == null) {
             return Collections.emptyList();
         }
-        Map<String, Object> clientAccess = (Map<String, Object>) resourceAccess.get(KEYCLOAK_CLIENT);
-        List<String> roles = (List<String>) clientAccess.get("roles");
-        return roles.stream()
-                .map(role -> new SimpleGrantedAuthority("ROLE_" + role))
-                .collect(Collectors.toList());
+
+        // Opción 1: Intentar extraer de Realm Roles (ej. si tus roles son globales en el realm)
+        // Los roles de realm en Keycloak están bajo "realm_access": { "roles": ["role1", "role2"] }
+        Map<String, Object> realmAccess = (Map<String, Object>) claims.get("realm_access");
+        if (realmAccess != null && realmAccess.containsKey("roles")) {
+            @SuppressWarnings("unchecked")
+            List<String> realmRoles = (List<String>) realmAccess.get("roles");
+            if (realmRoles != null && !realmRoles.isEmpty()) {
+                return realmRoles.stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase())) // ej., "ROLE_COMPANY"
+                        .collect(Collectors.toList());
+            }
+        }
+
+        // Opción 2: Intentar extraer de Client Roles (como en el ejemplo de tu profesor)
+        // Los roles de cliente en Keycloak están bajo "resource_access": { "client-id": { "roles": ["roleA", "roleB"] } }
+        Map<String, Object> resourceAccess = (Map<String, Object>) claims.get("resource_access");
+        if (resourceAccess != null && resourceAccess.containsKey(KEYCLOAK_RESOURCE_CLIENT_ID)) {
+            Map<String, Object> clientAccess = (Map<String, Object>) resourceAccess.get(KEYCLOAK_RESOURCE_CLIENT_ID);
+            if (clientAccess != null && clientAccess.containsKey("roles")) {
+                @SuppressWarnings("unchecked")
+                List<String> clientRoles = (List<String>) clientAccess.get("roles");
+                if (clientRoles != null && !clientRoles.isEmpty()) {
+                    return clientRoles.stream()
+                            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+                            .collect(Collectors.toList());
+                }
+            }
+        }
+
+        // Si no se encontraron roles ni en realm_access ni en resource_access para el cliente especificado
+        return Collections.emptyList();
     }
 }

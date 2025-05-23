@@ -56,4 +56,3 @@ public class CompanyDto {
      */
     private String companySector;
 }
-

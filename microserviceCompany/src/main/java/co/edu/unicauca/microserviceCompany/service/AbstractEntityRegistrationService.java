@@ -18,7 +18,7 @@ public abstract class AbstractEntityRegistrationService<E, D> {
      * @return La entidad registrada
      * @throws Exception Si ocurre algún error durante el registro
      */
-    @Transactional
+    @Transactional // Buena práctica tenerlo aquí si todas las implementaciones son transaccionales
     public final E registerEntity(D dto) throws Exception {
         // Validación inicial
         validateData(dto);

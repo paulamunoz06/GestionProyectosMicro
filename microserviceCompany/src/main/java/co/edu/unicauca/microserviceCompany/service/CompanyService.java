@@ -5,6 +5,8 @@ import co.edu.unicauca.microserviceCompany.entity.EnumSector;
 import co.edu.unicauca.microserviceCompany.infra.dto.CompanyDto;
 import co.edu.unicauca.microserviceCompany.repository.ICompanyRepository;
 import jakarta.persistence.EntityNotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -13,78 +15,59 @@ import org.springframework.util.StringUtils;
 
 import java.util.List;
 import java.util.Optional;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-/**
- * Servicio encargado de gestionar las operaciones relacionadas con las empresas.
- * Implementa la interfaz ICompanyService y proporciona la lógica de negocio para registrar, actualizar,
- * consultar y contar las empresas.
- */
 @Service
 public class CompanyService implements ICompanyService {
 
     private static final Logger logger = LoggerFactory.getLogger(CompanyService.class);
 
-    @Autowired
-    private ICompanyRepository companyRepository;
-
-    @Autowired
-    private RabbitTemplate rabbitTemplate;
-
-    // Servicio que implementa el patrón Template Method para el registro de empresas
+    private final ICompanyRepository companyRepository;
+    private final RabbitTemplate rabbitTemplate; // Puede ser opcional si no se usa en esta clase directamente
     private final CompanyRegistrationService companyRegistrationService;
 
     @Autowired
     public CompanyService(ICompanyRepository companyRepository, RabbitTemplate rabbitTemplate) {
         this.companyRepository = companyRepository;
-        this.rabbitTemplate = rabbitTemplate;
-        this.companyRegistrationService = new CompanyRegistrationService(companyRepository, rabbitTemplate);
+        this.rabbitTemplate = rabbitTemplate; // rabbitTemplate se pasa a CompanyRegistrationService
+        this.companyRegistrationService = new CompanyRegistrationService(this.companyRepository, this.rabbitTemplate);
     }
 
-    /**
-     * Registra una nueva empresa.
-     * Utiliza el patrón Template Method para estructurar el proceso de registro.
-     *
-     * @param companyDto DTO con la información de la empresa a registrar.
-     * @return La empresa registrada.
-     * @throws IllegalArgumentException si los datos de la empresa son inválidos.
-     * @throws Exception si ocurre algún error durante el registro.
-     */
     @Override
     @Transactional
     public Company registerCompany(CompanyDto companyDto) throws Exception {
-        // Utilizamos el servicio de registro basado en el patrón Template Method
+        // Se asume que companyDto.userId y companyDto.userEmail ya están poblados
+        // por el CompanyController (desde el token o desde la creación en Keycloak).
+        logger.info("Servicio: Registrando perfil de empresa para userId: {}", companyDto.getUserId());
         return companyRegistrationService.registerEntity(companyDto);
     }
 
     /**
-     * Actualiza los datos de una empresa existente.
+     * Actualiza los datos del perfil de una empresa existente.
      *
      * @param companyId El ID de la empresa a actualizar (corresponde al userId de Keycloak).
-     * @param companyDto DTO con los nuevos datos de la empresa.
-     * @return La empresa actualizada.
+     * @param companyDto DTO con los nuevos datos del perfil de la empresa.
+     * @return La entidad Company actualizada.
      * @throws IllegalArgumentException si los IDs no coinciden o el DTO es nulo.
      * @throws EntityNotFoundException si la empresa no se encuentra con el companyId proporcionado.
      * @throws Exception para otros errores durante el proceso.
      */
-
+    @Override
     @Transactional
-    public Company updateCompany(String companyId, CompanyDto companyDto) throws Exception{
-        logger.info("Intentando actualizar empresa con ID: {}", companyId);
+    public Company updateCompany(String companyId, CompanyDto companyDto) throws Exception {
+        logger.info("Servicio: Intentando actualizar empresa con ID: {}", companyId);
 
-        // Validación de parámetros de entrada
         if (!StringUtils.hasText(companyId)) {
             throw new IllegalArgumentException("El ID de la empresa para actualizar no puede ser nulo o vacío.");
         }
         if (companyDto == null) {
             throw new IllegalArgumentException("El DTO de la empresa para actualizar no puede ser nulo.");
         }
-
+        // Opcional: Verificar si el DTO contiene un userId y si coincide con companyId
         if (StringUtils.hasText(companyDto.getUserId()) && !companyDto.getUserId().equals(companyId)) {
-            logger.warn("Conflicto de ID: ID en path ({}) no coincide con ID en DTO ({}). Se usará el ID del path.", companyId, companyDto.getUserId());
-
+            logger.warn("Conflicto de ID en actualización: Path ID '{}' no coincide con DTO ID '{}'. Se usará el Path ID.", companyId, companyDto.getUserId());
+            // Podrías lanzar una excepción si esto no es permitido.
         }
+
 
         Company existingCompany = companyRepository.findById(companyId)
                 .orElseThrow(() -> {
@@ -92,10 +75,10 @@ public class CompanyService implements ICompanyService {
                     return new EntityNotFoundException("No se encontró empresa con ID: " + companyId + " para actualizar.");
                 });
 
+        // Actualizar campos de la entidad existente con valores del DTO
         if (StringUtils.hasText(companyDto.getCompanyName())) {
             existingCompany.setCompanyName(companyDto.getCompanyName());
         }
-
         if (StringUtils.hasText(companyDto.getContactName())) {
             existingCompany.setContactName(companyDto.getContactName());
         }
@@ -108,103 +91,58 @@ public class CompanyService implements ICompanyService {
         if (StringUtils.hasText(companyDto.getContactPosition())) {
             existingCompany.setContactPosition(companyDto.getContactPosition());
         }
-
         if (StringUtils.hasText(companyDto.getCompanySector())) {
             try {
-                EnumSector newSector = EnumSector.valueOf(companyDto.getCompanySector().toUpperCase());
-                existingCompany.setCompanySector(newSector);
+                existingCompany.setCompanySector(EnumSector.valueOf(companyDto.getCompanySector().toUpperCase()));
             } catch (IllegalArgumentException e) {
-                logger.warn("Sector inválido '{}' proporcionado durante la actualización de la empresa {}. El sector no se cambiará o se podría asignar uno por defecto.",
-                        companyDto.getCompanySector(), companyId);
+                logger.warn("Sector inválido '{}' durante actualización. No se cambiará.", companyDto.getCompanySector());
             }
         }
-
+        // Si el userEmail en el DTO representa un nuevo email de CONTACTO para la empresa
+        // y este puede ser diferente del email del usuario en Keycloak.
         if (StringUtils.hasText(companyDto.getUserEmail()) && !existingCompany.getEmail().equals(companyDto.getUserEmail())) {
-
             logger.info("Actualizando email de contacto de la empresa {} de {} a {}", companyId, existingCompany.getEmail(), companyDto.getUserEmail());
             existingCompany.setEmail(companyDto.getUserEmail());
         }
 
         Company updatedCompany = companyRepository.save(existingCompany);
         logger.info("Empresa con ID {} actualizada exitosamente.", companyId);
-
-
         return updatedCompany;
     }
 
     @Override
-    @Transactional
-    public Company updateCompany(Company company) throws Exception {
-        if (company == null || company.getId() == null || company.getId().isEmpty()) {
-            throw new IllegalArgumentException("La información de la empresa o su ID no pueden ser nulos/vacíos para actualizar.");
-        }
-
-        if (!companyRepository.existsById(company.getId())) {
-            throw new EntityNotFoundException("No existe una empresa con el ID proporcionado: " + company.getId());
-        }
-        // Aquí, la entidad 'company' que llega ya no debería tener información sensible como la contraseña.
-        // El mapeo de DTO a Entidad antes de llamar a este método debería haberlo manejado.
-        return companyRepository.save(company);
-    }
-
-
-    /**
-     * Busca una empresa por su ID.
-     *
-     * @param id Identificador único de la empresa.
-     * @return Un objeto Optional con la empresa encontrada.
-     * @throws EntityNotFoundException si no se encuentra la empresa.
-     */
-    @Override
     @Transactional(readOnly = true)
     public Optional<Company> findById(String id) {
-        if (id == null || id.isEmpty()) { // Es mejor verificar isEmpty también
-            // throw new EntityNotFoundException("Id de la empresa es nulo o vacío"); // Opcional: lanzar o devolver vacío
+        if (!StringUtils.hasText(id)) {
+            // Log o lanzar excepción si se prefiere, o simplemente devolver vacío.
             return Optional.empty();
         }
         return companyRepository.findById(id);
     }
 
-    /**
-     * Busca una empresa por su correo electrónico.
-     *
-     * @param email Correo electrónico de la empresa.
-     * @return Un objeto Optional con la empresa encontrada.
-     * @throws EntityNotFoundException si no se encuentra la empresa.
-     */
     @Override
     @Transactional(readOnly = true)
     public Optional<Company> findByEmail(String email) {
-        if (email == null || email.isEmpty()) {
-            // throw new EntityNotFoundException("Email de la empresa es nulo o vacío"); // Opcional
+        if (!StringUtils.hasText(email)) {
             return Optional.empty();
         }
         return companyRepository.findByEmail(email);
     }
 
-    /**
-     * Obtiene todas las empresas registradas.
-     *
-     * @return Lista de todas las empresas.
-     */
     @Override
     @Transactional(readOnly = true)
     public List<Company> findAllCompanies() {
         return companyRepository.findAll();
     }
 
-    /**
-     * Convierte una entidad Company en su DTO correspondiente.
-     *
-     * @param company Entidad Company a convertir.
-     * @return El DTO correspondiente a la empresa.
-     */
     @Override
     public CompanyDto companyToDto(Company company) {
-        if (company == null) return null;
+        if (company == null) {
+            return null;
+        }
         CompanyDto dto = new CompanyDto();
-        dto.setUserId(company.getId()); // El ID de la entidad Company es el userId
-        dto.setUserEmail(company.getEmail()); // El email de la entidad Company
+        dto.setUserId(company.getId()); // ID de la entidad es el userId de Keycloak
+        dto.setUserEmail(company.getEmail()); // Email de contacto de la empresa
         // No hay userPassword
         dto.setCompanyName(company.getCompanyName());
         dto.setContactName(company.getContactName());
@@ -216,22 +154,17 @@ public class CompanyService implements ICompanyService {
         }
         return dto;
     }
-    /**
-     * Convierte un DTO de empresa en su entidad correspondiente.
-     *
-     * @param companyDto DTO con los datos de la empresa.
-     * @return La entidad Company correspondiente.
-     */
+
     @Override
     public Company companyToEntity(CompanyDto companyDto) {
-        // Este método se usa principalmente en CompanyRegistrationService.
-        // Si se llama desde otro lugar, asegurarse que userId y userEmail estén poblados.
-        if (companyDto == null || companyDto.getUserId() == null || companyDto.getUserEmail() == null) {
-            throw new IllegalArgumentException("CompanyDto, userId o userEmail no pueden ser nulos para convertir a entidad.");
+        // Este método es llamado por CompanyRegistrationService.
+        // Asegurarse que userId y userEmail estén presentes si se llama desde otro lado.
+        if (companyDto == null || !StringUtils.hasText(companyDto.getUserId()) || !StringUtils.hasText(companyDto.getUserEmail())) {
+            throw new IllegalArgumentException("CompanyDto, userId, o userEmail no pueden ser nulos/vacíos para convertir a entidad.");
         }
         EnumSector sector;
         try {
-            if (companyDto.getCompanySector() == null || companyDto.getCompanySector().trim().isEmpty()) {
+            if (!StringUtils.hasText(companyDto.getCompanySector())) {
                 sector = EnumSector.OTHER;
             } else {
                 sector = EnumSector.valueOf(companyDto.getCompanySector().toUpperCase());
@@ -253,28 +186,42 @@ public class CompanyService implements ICompanyService {
     }
 
     @Override
+    @Transactional(readOnly = true)
     public boolean existsByEmail(String email) {
-        if (email == null || email.isEmpty()) {
+        if (!StringUtils.hasText(email)) {
             return false;
         }
         return companyRepository.existsByEmail(email);
     }
 
     @Override
+    @Transactional(readOnly = true)
     public int countAllCompanies() {
-        // Asumiendo que ICompanyRepository no tiene countAllCompanies() pero JpaRepository sí tiene count()
-        return (int) companyRepository.count();
+        // Tu ICompanyRepository tiene countAllCompanies(). Si no, usa companyRepository.count()
+        return companyRepository.countAllCompanies();
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean existsBySector(EnumSector sector) {
+        if (sector == null) {
+            return false;
+        }
+        // Tu ICompanyRepository tiene existsBySector(). Si no, necesitarías una query.
+        return companyRepository.existsBySector(sector);
+    }
 
     @Override
     public String getSectorIdByName(String sectorName) {
+        if (!StringUtils.hasText(sectorName)) {
+            return EnumSector.OTHER.toString(); // Devuelve un valor por defecto o lanza error
+        }
         try {
-            if(sectorName == null || sectorName.trim().isEmpty()) return EnumSector.OTHER.toString();
             EnumSector sector = EnumSector.valueOf(sectorName.toUpperCase());
             return sector.toString();
         } catch (IllegalArgumentException e) {
             return EnumSector.OTHER.toString();
         }
     }
+
 }

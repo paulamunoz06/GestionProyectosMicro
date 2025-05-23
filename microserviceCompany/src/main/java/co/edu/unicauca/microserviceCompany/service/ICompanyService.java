@@ -15,22 +15,25 @@ import java.util.Optional;
 public interface ICompanyService {
 
     /**
-     * Registra una nueva empresa.
+     * Registra el perfil de una nueva empresa.
+     * Se espera que companyDto.userId y companyDto.userEmail ya estén poblados
+     * (desde el token JWT o después de la creación del usuario en Keycloak).
      *
      * @param companyDto DTO con la información de la empresa a registrar.
-     * @return La empresa registrada.
+     * @return La entidad Company registrada.
      * @throws Exception Si ocurre un error durante el registro.
      */
     Company registerCompany(CompanyDto companyDto) throws Exception;
 
     /**
-     * Actualiza los datos de una empresa existente.
+     * Actualiza los datos del perfil de una empresa existente.
      *
-     * @param company Objeto de la empresa con los nuevos datos.
-     * @return La empresa actualizada.
-     * @throws Exception Si ocurre un error durante la actualización.
+     * @param companyId El ID de la empresa a actualizar (corresponde al userId de Keycloak).
+     * @param companyDto DTO con los nuevos datos del perfil de la empresa.
+     * @return La entidad Company actualizada.
+     * @throws Exception Si ocurre un error durante la actualización o la empresa no existe.
      */
-    Company updateCompany(Company company) throws Exception;
+    Company updateCompany(String companyId, CompanyDto companyDto) throws Exception; // << FIRMA MODIFICADA
 
     /**
      * Busca una empresa por su ID.
@@ -85,6 +88,14 @@ public interface ICompanyService {
      * @return El número total de empresas.
      */
     int countAllCompanies();
+
+    /**
+     * Verifica si existe alguna empresa en un sector específico.
+     *
+     * @param sector Sector a verificar.
+     * @return true si existen empresas en ese sector, false en caso contrario.
+     */
+    boolean existsBySector(EnumSector sector);
 
     /**
      * Obtiene el identificador de un sector a partir de su nombre.
