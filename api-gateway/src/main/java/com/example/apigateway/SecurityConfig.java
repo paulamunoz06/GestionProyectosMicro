@@ -109,23 +109,47 @@ public class SecurityConfig {
     }
 }
 
-// Esta clase debe estar accesible (mismo paquete o importada)
+// La clase KeycloakRealmRoleConverterWebFlux ahora debería ser así:
 class KeycloakRealmRoleConverterWebFlux implements Converter<Jwt, Collection<GrantedAuthority>> {
+    private static final String KEYCLOAK_CLIENT_ID_WITH_USER_ROLES = "sistema-desktop";
+    private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(KeycloakRealmRoleConverterWebFlux.class);
+
+
     @Override
     @SuppressWarnings("unchecked")
     public Collection<GrantedAuthority> convert(Jwt jwt) {
-        final Map<String, Object> claims = jwt.getClaims();
-        if (claims == null) return Collections.emptyList();
-
-        final Map<String, Object> realmAccess = (Map<String, Object>) claims.getOrDefault("realm_access", Collections.emptyMap());
-        final List<String> roles = (List<String>) realmAccess.getOrDefault("roles", Collections.emptyList());
-
-        if (!roles.isEmpty()) {
-            return roles.stream()
-                    .map(roleName -> "ROLE_" + roleName.toUpperCase())
-                    .map(SimpleGrantedAuthority::new)
-                    .collect(Collectors.toList());
+        Map<String, Object> claims = jwt.getClaims();
+        if (claims == null) {
+            return Collections.emptyList();
         }
+
+        // Priorizar Client Roles de "sistema-desktop"
+        Map<String, Object> resourceAccess = (Map<String, Object>) claims.get("resource_access");
+        if (resourceAccess != null && resourceAccess.containsKey(KEYCLOAK_CLIENT_ID_WITH_USER_ROLES)) {
+            Map<String, Object> clientAccess = (Map<String, Object>) resourceAccess.get(KEYCLOAK_CLIENT_ID_WITH_USER_ROLES);
+            if (clientAccess != null && clientAccess.containsKey("roles")) {
+                List<String> clientRoles = (List<String>) clientAccess.getOrDefault("roles", Collections.emptyList());
+                if (!clientRoles.isEmpty()) {
+                    logger.debug("GATEWAY: Extrayendo Client Roles de '{}': {}", KEYCLOAK_CLIENT_ID_WITH_USER_ROLES, clientRoles);
+                    return clientRoles.stream()
+                            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+                            .collect(Collectors.toList());
+                }
+            }
+        }
+
+        // Fallback a Realm Roles (si también los usas o como alternativa)
+        Map<String, Object> realmAccess = (Map<String, Object>) claims.get("realm_access");
+        if (realmAccess != null && realmAccess.containsKey("roles")) {
+            List<String> realmRoles = (List<String>) realmAccess.getOrDefault("roles", Collections.emptyList());
+            if (!realmRoles.isEmpty()) {
+                logger.debug("GATEWAY: Extrayendo Realm Roles: {}", realmRoles);
+                return realmRoles.stream()
+                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+                        .collect(Collectors.toList());
+            }
+        }
+        logger.warn("GATEWAY: No se encontraron roles ni en resource_access para '{}' ni en realm_access.", KEYCLOAK_CLIENT_ID_WITH_USER_ROLES);
         return Collections.emptyList();
     }
 }
