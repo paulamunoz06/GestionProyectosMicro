@@ -12,9 +12,9 @@ import lombok.Setter;
 public class CompanyRegistrationRequestDto {
 
     // Datos para crear el usuario en Keycloak
-    private String username; // El username/ID que el usuario desea para Keycloak
-    private String email;    // El email para la cuenta de Keycloak
-    private String password; // La contraseña deseada para la cuenta de Keycloak
+    private String userId; // El username/ID que el usuario desea para Keycloak
+    private String userEmail;    // El email para la cuenta de Keycloak
+    private String userPassword; // La contraseña deseada para la cuenta de Keycloak
 
     // Datos para el perfil de la empresa que se guardará en tu base de datos
     private String companyName;

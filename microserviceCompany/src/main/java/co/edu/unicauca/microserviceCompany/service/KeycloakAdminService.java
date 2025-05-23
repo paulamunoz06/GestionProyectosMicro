@@ -66,7 +66,7 @@ public class KeycloakAdminService {
         return keycloakAdminClientInstance;
     }
 
-    public String createUserInKeycloak(String username, String email, String password, String roleNameToAssign) {
+    public String   createUserInKeycloak(String username, String email, String password, String roleNameToAssign, String name, String lastName) {
         Keycloak keycloak = getKeycloakAdminClient();
         RealmResource appRealmResource = keycloak.realm(targetAppRealm); // targetAppRealm es "sistema"
         UsersResource usersResource = appRealmResource.users();
@@ -74,6 +74,8 @@ public class KeycloakAdminService {
         UserRepresentation newUser = new UserRepresentation();
         newUser.setUsername(username);
         newUser.setEmail(email);
+        newUser.setFirstName(name);
+        newUser.setLastName(lastName);
         newUser.setEmailVerified(true);
         newUser.setEnabled(true);
 

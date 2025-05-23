@@ -44,29 +44,31 @@ public class CompanyController {
     public ResponseEntity<?> registerNewCompanyWithUserCreation(@RequestBody CompanyRegistrationRequestDto registrationRequest) {
         try {
             // Validar que los datos necesarios para Keycloak y la empresa estén presentes
-            if (registrationRequest.getUsername() == null || registrationRequest.getUsername().isEmpty() ||
-                    registrationRequest.getEmail() == null || registrationRequest.getEmail().isEmpty() ||
-                    registrationRequest.getPassword() == null || registrationRequest.getPassword().isEmpty() ||
+            if (registrationRequest.getUserId() == null || registrationRequest.getUserId().isEmpty() ||
+                    registrationRequest.getUserEmail() == null || registrationRequest.getUserEmail().isEmpty() ||
+                    registrationRequest.getUserPassword() == null || registrationRequest.getUserPassword().isEmpty() ||
                     registrationRequest.getCompanyName() == null || registrationRequest.getCompanyName().isEmpty()) {
                 return ResponseEntity.status(HttpStatus.BAD_REQUEST)
                         .body(Map.of("error", "Username, email, password y nombre de la empresa son requeridos."));
             }
 
-            logger.info("Iniciando registro de nuevo usuario '{}' en Keycloak y perfil de empresa.", registrationRequest.getUsername());
+            logger.info("Iniciando registro de nuevo usuario '{}' en Keycloak y perfil de empresa.", registrationRequest.getUserId());
 
             // Paso 1: Crear el usuario en Keycloak
             String keycloakUserId = keycloakAdminService.createUserInKeycloak(
-                    registrationRequest.getUsername(),
-                    registrationRequest.getEmail(),
-                    registrationRequest.getPassword(),
-                    "company" // Rol a asignar en Keycloak (asegúrate que 'company' sea el nombre del rol en Keycloak)
+                    registrationRequest.getUserId(),
+                    registrationRequest.getUserEmail(),
+                    registrationRequest.getUserPassword(),
+                    "company", // Rol a asignar en Keycloak
+                    registrationRequest.getContactName(),
+                    registrationRequest.getContactLastName()
             );
-            logger.info("Usuario '{}' creado en Keycloak con ID: {}", registrationRequest.getUsername(), keycloakUserId);
+            logger.info("Usuario '{}' creado en Keycloak con ID: {}", registrationRequest.getUserId(), keycloakUserId);
 
             // Paso 2: Crear el perfil de la empresa en la base de datos local
             CompanyDto companyProfileDto = new CompanyDto();
             companyProfileDto.setUserId(keycloakUserId); // Usar el ID devuelto por Keycloak
-            companyProfileDto.setUserEmail(registrationRequest.getEmail()); // Usar el email proporcionado
+            companyProfileDto.setUserEmail(registrationRequest.getUserEmail()); // Usar el email proporcionado
             companyProfileDto.setCompanyName(registrationRequest.getCompanyName());
             companyProfileDto.setContactName(registrationRequest.getContactName());
             companyProfileDto.setContactLastName(registrationRequest.getContactLastName());
