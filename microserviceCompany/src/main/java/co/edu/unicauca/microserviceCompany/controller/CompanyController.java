@@ -67,7 +67,7 @@ public class CompanyController {
 
             // Paso 2: Crear el perfil de la empresa en la base de datos local
             CompanyDto companyProfileDto = new CompanyDto();
-            companyProfileDto.setUserId(keycloakUserId); // Usar el ID devuelto por Keycloak
+            companyProfileDto.setUserId(registrationRequest.getUserId()); // Usar el ID devuelto por Keycloak
             companyProfileDto.setUserEmail(registrationRequest.getUserEmail()); // Usar el email proporcionado
             companyProfileDto.setCompanyName(registrationRequest.getCompanyName());
             companyProfileDto.setContactName(registrationRequest.getContactName());

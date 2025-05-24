@@ -30,6 +30,76 @@ import java.util.stream.Collectors;
 public class SecurityConfig {
 
     // ... (cadenas de filtros #1 y #2 sin cambios, asumiendo que son correctas para sus propósitos) ...
+// CADENA DE FILTROS #1: Para el endpoint público de registro de empresa
+
+    @Bean
+
+    @Order(1) // Se evalúa PRIMERO
+
+    public SecurityWebFilterChain publicCompanyRegistrationFilterChain(ServerHttpSecurity http) {
+
+        http
+
+                .securityMatcher( // Aplicar esta cadena SOLO a esta ruta y método específicos
+
+                        new PathPatternParserServerWebExchangeMatcher("/company/public/register-new-company", HttpMethod.POST)
+
+                )
+
+                .authorizeExchange(exchanges -> exchanges
+
+                        .anyExchange().permitAll() // Si coincide el matcher, permitir todo
+
+                )
+
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable);
+
+// IMPORTANTE: NO hay .oauth2ResourceServer() aquí, para que no intente validar JWT
+
+        return http.build();
+
+    }
+
+
+
+// CADENA DE FILTROS #2: Para otras rutas públicas de /company/sector (ejemplo)
+
+    @Bean
+
+    @Order(2) // Se evalúa DESPUÉS de la anterior
+
+    public SecurityWebFilterChain publicCompanySectorFilterChain(ServerHttpSecurity http) {
+
+        http
+
+                .securityMatcher( // Aplicar esta cadena SOLO a esta ruta y método
+
+                        new PathPatternParserServerWebExchangeMatcher("/company/sector/**", HttpMethod.GET)
+
+                )
+
+                .authorizeExchange(exchanges -> exchanges
+
+                        .anyExchange().permitAll()
+
+                )
+
+                .csrf(ServerHttpSecurity.CsrfSpec::disable)
+
+                .httpBasic(ServerHttpSecurity.HttpBasicSpec::disable)
+
+                .formLogin(ServerHttpSecurity.FormLoginSpec::disable);
+
+// NO .oauth2ResourceServer()
+
+        return http.build();
+
+    }
+
 
     // CADENA DE FILTROS #3: Para el resto de las rutas (protegidas con JWT)
     @Bean
