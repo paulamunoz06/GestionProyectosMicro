@@ -106,7 +106,7 @@ public class CompanyController {
      * @return ResponseEntity con el estado de la operación.
      */
     @PostMapping("/register") // Este es el endpoint original, ahora protegido
-    @PreAuthorize("hasRole('company')") // El rol debe ser COMPANY (Spring Security añade ROLE_ internamente)
+    @PreAuthorize("hasAuthority('company')") // El rol debe ser COMPANY (Spring Security añade ROLE_ internamente)
     public ResponseEntity<?> createOrUpdateCompanyProfile(@RequestBody CompanyDto companyDetailsDto, @AuthenticationPrincipal Jwt jwt) {
         try {
             String userIdFromToken = jwt.getSubject();
@@ -161,7 +161,7 @@ public class CompanyController {
     }
 
     @GetMapping("/{companyId}")
-    @PreAuthorize("hasRole('coordinator') or (hasRole('company') and #companyId == authentication.principal.subject)")
+    @PreAuthorize("hasAuthority('coordinator') or hasAuthority('company')")
     public ResponseEntity<?> getCompanyById(@PathVariable String companyId, @AuthenticationPrincipal Jwt jwt) {
         try {
             logger.info("Usuario {} solicitando empresa con ID: {}", jwt.getSubject(), companyId);

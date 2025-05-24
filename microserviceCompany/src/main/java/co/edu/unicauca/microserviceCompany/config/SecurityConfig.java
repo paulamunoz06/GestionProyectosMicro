@@ -19,47 +19,49 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
+// ... (imports sin cambios)
+
 @Configuration
 @EnableWebSecurity
-@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true)
+@EnableMethodSecurity(securedEnabled = true, jsr250Enabled = true) // jsr250Enabled es para @RolesAllowed, securedEnabled para @Secured
 public class SecurityConfig {
 
-    private static final String KEYCLOAK_RESOURCE_CLIENT_ID = "sistema-desktop";
-    private static final String KEYCLOAK_CLIENT_ID_WITH_USER_ROLES = "sistema-desktop";
+    private static final String KEYCLOAK_CLIENT_ID_WITH_USER_ROLES = "sistema-desktop"; // Asegúrate que sea igual que en el gateway
     private static final org.slf4j.Logger logger = org.slf4j.LoggerFactory.getLogger(SecurityConfig.class);
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
         http
                 .authorizeHttpRequests(authorize -> authorize
-                        // El endpoint público para registrar empresa y usuario
                         .requestMatchers(HttpMethod.POST, "/public/register-new-company").permitAll()
-                        // El endpoint para que una empresa autenticada actualice su perfil
-                        .requestMatchers(HttpMethod.POST, "/register").hasRole("COMPANY") // Rol en MAYÚSCULAS
-                        .requestMatchers(HttpMethod.GET, "/{companyId}").authenticated()
-                        .requestMatchers(HttpMethod.GET, "/email/**").hasRole("COORDINATOR")
-                        .requestMatchers(HttpMethod.GET, "/all").hasRole("COORDINATOR")
+                        // MODIFICADO: hasRole a hasAuthority
+                        .requestMatchers(HttpMethod.POST, "/register").hasAuthority("company")
+                        .requestMatchers(HttpMethod.GET, "/{companyId}").authenticated() // @PreAuthorize se encargará de la autorización fina
+                        .requestMatchers(HttpMethod.GET, "/email/**").hasAuthority("coordinator")
+                        .requestMatchers(HttpMethod.GET, "/all").hasAuthority("coordinator")
                         .requestMatchers(HttpMethod.GET, "/sector/**").permitAll()
-                        .requestMatchers(HttpMethod.GET, "/count").hasRole("COORDINATOR")
-                        .requestMatchers("/**").authenticated()
-                        // Para ProjectController (ejemplos, ajusta según tus necesidades)
-                        .requestMatchers(HttpMethod.POST, "/project/register").authenticated()
+                        .requestMatchers(HttpMethod.GET, "/count").hasAuthority("coordinator")
+                        // .requestMatchers("/**").authenticated() // Podría ser redundante o demasiado general
+
+                        // Reglas para ProjectController (ejemplos)
+                        .requestMatchers(HttpMethod.POST, "/project/register").authenticated() // o hasAnyAuthority si aplica
                         .requestMatchers(HttpMethod.GET, "/project/{projectId}").authenticated()
                         .requestMatchers(HttpMethod.GET, "/project/exists/{projectId}").authenticated()
                         .requestMatchers(HttpMethod.GET, "/project/{projectId}/company").authenticated()
                         .requestMatchers(HttpMethod.PUT, "/project/{projectId}").authenticated()
-                        .requestMatchers("/project/**").authenticated()
-                        .requestMatchers("/h2-console/**").permitAll() // Para H2 console
-                        .anyRequest().denyAll()
+                        .requestMatchers("/project/**").authenticated() // Regla general para project
+
+                        .requestMatchers("/h2-console/**").permitAll()
+                        .anyRequest().denyAll() // Denegar todo lo no especificado explícitamente
                 )
                 .oauth2ResourceServer(oauth2 -> oauth2
                         .jwt(jwt -> jwt.jwtAuthenticationConverter(jwtAuthenticationConverter()))
                 )
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin())) // Para H2 Console si usas frames
+                .headers(headers -> headers.frameOptions(frameOptions -> frameOptions.sameOrigin()))
                 .csrf(csrf -> csrf
-                        .ignoringRequestMatchers("/h2-console/**") // Ignorar CSRF para H2 console
-                        .disable() // Considera si necesitas deshabilitarlo globalmente o solo para ciertas rutas
+                        .ignoringRequestMatchers("/h2-console/**")
+                        .disable()
                 );
         return http.build();
     }
@@ -74,38 +76,39 @@ public class SecurityConfig {
     private Collection<GrantedAuthority> extractAuthoritiesFromJwt(Jwt jwt) {
         Map<String, Object> claims = jwt.getClaims();
         if (claims == null) {
+            logger.warn("MICROSERVICIO: JWT claims son nulos.");
             return Collections.emptyList();
         }
 
-        // Priorizar Client Roles del cliente especificado (ej. "sistema-desktop")
         Map<String, Object> resourceAccess = (Map<String, Object>) claims.get("resource_access");
         if (resourceAccess != null && resourceAccess.containsKey(KEYCLOAK_CLIENT_ID_WITH_USER_ROLES)) {
             Map<String, Object> clientAccess = (Map<String, Object>) resourceAccess.get(KEYCLOAK_CLIENT_ID_WITH_USER_ROLES);
             if (clientAccess != null && clientAccess.containsKey("roles")) {
                 @SuppressWarnings("unchecked")
-                List<String> clientRoles = (List<String>) clientAccess.get("roles");
+                List<String> clientRoles = (List<String>) clientAccess.getOrDefault("roles", Collections.emptyList());
                 if (clientRoles != null && !clientRoles.isEmpty()) {
-                    logger.debug("Extrayendo Client Roles de '{}': {}", KEYCLOAK_CLIENT_ID_WITH_USER_ROLES, clientRoles);
+                    logger.debug("MICROSERVICIO: Extrayendo Client Roles de '{}': {}", KEYCLOAK_CLIENT_ID_WITH_USER_ROLES, clientRoles);
                     return clientRoles.stream()
-                            .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+                            // MODIFICADO: Crear SimpleGrantedAuthority directamente con el nombre del rol
+                            .map(SimpleGrantedAuthority::new)
                             .collect(Collectors.toList());
                 }
             }
         }
 
-        // Como fallback, intentar extraer de Realm Roles
         Map<String, Object> realmAccess = (Map<String, Object>) claims.get("realm_access");
         if (realmAccess != null && realmAccess.containsKey("roles")) {
             @SuppressWarnings("unchecked")
-            List<String> realmRoles = (List<String>) realmAccess.get("roles");
+            List<String> realmRoles = (List<String>) realmAccess.getOrDefault("roles", Collections.emptyList());
             if (realmRoles != null && !realmRoles.isEmpty()) {
-                logger.debug("Extrayendo Realm Roles: {}", realmRoles);
+                logger.debug("MICROSERVICIO: Extrayendo Realm Roles: {}", realmRoles);
                 return realmRoles.stream()
-                        .map(role -> new SimpleGrantedAuthority("ROLE_" + role.toUpperCase()))
+                        // MODIFICADO: Crear SimpleGrantedAuthority directamente con el nombre del rol
+                        .map(SimpleGrantedAuthority::new)
                         .collect(Collectors.toList());
             }
         }
-        logger.warn("No se encontraron roles ni en resource_access para el cliente '{}' ni en realm_access.", KEYCLOAK_CLIENT_ID_WITH_USER_ROLES);
+        logger.warn("MICROSERVICIO: No se encontraron roles ni en resource_access para el cliente '{}' ni en realm_access.", KEYCLOAK_CLIENT_ID_WITH_USER_ROLES);
         return Collections.emptyList();
     }
 }

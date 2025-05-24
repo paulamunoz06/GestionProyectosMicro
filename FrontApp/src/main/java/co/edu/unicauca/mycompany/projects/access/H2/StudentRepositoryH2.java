@@ -32,7 +32,7 @@ public class StudentRepositoryH2 extends Token implements IStudentRepository{
     public Student getStudent(String id) {
         HttpClient httpClient = HttpClients.createDefault();
         ObjectMapper mapper = new ObjectMapper();
-        String apiUrl = IUrl.ApiGatewayUrl + "/estudiante/"+id ;
+        String apiUrl = IUrl.ApiGatewayUrl + "/student/"+id ;
         Student student = null;
         try {
             // Crear una solicitud GET
