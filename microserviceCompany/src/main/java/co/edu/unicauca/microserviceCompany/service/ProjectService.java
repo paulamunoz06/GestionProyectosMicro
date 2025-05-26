@@ -197,39 +197,41 @@ public class ProjectService implements IProjectService {
      */
     @Override
     public Project projectToClass(ProjectDto projectDto) {
-        Project project = new Project(
-                projectDto.getProId(),
-                projectDto.getProTitle(),
-                projectDto.getProDescription(),
-                projectDto.getProAbstract(),
-                projectDto.getProGoals(),
-                projectDto.getProDeadLine(),
-                projectDto.getProBudget(),
-                projectDto.getIdcompany(),
-                projectDto.getProCoordinator()
-        );
-
-        // Si la fecha es nula, establecemos la fecha actual
-        if (projectDto.getProDate() == null) {
-            project.setProDate(LocalDate.now());
-        } else {
-            project.setProDate(projectDto.getProDate());
+        if (projectDto == null) {
+            throw new IllegalArgumentException("ProjectDto no puede ser nulo para convertir a entidad.");
+        }
+        if (projectDto.getProId() == null || projectDto.getProId().trim().isEmpty() ||
+                projectDto.getProTitle() == null || projectDto.getProTitle().trim().isEmpty()) {
+            throw new IllegalArgumentException("ProId y ProTitle son requeridos en ProjectDto para convertir a entidad.");
         }
 
-        // Si el estado está definido, lo establecemos
-        if (projectDto.getProState() != null && !projectDto.getProState().isEmpty()) {
+        // Determinar el estado del proyecto
+        EnumProjectState state = EnumProjectState.RECIBIDO; // Valor por defecto
+        if (projectDto.getProState() != null && !projectDto.getProState().trim().isEmpty()) {
             try {
-                project.setProState(EnumProjectState.valueOf(projectDto.getProState()));
+                state = EnumProjectState.valueOf(projectDto.getProState().toUpperCase());
             } catch (IllegalArgumentException e) {
-                // Si el estado no es válido, establecemos el estado por defecto
-                project.setProState(EnumProjectState.RECIBIDO);
+                // logger.warn("Estado de proyecto inválido '{}' en DTO. Usando RECIBIDO.", projectDto.getProState());
             }
-        } else {
-            // Si no hay estado, establecemos el estado por defecto
-            project.setProState(EnumProjectState.RECIBIDO);
         }
 
-        return project;
+        // Determinar la fecha del proyecto
+        LocalDate date = LocalDate.now(); // Valor por defecto
+        if (projectDto.getProDate() != null) {
+            date = projectDto.getProDate();
+        }
+
+        return Project.builder(projectDto.getProId(), projectDto.getProTitle())
+                .description(projectDto.getProDescription())
+                .proAbstract(projectDto.getProAbstract())
+                .goals(projectDto.getProGoals())
+                .date(date)
+                .deadLine(projectDto.getProDeadLine())
+                .budget(projectDto.getProBudget())
+                .state(state)
+                .companyId(projectDto.getIdcompany()) // O projectDto.getCompanyId(), sé consistente
+                .coordinatorId(projectDto.getProCoordinator())
+                .build();
     }
 
     /**

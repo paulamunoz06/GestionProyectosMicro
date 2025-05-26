@@ -1,6 +1,7 @@
 package co.edu.unicauca.microserviceCompany.service;
 
 import co.edu.unicauca.microserviceCompany.entity.Company;
+import co.edu.unicauca.microserviceCompany.entity.EnumProjectState;
 import co.edu.unicauca.microserviceCompany.entity.Project;
 import co.edu.unicauca.microserviceCompany.infra.config.RabbitMQConfig;
 import co.edu.unicauca.microserviceCompany.infra.dto.ProjectDto;
@@ -9,6 +10,7 @@ import co.edu.unicauca.microserviceCompany.repository.IProjectRepository;
 import jakarta.persistence.EntityNotFoundException;
 import org.springframework.amqp.rabbit.core.RabbitTemplate;
 
+import java.time.LocalDate;
 import java.util.Optional;
 /**
  * Implementación concreta del servicio de registro para proyectos.
@@ -62,17 +64,34 @@ public class ProjectRegistrationService extends AbstractEntityRegistrationServic
 
     @Override
     protected Project dtoToEntity(ProjectDto projectDto) {
-        return new Project(
-                projectDto.getProId(),
-                projectDto.getProTitle(),
-                projectDto.getProDescription(),
-                projectDto.getProAbstract(),
-                projectDto.getProGoals(),
-                projectDto.getProDeadLine(),
-                projectDto.getProBudget(),
-                projectDto.getCompanyId(),
-                projectDto.getProCoordinator()
-        );
+        // Determinar el estado del proyecto
+        EnumProjectState state = EnumProjectState.RECIBIDO; // Valor por defecto
+        if (projectDto.getProState() != null && !projectDto.getProState().trim().isEmpty()) {
+            try {
+                state = EnumProjectState.valueOf(projectDto.getProState().toUpperCase());
+            } catch (IllegalArgumentException e) {
+                // logger.warn("Estado de proyecto inválido '{}' en DTO. Usando RECIBIDO.", projectDto.getProState());
+                // Mantener RECIBIDO o manejar el error como prefieras
+            }
+        }
+
+        // Determinar la fecha del proyecto
+        LocalDate date = LocalDate.now(); // Valor por defecto
+        if (projectDto.getProDate() != null) {
+            date = projectDto.getProDate();
+        }
+
+        return Project.builder(projectDto.getProId(), projectDto.getProTitle()) // Campos requeridos para el builder
+                .description(projectDto.getProDescription())
+                .proAbstract(projectDto.getProAbstract())
+                .goals(projectDto.getProGoals())
+                .date(date) // Usar la fecha determinada
+                .deadLine(projectDto.getProDeadLine())
+                .budget(projectDto.getProBudget())
+                .state(state) // Usar el estado determinado
+                .companyId(projectDto.getCompanyId()) // Asegúrate que companyId en DTO sea el correcto
+                .coordinatorId(projectDto.getProCoordinator())
+                .build();
     }
 
     @Override

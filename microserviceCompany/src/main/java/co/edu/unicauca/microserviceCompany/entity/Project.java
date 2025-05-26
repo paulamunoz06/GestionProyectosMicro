@@ -5,137 +5,171 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
+// Quitamos @NoArgsConstructor y @AllArgsConstructor si forzamos el builder.
+// Si necesitas un constructor sin args para JPA/Frameworks, puedes añadirlo explícitamente o mantener @NoArgsConstructor.
+// Para este ejemplo, lo mantendré por simplicidad con JPA, pero el constructor principal será privado.
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.time.LocalDate;
 
-/**
- * Clase que representa un proyecto en el sistema.
- *
- * La clase {@link Project} define los atributos y comportamientos relacionados con un proyecto,
- * incluyendo detalles como su título, descripción, metas, presupuesto, fecha de inicio, fecha de vencimiento,
- * y el estado del proyecto. Esta entidad está vinculada a la base de datos y se utiliza para representar los proyectos
- * gestionados por las empresas en el sistema.
- *
- */
 @Entity
 @Getter
-@Setter
-@NoArgsConstructor
+@Setter // Puedes restringir setters si quieres inmutabilidad post-construcción
+@NoArgsConstructor // Para JPA y otras librerías de framework
 public class Project {
 
-    /**
-     * Identificador único del proyecto.
-     * Este atributo es utilizado para distinguir un proyecto de otro.
-     */
     @Id
     @Column(name = "PROID", nullable = false, unique = true)
     private String proId;
 
-    /**
-     * Título del proyecto.
-     * Este atributo no puede estar vacío y debe tener entre 2 y 100 caracteres.
-     */
     @NotBlank(message = "El título del proyecto no puede estar vacío")
     @Size(min = 2, max = 100)
     @Column(name = "PROTITLE", nullable = false)
     private String proTitle;
 
-    /**
-     * Descripción detallada del proyecto.
-     * Este atributo no puede estar vacío y debe tener entre 10 y 1000 caracteres.
-     */
     @NotBlank(message = "La descripción del proyecto no puede estar vacía")
     @Size(min = 10, max = 1000)
     @Column(name = "PRODESCRIPTION", nullable = false)
     private String proDescription;
 
-    /**
-     * Resumen del proyecto.
-     * Este atributo no puede estar vacío.
-     */
     @NotBlank(message = "El resumen no puede estar vacío")
     @Column(name = "PROABSTRACT", nullable = false)
     private String proAbstract;
 
-    /**
-     * Objetivos del proyecto.
-     * Este atributo no puede estar vacío.
-     */
     @NotBlank(message = "Los objetivos no pueden estar vacíos")
     @Column(name = "PROGOALS", nullable = false)
     private String proGoals;
 
-    /**
-     * Fecha en que se crea el proyecto.
-     * Se utiliza la fecha actual como valor predeterminado.
-     */
     @Temporal(TemporalType.DATE)
     @Column(name = "PRODATE", nullable = false)
     private LocalDate proDate;
 
-    /**
-     * Tiempo máximo en meses para completar el proyecto.
-     * Este valor no puede ser nulo.
-     */
     @NotNull(message = "El tiempo máximo en meses no puede estar vacío")
     @Column(name = "PRODEADLINE", nullable = false)
     private int proDeadLine;
 
-    /**
-     * Presupuesto estimado para el proyecto.
-     * Este valor es opcional.
-     */
     @Column(name = "PROBUDGET", nullable = true)
     private Double proBudget;
 
-    /**
-     * Estado actual del proyecto.
-     * El estado está representado por la enumeración {@link EnumProjectState}.
-     */
     @Enumerated(EnumType.STRING)
     @Column(name = "PROSTATE", nullable = false)
     private EnumProjectState proState;
 
-    /**
-     * Identificador de la empresa que gestiona el proyecto.
-     * Este valor es opcional y puede estar vacío.
-     */
     @Column(name = "IDCOMPANY", nullable = true)
     private String idcompany;
 
-    /**
-     * Identificador del coordinador del proyecto.
-     * Este valor es opcional y puede estar vacío.
-     */
     @Column(name = "IDCOORDINADOR", nullable = true)
     private String proCoordinator;
 
-    /**
-     * Constructor para crear un nuevo proyecto con los parámetros proporcionados.
-     *
-     * @param proid          Identificador del proyecto.
-     * @param protitle       Título del proyecto.
-     * @param prodescription Descripción del proyecto.
-     * @param proAbstract    Resumen del proyecto.
-     * @param proGoals       Objetivos del proyecto.
-     * @param proDeadline    Tiempo máximo en meses para completar el proyecto.
-     * @param proBudget      Presupuesto estimado para el proyecto.
-     * @param idcompany      Identificador de la empresa que gestiona el proyecto.
-     * @param proCoordinator Identificador del coordinador del proyecto.
-     */
-    public Project(String proid, String protitle, String prodescription, String proAbstract, String proGoals, int proDeadline, Double proBudget, String idcompany, String proCoordinator) {
-        this.proId = proid;
-        this.proTitle = protitle;
-        this.proDescription = prodescription;
-        this.proAbstract = proAbstract;
-        this.proGoals = proGoals;
-        this.proDate = LocalDate.now();
-        this.proDeadLine = proDeadline;
-        this.proBudget = proBudget;
-        this.proState = EnumProjectState.RECIBIDO;
-        this.idcompany = idcompany;
-        this.proCoordinator = proCoordinator;
+    // Constructor privado: solo el Builder puede llamarlo
+    private Project(ProjectBuilder builder) {
+        this.proId = builder.proId;
+        this.proTitle = builder.proTitle;
+        this.proDescription = builder.proDescription;
+        this.proAbstract = builder.proAbstract;
+        this.proGoals = builder.proGoals;
+        this.proDate = builder.proDate;
+        this.proDeadLine = builder.proDeadLine;
+        this.proBudget = builder.proBudget;
+        this.proState = builder.proState;
+        this.idcompany = builder.idcompany;
+        this.proCoordinator = builder.proCoordinator;
+    }
+
+    // Método estático para obtener una instancia del Builder
+    public static ProjectBuilder builder(String proId, String proTitle) {
+        return new ProjectBuilder(proId, proTitle);
+    }
+
+    // Clase Builder interna estática
+    public static class ProjectBuilder {
+        // Campos requeridos (ejemplo, podrían ser más o menos)
+        private final String proId;
+        private final String proTitle;
+
+        // Campos opcionales con valores por defecto si aplica
+        private String proDescription = "";
+        private String proAbstract = "";
+        private String proGoals = "";
+        private LocalDate proDate = LocalDate.now(); // Valor por defecto
+        private int proDeadLine;
+        private Double proBudget;
+        private EnumProjectState proState = EnumProjectState.RECIBIDO; // Valor por defecto
+        private String idcompany;
+        private String proCoordinator;
+
+        // Constructor del Builder con los campos requeridos
+        public ProjectBuilder(String proId, String proTitle) {
+            if (proId == null || proId.trim().isEmpty()) {
+                throw new IllegalArgumentException("Project ID (proId) no puede ser nulo o vacío.");
+            }
+            if (proTitle == null || proTitle.trim().isEmpty()) {
+                throw new IllegalArgumentException("Project Title (proTitle) no puede ser nulo o vacío.");
+            }
+            this.proId = proId;
+            this.proTitle = proTitle;
+        }
+
+        // Métodos "setter" fluidos para los campos opcionales
+        public ProjectBuilder description(String proDescription) {
+            this.proDescription = proDescription;
+            return this;
+        }
+
+        public ProjectBuilder proAbstract(String proAbstract) {
+            this.proAbstract = proAbstract;
+            return this;
+        }
+
+        public ProjectBuilder goals(String proGoals) {
+            this.proGoals = proGoals;
+            return this;
+        }
+
+        public ProjectBuilder date(LocalDate proDate) {
+            if (proDate != null) { // Permitir sobreescribir el valor por defecto solo si no es null
+                this.proDate = proDate;
+            }
+            return this;
+        }
+
+        public ProjectBuilder deadLine(int proDeadLine) {
+            this.proDeadLine = proDeadLine;
+            return this;
+        }
+
+        public ProjectBuilder budget(Double proBudget) {
+            this.proBudget = proBudget;
+            return this;
+        }
+
+        public ProjectBuilder state(EnumProjectState proState) {
+            if (proState != null) { // Permitir sobreescribir el valor por defecto solo si no es null
+                this.proState = proState;
+            }
+            return this;
+        }
+
+        public ProjectBuilder companyId(String idcompany) {
+            this.idcompany = idcompany;
+            return this;
+        }
+
+        public ProjectBuilder coordinatorId(String proCoordinator) {
+            this.proCoordinator = proCoordinator;
+            return this;
+        }
+
+        // Método build() que crea la instancia de Project
+        public Project build() {
+            // Aquí podrías añadir validaciones más complejas de los campos del builder si es necesario
+            // antes de crear el objeto Project.
+            if (this.proDeadLine <= 0 && this.proState != EnumProjectState.RECHAZADO) { // Ejemplo de validación
+                // Podrías lanzar una excepción o ajustar el valor
+                // System.err.println("Advertencia: proDeadLine debería ser positivo.");
+            }
+            return new Project(this);
+        }
     }
 }
