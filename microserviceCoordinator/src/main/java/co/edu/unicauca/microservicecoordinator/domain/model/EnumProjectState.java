@@ -3,8 +3,8 @@ package co.edu.unicauca.microservicecoordinator.domain.model;
 /**
  * Enumeración que define los posibles estados de un proyecto en el sistema.
  *
- * <p>Esta enumeración permite gestionar el ciclo de vida de un proyecto desde
- * su recepción inicial hasta su cierre.</p>
+ * Esta enumeración permite gestionar el ciclo de vida de un proyecto desde
+ * su recepción inicial hasta su cierre.
  */
 public enum EnumProjectState {
     /**
