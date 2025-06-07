@@ -77,19 +77,15 @@ La aplicación está dockerizada con Docker-Compose. Se ha configurado un volume
     * Modelo de Contenedores 
     * Diagrama de Componentes 
     * Diagrama de Clases – Entidades 
--   [Bounded Context Diagram]([https://documentacion.docx#page=5](https://drive.google.com/file/d/1I6pi0R7gYwSiqrWNn6MVyKbS7FnPlVaR/view?usp=sharing)) 
--   [Modelo de Dominio y Arquitectura Hexagonal]([https://documentacion.docx#page=6](https://drive.google.com/file/d/1I6pi0R7gYwSiqrWNn6MVyKbS7FnPlVaR/view?usp=sharing)) 
+-   [Bounded Context Diagram](https://drive.google.com/file/d/1I6pi0R7gYwSiqrWNn6MVyKbS7FnPlVaR/view?usp=sharing)
+-   [Modelo de Dominio y Arquitectura Hexagonal](https://drive.google.com/file/d/1I6pi0R7gYwSiqrWNn6MVyKbS7FnPlVaR/view?usp=sharing) 
 -   [Levantamiento de Requisitos (Historias de Usuario)](https://docs.google.com/spreadsheets/d/1hG2GuJDQpcxUXRv70Yiytuf38SZNCaiGbclfKXcRKBk/edit?usp=sharing) 
 -   [Test de Usabilidad](https://docs.google.com/spreadsheets/d/1pmMF3Gd32J0-KrMs3bDB2ZYqA62sIhG9D5hBbXWHq5U/edit?gid=946668092#gid=946668092) 
 
 ## Repositorio del Proyecto
 [https://github.com/paulamunoz06/GestionProyectosMicro.git](https://github.com/paulamunoz06/GestionProyectosMicro.git) 
 
-## Tablero de Tareas y Progreso
-Se siguió la metodología Scrum para la gestión de tareas, con un tablero de tareas para el Sprint 3 y gráficas de progreso que muestran el 100% de finalización. 
-
-## Video de Sustentación
-[]. 
+## Video sustentación
 
 ## Créditos
 **Desarrollado por:**
