@@ -6,53 +6,71 @@ import co.edu.unicauca.mycompany.projects.domain.entities.Project;
 import co.edu.unicauca.mycompany.projects.domain.services.CompanyService;
 import co.edu.unicauca.mycompany.projects.infra.Observer;
 import co.edu.unicauca.mycompany.projects.domain.services.ProjectService;
+import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.util.Date;
 import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * Clase que implementa un observador para actualizar dinámicamente la tabla de proyectos disponibles.
- * Se actualiza cuando un estudiante se postula a un proyecto.
+ * Clase que implementa un observador para actualizar dinámicamente la tabla de
+ * proyectos disponibles. Se actualiza cuando un estudiante se postula a un
+ * proyecto.
  */
 public class TableProjectsCoordinatorObserver extends JFrame implements Observer {
 
-    /** Tabla que muestra los proyectos disponibles */
+    /**
+     * Tabla que muestra los proyectos disponibles
+     */
     private final JTable jTableCoordinator;
 
-    /** Panel de desplazamiento para la tabla */
+    /**
+     * Panel de desplazamiento para la tabla
+     */
     private final JScrollPane jScrollPane1;
 
-    /** Servicio de gestión de proyectos */
+    /**
+     * Servicio de gestión de proyectos
+     */
     private final ProjectService projectService;
 
-    /** Coordinador que supervisa los proyectos */
+    /**
+     * Coordinador que supervisa los proyectos
+     */
     private final Coordinator coordinator;
 
-    /** Servicio de gestión de compañías */
+    /**
+     * Servicio de gestión de compañías
+     */
     private final CompanyService companyService;
+    
+    private JComboBox cboPeriodosAcademicos;
 
     /**
      * Constructor de la clase.
-     * 
+     *
      * @param coordinator Coordinador que gestiona los proyectos.
      * @param projectService Servicio de gestión de proyectos.
      * @param jTableCoordinator Tabla que muestra los proyectos disponibles.
      * @param jScrollPane1 Panel de desplazamiento para la tabla.
      * @param companyService Servicio de gestión de compañías.
      */
-    public TableProjectsCoordinatorObserver(Coordinator coordinator, ProjectService projectService, JTable jTableCoordinator, JScrollPane jScrollPane1, CompanyService companyService) {
+    public TableProjectsCoordinatorObserver(Coordinator coordinator, ProjectService projectService, JTable jTableCoordinator, JScrollPane jScrollPane1, CompanyService companyService, JComboBox cbo) {
         this.coordinator = coordinator;
         this.jTableCoordinator = jTableCoordinator;
         this.projectService = projectService;
         this.jScrollPane1 = jScrollPane1;
         this.companyService = companyService;
+        this.cboPeriodosAcademicos = cbo;
 
         // Cargar datos iniciales
         configurarTabla();
     }
 
     /**
-     * Configura y llena la tabla con los proyectos disponibles para el coordinador.
+     * Configura y llena la tabla con los proyectos disponibles para el
+     * coordinador.
      */
     private void configurarTabla() {
         // Configurar la tabla y cargar datos iniciales
@@ -84,12 +102,13 @@ public class TableProjectsCoordinatorObserver extends JFrame implements Observer
     }
 
     /**
-     * Configura los componentes de la tabla, incluyendo su diseño y renderizadores.
+     * Configura los componentes de la tabla, incluyendo su diseño y
+     * renderizadores.
      */
     private void initComponents() {
         jTableCoordinator.setModel(new DefaultTableModel(
-            new Object[][] {},
-            new String[] { "Id", "NIT Empresa", "Nombre Empresa", "Nombre Proyecto", "Fecha", "Acciones" }
+                new Object[][]{},
+                new String[]{"Id", "NIT Empresa", "Nombre Empresa", "Nombre Proyecto", "Fecha", "Acciones"}
         ));
 
         // Configuración de la columna de acciones
@@ -108,11 +127,55 @@ public class TableProjectsCoordinatorObserver extends JFrame implements Observer
     }
 
     /**
-     * Método que se ejecuta cuando la tabla necesita actualizarse.
-     * Limpia la tabla y vuelve a cargar los datos.
+     * Método que se ejecuta cuando la tabla necesita actualizarse. Limpia la
+     * tabla y vuelve a cargar los datos.
      */
     @Override
     public void update() {
         configurarTabla();
+        cboPeriodosAcademicos.setSelectedIndex(0);
     }
+
+    public void actualizarTablaPorPeriodo(String periodo) {
+        initComponents(); // Asegura que la tabla tenga las columnas bien definidas
+        DefaultTableModel modelo = (DefaultTableModel) jTableCoordinator.getModel();
+        modelo.setRowCount(0);
+
+        List<Project> projects = projectService.listProjects();
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+        for (Project project : projects) {
+            Date fechaDate = project.getProDate();
+            String fechaStr = sdf.format(fechaDate);
+            String periodoProyecto = obtenerPeriodoAcademico(fechaStr);
+
+            if (periodo.equals("Todos") || periodoProyecto.equals(periodo)) {
+                Company company = companyService.getCompany(project.getIdcompany());
+                modelo.addRow(new Object[]{
+                    project.getProId(),
+                    company.getId(),
+                    company.getCompanyName(),
+                    project.getProTitle(),
+                    fechaStr,
+                    "Acciones"
+                });
+            }
+        }
+
+        modelo.fireTableDataChanged();
+    }
+
+    private String obtenerPeriodoAcademico(String fecha) {
+        //formato YYYY-MM-DD
+        String[] partes = fecha.split("-");
+        int año = Integer.parseInt(partes[0]);
+        int mes = Integer.parseInt(partes[1]);
+
+        if (mes >= 1 && mes <= 6) {
+            return año + ".1";
+        } else {
+            return año + ".2";
+        }
+    }
+
 }

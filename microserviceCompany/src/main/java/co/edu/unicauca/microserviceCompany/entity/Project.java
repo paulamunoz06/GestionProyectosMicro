@@ -1,5 +1,6 @@
 package co.edu.unicauca.microserviceCompany.entity;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -42,6 +43,7 @@ public class Project {
     private String proGoals;
 
     @Temporal(TemporalType.DATE)
+    @JsonFormat(pattern = "yyyy-MM-dd")
     @Column(name = "PRODATE", nullable = false)
     private LocalDate proDate;
 

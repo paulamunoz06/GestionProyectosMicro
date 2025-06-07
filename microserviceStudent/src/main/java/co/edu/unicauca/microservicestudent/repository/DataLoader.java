@@ -87,8 +87,65 @@ public class DataLoader implements CommandLineRunner {
         project3.setProState(EnumProjectState.RECIBIDO);
         project3.setIdcompany("juanvela");
 
+        // Proyecto 4 - 2020.2
+        Project project4 = new Project();
+        project4.setProId("P4");
+        project4.setProTitle("Plataforma de Aprendizaje en Línea");
+        project4.setProDescription("Diseñar una plataforma web educativa interactiva.");
+        project4.setProAbstract("Portal con recursos, ejercicios y seguimiento para estudiantes.");
+        project4.setProGoals("Facilitar el acceso a la educación desde casa.");
+        project4.setProDate(LocalDate.of(2020, 9, 1)); // 2020.2
+        project4.setProDeadLine(6);
+        project4.setProBudget(15000.0);
+        project4.setProState(EnumProjectState.ACEPTADO);
+        project4.setIdcompany("juanvela");
+
+        // Proyecto 5 - 2023.1
+        Project project5 = new Project();
+        project5.setProId("P5");
+        project5.setProTitle("Sistema de Control de Inventario");
+        project5.setProDescription("Control eficiente de inventario para pymes.");
+        project5.setProAbstract("Sistema automatizado de seguimiento de productos.");
+        project5.setProGoals("Reducir pérdidas por mal manejo de inventario.");
+        project5.setProDate(LocalDate.of(2023, 2, 1)); // 2023.1
+        project5.setProDeadLine(5);
+        project5.setProBudget(20000.0);
+        project5.setProState(EnumProjectState.RECHAZADO);
+        project5.setIdcompany("juanvela");
+
+        // Proyecto 6 - 2024.1
+        Project project6 = new Project();
+        project6.setProId("P6");
+        project6.setProTitle("Chatbot de Atención al Cliente");
+        project6.setProDescription("Desarrollar un chatbot inteligente para atención 24/7.");
+        project6.setProAbstract("Soporte automatizado con IA para mejorar la atención al cliente.");
+        project6.setProGoals("Reducir carga de trabajo del personal de soporte.");
+        project6.setProDate(LocalDate.of(2024, 2, 1)); // 2024.1
+        project6.setProDeadLine(4);
+        project6.setProBudget(25000.0);
+        project6.setProState(EnumProjectState.EJECUCION);
+        project6.setIdcompany("juanvela");
+
+        // Proyecto 7 - 2024.2
+        Project project7 = new Project();
+        project7.setProId("P7");
+        project7.setProTitle("Sistema de Reservas Online");
+        project7.setProDescription("Permitir reservas en línea para eventos y espacios.");
+        project7.setProAbstract("Interfaz amigable para que los usuarios reserven desde cualquier dispositivo.");
+        project7.setProGoals("Digitalizar el sistema de reservas.");
+        project7.setProDate(LocalDate.of(2024, 8, 1)); // 2024.2
+        project7.setProDeadLine(3);
+        project7.setProBudget(12000.0);
+        project7.setProState(EnumProjectState.CERRADO);
+        project7.setIdcompany("juanvela");
+
+        // Guardar todos
         projectRepository.save(project1);
         projectRepository.save(project2);
         projectRepository.save(project3);
+        projectRepository.save(project4);
+        projectRepository.save(project5);
+        projectRepository.save(project6);
+        projectRepository.save(project7);
     }
 }
