@@ -11,9 +11,7 @@ El sistema sigue una arquitectura **basada en microservicios** con comunicación
 
 ### Microservicios del sistema
 
-- **Login Microservice**
-  Se encarga de todo lo relacionado con el inicio de sesión, autenticación y autorización de usuarios. 
-  El sistema utiliza Keycloak como sistema proveedor de identidad para la gestión de usuarios, roles, grupos y la emisión de tokens de seguridad. Un API Gateway se encarga de interceptar las solicitudes entrantes para realizar la validación de autenticación y autorización inicial. 
+El sistema utiliza Keycloak como sistema proveedor de identidad para la gestión de usuarios, roles, grupos y la emisión de tokens de seguridad. Un API Gateway se encarga de interceptar las solicitudes entrantes para realizar la validación de autenticación y autorización inicial. 
 
 - **Company Microservice**
   Maneja las necesidades de las empresas:
@@ -35,7 +33,7 @@ El sistema sigue una arquitectura **basada en microservicios** con comunicación
 
 ### Patrones de Diseño
 
-Se implementaron seis patrones de diseño como Observer, Singleton, Builder, Factory, State y Template para optimizar la interacción entre los módulos, garantizando modularidad y facilidad de mantenimiento. 
+Se implementaron seis patrones de diseño: Observer, Singleton, Builder, Factory, State y Template para optimizar la interacción entre los módulos, garantizando modularidad y facilidad de mantenimiento. 
 
 ### Despliegue
 
@@ -44,7 +42,7 @@ La aplicación está dockerizada con Docker-Compose. Se ha configurado un volume
 ## Tecnologías Utilizadas
 
 * **Backend:** Java 21, Spring Boot, JPA/Hibernate
-* **Bases de Datos:** PostgreSQL (para el microservicio Coordinator), H2 o SQLite (para otros microservicios en memoria) 
+* **Bases de Datos:** MariaDb  
 * **Autenticación y Autorización:** Keycloak, JWT, API Gateway 
 * **Contenedorización:** Docker, Docker-Compose 
 * **Mensajería Asíncrona:** RabbitMQ 
@@ -62,11 +60,10 @@ La aplicación está dockerizada con Docker-Compose. Se ha configurado un volume
 
 ### No Funcionales
 -   **Escalabilidad:** Diseñado para soportar una alta concurrencia de usuarios (500 estudiantes accediendo simultáneamente para postularse) y con capacidad de expansión a un producto nacional que involucre a estudiantes y empresas de todo el país. 
--   **Rendimiento:** Tiempos de respuesta rápidos para operaciones críticas. El sistema debe procesar cada postulación en menos de 1.5 segundos, soportando 500 postulaciones simultáneas sin degradación del rendimiento. El rendimiento del sistema no debe degradarse con la concurrencia, manteniendo tiempos de respuesta óptimos y evitando sobrecargas en la base de datos o el servidor. Las acciones dentro del sistema deben procesarse en menos de 2 segundos. 
 -   **Integridad de Datos:** Garantizar la integridad y consistencia de los datos, evitando postulaciones duplicadas o errores en la actualización del estado del estudiante. 
 -   **Mantenimiento:** Código bien documentado y modular para facilitar futuras mejoras y mantenimiento. 
--   **Usabilidad:** Interfaz intuitiva y fácil de usar. Diseño responsive y accesible desde dispositivos móviles y computadoras. 
--   **Seguridad:** Implementación de autenticación y autorización seguras basadas en tokens JWT, gestionados mediante Keycloak y un API Gateway.  Protección de datos personales y académicos, control de acceso y autorización. Implementación de HTTPS y cifrado de datos sensibles. Protección contra ataques comunes (SQL Injection, XSS, CSRF, etc.). 
+-   **Usabilidad:** Interfaz intuitiva y fácil de usar.
+-   **Seguridad:** Implementación de autenticación y autorización seguras basadas en tokens JWT, gestionados mediante Keycloak y un API Gateway.  Protección de datos personales y académicos, control de acceso y autorización. Implementación de HTTPS y cifrado de datos sensibles. 
 -   **Fiabilidad:** Consistencia y fiabilidad en el ciclo de vida del desarrollo. 
 
 ## Prototipos y Diseño
