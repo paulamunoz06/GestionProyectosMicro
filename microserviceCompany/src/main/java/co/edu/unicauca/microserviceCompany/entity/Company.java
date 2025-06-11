@@ -23,6 +23,7 @@ import java.util.List;
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "company")
 public class Company {
 
     /**
@@ -30,6 +31,7 @@ public class Company {
      * Este atributo se utiliza como clave primaria de la entidad {@link Company}.
      */
     @Id
+    @Column(name = "id")
     private String id;
 
     /**
@@ -38,7 +40,7 @@ public class Company {
      */
     @Email(message = "Debe proporcionar un correo electrónico válido")
     @NotBlank(message = "El correo electrónico no puede estar vacío")
-    @Column(nullable = false, unique = true)
+    @Column(name = "email",nullable = false, unique = true)
     private String email;
 
     /**
@@ -46,7 +48,7 @@ public class Company {
      * Este campo no puede estar vacío y se valida a través de una anotación de validación.
      */
     @NotBlank(message = "El nombre de la empresa no puede estar vacío")
-    @Column(nullable = false)
+    @Column(name = "company_name",nullable = false)
     private String companyName;
 
     /**
@@ -54,7 +56,7 @@ public class Company {
      * Este campo no puede estar vacío y se valida a través de una anotación de validación.
      */
     @NotBlank(message = "El nombre del contacto no puede estar vacío")
-    @Column(nullable = false)
+    @Column(name = "contact_name",nullable = false)
     private String contactName;
 
     /**
@@ -62,7 +64,7 @@ public class Company {
      * Este campo no puede estar vacío y se valida a través de una anotación de validación.
      */
     @NotBlank(message = "El apellido del contacto no puede estar vacío")
-    @Column(nullable = false)
+    @Column(name = "contact_last_name",nullable = false)
     private String contactLastName;
 
     /**
@@ -70,7 +72,7 @@ public class Company {
      * Este campo no puede estar vacío y se valida a través de una anotación de validación.
      */
     @NotBlank(message = "El teléfono de contacto no puede estar vacío")
-    @Column(nullable = false)
+    @Column(name = "contact_phone",nullable = false)
     private String contactPhone;
 
     /**
@@ -78,7 +80,7 @@ public class Company {
      * Este campo no puede estar vacío y se valida a través de una anotación de validación.
      */
     @NotBlank(message = "El cargo del contacto no puede estar vacío")
-    @Column(nullable = false)
+    @Column(name = "contact_position",nullable = false)
     private String contactPosition;
 
     /**
@@ -86,7 +88,7 @@ public class Company {
      * Este campo es un valor enumerado basado en la clase {@link EnumSector}.
      */
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "company_sector",nullable = false)
     private EnumSector companySector;
 
     /**
@@ -94,7 +96,7 @@ public class Company {
      * Esta relación es de tipo `OneToMany`, donde una empresa puede tener varios proyectos.
      */
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
-    @JoinColumn(name = "company_id")
+    @JoinColumn(name = "idcompany")
     private List<Project> companyProjects = new ArrayList<>();
 
     /**

@@ -18,50 +18,51 @@ import java.time.LocalDate;
 @Getter
 @Setter // Puedes restringir setters si quieres inmutabilidad post-construcción
 @NoArgsConstructor // Para JPA y otras librerías de framework
+@Table(name = "project")
 public class Project {
 
     @Id
-    @Column(name = "PROID", nullable = false, unique = true)
+    @Column(name = "proid", nullable = false, unique = true)
     private String proId;
 
     @NotBlank(message = "El título del proyecto no puede estar vacío")
     @Size(min = 2, max = 100)
-    @Column(name = "PROTITLE", nullable = false)
+    @Column(name = "protitle", nullable = false)
     private String proTitle;
 
     @NotBlank(message = "La descripción del proyecto no puede estar vacía")
     @Size(min = 10, max = 1000)
-    @Column(name = "PRODESCRIPTION", nullable = false)
+    @Column(name = "prodescription", nullable = false)
     private String proDescription;
 
     @NotBlank(message = "El resumen no puede estar vacío")
-    @Column(name = "PROABSTRACT", nullable = false)
+    @Column(name = "proabstract", nullable = false)
     private String proAbstract;
 
     @NotBlank(message = "Los objetivos no pueden estar vacíos")
-    @Column(name = "PROGOALS", nullable = false)
+    @Column(name = "progoals", nullable = false)
     private String proGoals;
 
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "PRODATE", nullable = false)
+    @Column(name = "prodate", nullable = false)
     private LocalDate proDate;
 
     @NotNull(message = "El tiempo máximo en meses no puede estar vacío")
-    @Column(name = "PRODEADLINE", nullable = false)
+    @Column(name = "prodeadline", nullable = false)
     private int proDeadLine;
 
-    @Column(name = "PROBUDGET", nullable = true)
+    @Column(name = "probudget", nullable = true)
     private Double proBudget;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "PROSTATE", nullable = false)
+    @Column(name = "prostate", nullable = false)
     private EnumProjectState proState;
 
-    @Column(name = "IDCOMPANY", nullable = true)
+    @Column(name = "idcompany", nullable = true)
     private String idcompany;
 
-    @Column(name = "IDCOORDINADOR", nullable = true)
+    @Column(name = "idcoordinator", nullable = true)
     private String proCoordinator;
 
     // Constructor privado: solo el Builder puede llamarlo

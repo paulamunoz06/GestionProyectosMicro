@@ -1,0 +1,147 @@
+version: '3.8'
+
+services:
+
+  rabbitmq:
+    image: rabbitmq:3-management
+    container_name: rabbitmq
+    ports:
+      - "5672:5672"
+      - "15672:15672"
+    environment:
+      RABBITMQ_DEFAULT_USER: guest
+      RABBITMQ_DEFAULT_PASS: guest
+    healthcheck:
+      test: [ "CMD", "rabbitmq-diagnostics", "ping" ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  mariadb:
+    container_name: mariadb
+    image: mariadb:11.3
+    restart: always
+    ports:
+      - "3306:3306"
+    environment:
+      MYSQL_ROOT_PASSWORD: mariadb
+      MYSQL_DATABASE: projectsoftwaredb
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: mariadb
+    volumes:
+      - ./dbfiles:/docker-entrypoint-initdb.d
+      - mariadb_data:/var/lib/mysql
+    healthcheck:
+      #test: [ "CMD", "mysqladmin", "ping", "-h", "localhost" ]
+      test: [ "CMD-SHELL", "exit 0" ]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+    networks:
+      - app-network
+
+  keycloak:
+    image: quay.io/keycloak/keycloak:26.2.4
+    command: start-dev --import-realm --hostname-strict=false --hostname=keycloak
+    volumes:
+      - ./export:/opt/keycloak/data/import
+      - keycloak-db-data:/opt/keycloak/data
+    environment:
+      KC_BOOTSTRAP_ADMIN_USERNAME: admin
+      KC_BOOTSTRAP_ADMIN_PASSWORD: admin
+      KC_DB: mariadb
+      KC_DB_URL_HOST: mariadb
+      KC_DB_URL_PORT: 3306
+      KC_DB_URL_DATABASE: keycloakdb
+      KC_DB_USERNAME: appuser
+      KC_DB_PASSWORD: mariadb
+      #KC_HOSTNAME: keycloak
+    ports:
+      - "8080:8080"
+    networks:
+      - app-network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  adminer:
+    image: adminer
+    container_name: adminer
+    restart: always
+    ports:
+      - "9090:8080"
+    networks:
+      - app-network
+    depends_on:
+      mariadb:
+        condition: service_healthy
+
+  company-microservice:
+    build:
+      context: ./microserviceCompany
+    container_name: company-microservice
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "8085:8085"
+    networks:
+      - app-network
+
+  coordinator-microservice:
+    build:
+      context: ./microserviceCoordinator
+    container_name: coordinator-microservice
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "8081:8081"
+    networks:
+      - app-network
+
+  student-microservice:
+    build:
+      context: ./microserviceStudent
+    container_name: student-microservice
+    depends_on:
+      rabbitmq:
+        condition: service_healthy
+      keycloak:
+        condition: service_started
+      mariadb:
+        condition: service_healthy
+    ports:
+      - "8083:8083"
+    networks:
+      - app-network
+
+  api-gateway:
+    build:
+      context: ./api-gateway
+    container_name: api-gateway
+    depends_on:
+      - company-microservice
+      - coordinator-microservice
+      - student-microservice
+    ports:
+      - "8086:8086"
+    networks:
+      - app-network
+
+networks:
+  app-network:
+
+volumes:
+  mariadb_data:
+  keycloak-db-data:

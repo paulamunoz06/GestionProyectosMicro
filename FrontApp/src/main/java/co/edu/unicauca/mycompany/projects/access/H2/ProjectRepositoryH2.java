@@ -496,6 +496,11 @@ public class ProjectRepositoryH2 extends Token implements IProjectRepository{
      */
     @Override
     public int countByStatus(String status) {
+        //try {
+        //    Thread.sleep(1000*3);
+        //} catch (InterruptedException ex) {
+        //    Logger.getLogger(ProjectRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
+        //}
         HttpClient httpClient = HttpClients.createDefault();
         ObjectMapper mapper = new ObjectMapper();
         String apiUrl = IUrl.ApiGatewayUrl + "/coordinator/projects/count-by-status/" + status;

@@ -14,11 +14,13 @@ import org.apache.http.HttpStatus;
 import java.net.http.HttpClient;
 import org.json.JSONObject;
 
+
+
 /**
  * Implementación del repositorio de usuarios que interactúa con un servicio REST
  * para realizar operaciones relacionadas con los usuarios, como el inicio de sesión.
  */
-public class UserRepositoryH2 implements IUserRepository{
+public class UserRepositoryH2 extends Token implements IUserRepository{
 
      /**
      * Inicia sesión en el sistema con las credenciales del usuario.
@@ -38,6 +40,9 @@ public class UserRepositoryH2 implements IUserRepository{
     public int iniciarSesion(String usuario, char[] pwd) {
         try{
             String token = obtenerToken(usuario, new String(pwd));
+            //Thread.sleep(1000*4);
+            //this.token = token;
+            
             if (token != null) {
                 return extraerRolDesdeToken(token);
             }
@@ -89,6 +94,7 @@ public class UserRepositoryH2 implements IUserRepository{
     
     @Override
     public String obtenerToken(String username, String password) throws IOException, InterruptedException{
+        //Thread.sleep(1000*4);
         HttpClient client = HttpClient.newHttpClient();
         String requestBody = "client_id=sistema-desktop&grant_type=password&username=" + username + "&password=" + password;
 
@@ -102,6 +108,7 @@ public class UserRepositoryH2 implements IUserRepository{
         System.out.println("Código de respuesta: " + response.statusCode());
         System.out.println("Cuerpo de respuesta: " + response.body());
         if (response.statusCode() != 200) {
+            System.out.println("Falló get obtenertoken: " + response.statusCode());
             return null;
         }
         JSONObject json = new JSONObject(response.body());

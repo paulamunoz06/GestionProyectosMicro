@@ -17,10 +17,10 @@ import java.util.List;
  * se ha postulado y en los que ha sido aprobado.
  */
 @Entity
-@Table(name = "student")
 @Getter
 @Setter
 @NoArgsConstructor
+@Table(name = "student")
 public class Student {
 
     /**
@@ -30,7 +30,7 @@ public class Student {
      */
     @Id
     @NotNull(message = "El ID no puede estar vacío")
-    @Column(name = "STUDENTID", nullable = false, unique = true)
+    @Column(name = "studentid", nullable = false, unique = true)
     private String id;
 
     /**
@@ -40,7 +40,7 @@ public class Student {
      */
     @NotBlank(message = "El correo no puede estar vacío")
     @Email(message = "Debe ser un correo electrónico válido")
-    @Column(name = "STUDENTEMAIL", nullable = false)
+    @Column(name = "studentemail", nullable = false)
     private String email;
 
     /**
@@ -50,7 +50,7 @@ public class Student {
      */
     @NotBlank(message = "La contraseña no puede estar vacía")
     @Size(min = 8, message = "La contraseña debe tener al menos 8 caracteres")
-    @Column(name = "STUDENTPASSWORD", nullable = false)
+    @Column(name = "studentpassword", nullable = false)
     private String password;
 
     /**

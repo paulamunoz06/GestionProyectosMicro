@@ -6,21 +6,23 @@ spring:
     name: api-gateway
   cloud:
     gateway:
+      #default-filters:
+      #  - TokenRelay
       routes:
         - id: microservice-company
-          uri: http://localhost:8085
+          uri: http://company-microservice:8085  # Changed from localhost
           predicates:
             - Path=/company/**
           filters:
             - StripPrefix=1
         - id: microservice-coordinator
-          uri: http://localhost:8081
+          uri: http://coordinator-microservice:8081  # Changed from localhost
           predicates:
             - Path=/coordinator/**
           filters:
             - StripPrefix=1
         - id: microservice-student
-          uri: http://localhost:8083
+          uri: http://student-microservice:8083  # Changed from localhost
           predicates:
             - Path=/student/**
           filters:
@@ -29,7 +31,7 @@ spring:
     oauth2:
       resourceserver:
         jwt:
-          issuer-uri: http://localhost:8080/realms/sistema
+          issuer-uri: http://keycloak:8080/realms/sistema  # Changed from localhost
 
 logging:
   level:

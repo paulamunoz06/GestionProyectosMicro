@@ -83,6 +83,11 @@ public class CompanyRepositoryH2 extends Token implements ICompanyRepository {
      */
     @Override
     public Company companyInfo(String nit) {
+        //try {
+        //    Thread.sleep(1000*3);
+        //} catch (InterruptedException ex) {
+        //    Logger.getLogger(CompanyRepositoryH2.class.getName()).log(Level.SEVERE, null, ex);
+        //}
         HttpClient httpClient = HttpClients.createDefault();
         ObjectMapper mapper = new ObjectMapper();
         Company companyReturn = null;

@@ -28,13 +28,14 @@ import java.util.List;
 @Setter
 @NoArgsConstructor
 @AllArgsConstructor
+@Table(name = "project")
 public class Project {
 
     /**
      * Identificador único del proyecto.
      */
     @Id
-    @Column(name = "PROID", nullable = false, unique = true)
+    @Column(name = "proid", nullable = false, unique = true)
     private String proId;
 
     /**
@@ -44,7 +45,7 @@ public class Project {
      */
     @NotBlank(message = "El título del proyecto no puede estar vacío")
     @Size(min = 2, max = 100)
-    @Column(name = "PROTITLE", nullable = false)
+    @Column(name = "protitle", nullable = false)
     private String proTitle;
 
     /**
@@ -54,21 +55,21 @@ public class Project {
      */
     @NotBlank(message = "La descripción del proyecto no puede estar vacía")
     @Size(min = 10, max = 1000)
-    @Column(name = "PRODESCRIPTION", nullable = false)
+    @Column(name = "prodescription", nullable = false)
     private String proDescription;
 
     /**
      * Resumen o sinopsis breve del proyecto.
      */
     @NotBlank(message = "El resumen no puede estar vacío")
-    @Column(name = "PROABSTRACT", nullable = false)
+    @Column(name = "proabstract", nullable = false)
     private String proAbstract;
 
     /**
      * Objetivos principales que el proyecto busca alcanzar.
      */
     @NotBlank(message = "Los objetivos no pueden estar vacíos")
-    @Column(name = "PROGOALS", nullable = false)
+    @Column(name = "progoals", nullable = false)
     private String proGoals;
 
     /**
@@ -78,20 +79,20 @@ public class Project {
      */
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd")
-    @Column(name = "PRODATE", nullable = false)
+    @Column(name = "prodate", nullable = false)
     private LocalDate proDate;
 
     /**
      * Plazo máximo estimado para la ejecución del proyecto (en meses).
      */
     @NotNull(message = "El tiempo máximo en meses no puede estar vacío")
-    @Column(name = "PRODEADLINE", nullable = false)
+    @Column(name = "prodeadline", nullable = false)
     private int proDeadLine;
 
     /**
      * Presupuesto estimado del proyecto.
      */
-    @Column(name = "PROBUDGET", nullable = true)
+    @Column(name = "probudget", nullable = true)
     private Double proBudget;
 
     /**
@@ -100,19 +101,19 @@ public class Project {
      * Define en qué fase se encuentra dentro del ciclo de vida.
      */
     @Enumerated(EnumType.STRING)
-    @Column(name = "PROSTATE", nullable = false)
+    @Column(name = "prostate", nullable = false)
     private EnumProjectState proState;
 
     /**
      * Identificador de la empresa que propone o financia el proyecto.
      */
-    @Column(name = "IDCOMPANY", nullable = true)
+    @Column(name = "idcompany", nullable = true)
     private String idcompany;
 
     /**
      * Identificador del coordinador académico asignado al proyecto.
      */
-    @Column(name = "IDCOORDINADOR", nullable = true)
+    @Column(name = "idcoordinator", nullable = true)
     private String proCoordinator;
 
     /**
@@ -123,8 +124,8 @@ public class Project {
     @ManyToMany
     @JoinTable(
             name = "postulated",
-            joinColumns = @JoinColumn(name = "proId"),
-            inverseJoinColumns = @JoinColumn(name = "studentId")
+            joinColumns = @JoinColumn(name = "pro_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
     )
     private List<Student> postulated = new ArrayList<>();
 
@@ -136,8 +137,8 @@ public class Project {
     @ManyToMany
     @JoinTable(
             name = "approved",
-            joinColumns = @JoinColumn(name = "proId"),
-            inverseJoinColumns = @JoinColumn(name = "studentId")
+            joinColumns = @JoinColumn(name = "pro_id"),
+            inverseJoinColumns = @JoinColumn(name = "student_id")
     )
     private List<Student> approved = new ArrayList<>();
 

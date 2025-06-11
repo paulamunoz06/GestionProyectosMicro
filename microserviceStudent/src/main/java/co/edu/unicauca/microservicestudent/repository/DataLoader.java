@@ -47,7 +47,7 @@ public class DataLoader implements CommandLineRunner {
         projectRepository.deleteAll();
 
         // Crear y guardar un estudiante de ejemplo
-        Student user3 = new Student("cunas", "cunas@example.com", "passwordCris");
+        Student user3 = new Student("cunas", "cunas@example.com", "passwordcris");
         studentRepository.save(user3);
 
         // Proyecto 1
@@ -61,7 +61,7 @@ public class DataLoader implements CommandLineRunner {
         project1.setProBudget(10000.0);
         project1.setProState(EnumProjectState.RECIBIDO);
         project1.setProDate(LocalDate.now());
-        project1.setIdcompany("juanvela");
+        //project1.setIdcompany("juanvela");
 
         Project project2 = new Project();
         project2.setProId("P2");
@@ -73,7 +73,7 @@ public class DataLoader implements CommandLineRunner {
         project2.setProDeadLine(8);
         project2.setProBudget(30000.0);
         project2.setProState(EnumProjectState.RECIBIDO);
-        project2.setIdcompany("juanvela");
+        //project2.setIdcompany("juanvela");
 
         Project project3 = new Project();
         project3.setProId("P3");
@@ -85,7 +85,7 @@ public class DataLoader implements CommandLineRunner {
         project3.setProDeadLine(8);
         project3.setProBudget(30000.0);
         project3.setProState(EnumProjectState.RECIBIDO);
-        project3.setIdcompany("juanvela");
+        //project3.setIdcompany("juanvela");
 
         // Proyecto 4 - 2020.2
         Project project4 = new Project();
@@ -98,7 +98,7 @@ public class DataLoader implements CommandLineRunner {
         project4.setProDeadLine(6);
         project4.setProBudget(15000.0);
         project4.setProState(EnumProjectState.ACEPTADO);
-        project4.setIdcompany("juanvela");
+        //project4.setIdcompany("juanvela");
 
         // Proyecto 5 - 2023.1
         Project project5 = new Project();
@@ -111,7 +111,7 @@ public class DataLoader implements CommandLineRunner {
         project5.setProDeadLine(5);
         project5.setProBudget(20000.0);
         project5.setProState(EnumProjectState.RECHAZADO);
-        project5.setIdcompany("juanvela");
+        //project5.setIdcompany("juanvela");
 
         // Proyecto 6 - 2024.1
         Project project6 = new Project();
@@ -124,7 +124,7 @@ public class DataLoader implements CommandLineRunner {
         project6.setProDeadLine(4);
         project6.setProBudget(25000.0);
         project6.setProState(EnumProjectState.EJECUCION);
-        project6.setIdcompany("juanvela");
+        //project6.setIdcompany("juanvela");
 
         // Proyecto 7 - 2024.2
         Project project7 = new Project();
@@ -137,7 +137,7 @@ public class DataLoader implements CommandLineRunner {
         project7.setProDeadLine(3);
         project7.setProBudget(12000.0);
         project7.setProState(EnumProjectState.CERRADO);
-        project7.setIdcompany("juanvela");
+        //project7.setIdcompany("juanvela");
 
         // Guardar todos
         projectRepository.save(project1);

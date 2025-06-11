@@ -26,41 +26,42 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@Table(name = "jpa_project_entity")
 public class JpaProjectEntity {
 
     /**
      * Identificador único del proyecto, representado como objeto de valor ProjectId.
      */
     @EmbeddedId
-    @AttributeOverride(name = "value", column = @Column(name = "proId"))
+    @AttributeOverride(name = "value", column = @Column(name = "pro_id"))
     private ProjectId proId;
 
     /**
      * Título del proyecto como objeto de valor ProjectTitle.
      */
     @Embedded
-    @AttributeOverride(name = "value", column = @Column(name = "proTitle", nullable = false))
+    @AttributeOverride(name = "value", column = @Column(name = "pro_title", nullable = false))
     private ProjectTitle proTitle;
 
     /**
      * Descripción detallada del proyecto. No puede estar vacía.
      */
     @NotBlank(message = "La descripción del proyecto no puede estar vacía")
-    @Column(nullable = false)
+    @Column(name = "pro_description",nullable = false)
     private String proDescription;
 
     /**
      * Resumen del proyecto. No puede estar vacío.
      */
     @NotBlank(message = "El resumen no puede estar vacío")
-    @Column(nullable = false)
+    @Column(name = "pro_abstract",nullable = false)
     private String proAbstract;
 
     /**
      * Objetivos del proyecto. No pueden estar vacíos.
      */
     @NotBlank(message = "Los objetivos no pueden estar vacíos")
-    @Column(nullable = false)
+    @Column(name = "pro_goals",nullable = false)
     private String proGoals;
 
     /**
@@ -70,39 +71,39 @@ public class JpaProjectEntity {
     @Temporal(TemporalType.DATE)
     @JsonFormat(pattern = "yyyy-MM-dd")
     @Embedded
-    @AttributeOverride(name = "date", column = @Column(name = "proDate", nullable = false))
+    @AttributeOverride(name = "date", column = @Column(name = "pro_date", nullable = false))
     private ProjectRegistrationDate proDate;
 
     /**
      * Plazo máximo para la ejecución del proyecto, representado como objeto de valor ProjectDeadline.
      */
     @Embedded
-    @AttributeOverride(name = "months", column = @Column(name = "proDeadLine", nullable = false))
+    @AttributeOverride(name = "months", column = @Column(name = "pro_dead_line", nullable = false))
     private ProjectDeadline proDeadLine;
 
     /**
      * Presupuesto asignado al proyecto. Puede ser nulo.
      */
-    @Column(nullable = true)
+    @Column(name = "pro_budget",nullable = true)
     private Double proBudget;
 
     /**
      * Estado actual del proyecto como enumeración EnumProjectState.
      */
     @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
+    @Column(name = "pro_state",nullable = false)
     private EnumProjectState proState;
 
     /**
      * Identificador de la compañía asociada al proyecto. Puede ser nulo.
      */
-    @Column(nullable = true)
+    @Column(name = "idcompany",nullable = true)
     private String idcompany;
 
     /**
      * Identificador del coordinador asignado al proyecto. Puede ser nulo.
      */
-    @Column(nullable = true)
+    @Column(name = "pro_coordinator",nullable = true)
     private String proCoordinator;
 
     /**

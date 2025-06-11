@@ -3,6 +3,7 @@ package co.edu.unicauca.microservicecoordinator.infraestructure.persistence.enti
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -24,6 +25,7 @@ import lombok.Setter;
 @Getter
 @Setter
 @AllArgsConstructor
+@Table(name = "jpa_coordinator_entity")
 public class JpaCoordinatorEntity {
 
     /**
@@ -36,13 +38,13 @@ public class JpaCoordinatorEntity {
     /**
      * Correo electrónico único del coordinador.
      */
-    @Column(nullable = false, unique = true)
+    @Column(name = "coordinator_email",nullable = false, unique = true)
     private String coordinatorEmail;
 
     /**
      * Contraseña del coordinador.
      */
-    @Column(nullable = false)
+    @Column(name = "coordinator_password",nullable = false)
     private String coordinatorPassword;
 
     /**

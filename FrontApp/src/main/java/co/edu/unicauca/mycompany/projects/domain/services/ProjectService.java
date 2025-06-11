@@ -8,6 +8,8 @@ import co.edu.unicauca.mycompany.projects.infra.Messages;
 import co.edu.unicauca.mycompany.projects.infra.Subject;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Servicio que gestiona la lógica de negocio relacionada con los proyectos.
@@ -104,16 +106,28 @@ public class ProjectService extends Subject{
     * @return Una lista de enteros donde cada elemento representa la cantidad de proyectos en un estado específico.
     */
     public List<Integer> dataGraphicCoordinator() {
-        List<Integer> data = new ArrayList<>();
-
-        data.add(repository.countByStatus("RECIBIDO"));
-        data.add(repository.countByStatus("ACEPTADO"));
-        data.add(repository.countByStatus("RECHAZADO"));
-        data.add(repository.countByStatus("EJECUCION"));
-        data.add(repository.countByStatus("CERRADO"));
-        data.add(repository.countTotalProjects());
-
-        return data;
+        
+            List<Integer> data = new ArrayList<>();
+        //try {
+            //Thread.sleep(1000*2);
+            data.add(repository.countByStatus("RECIBIDO"));
+            //Thread.sleep(1000*2);
+            data.add(repository.countByStatus("ACEPTADO"));
+            //Thread.sleep(1000*2);
+            data.add(repository.countByStatus("RECHAZADO"));
+            //Thread.sleep(1000*2);
+            data.add(repository.countByStatus("EJECUCION"));
+            //Thread.sleep(1000*2);
+            data.add(repository.countByStatus("CERRADO"));
+            //Thread.sleep(1000*2);
+            data.add(repository.countTotalProjects());
+            //Thread.sleep(1000*2);
+            
+            return data;
+        //} catch (InterruptedException ex) {
+        //    Logger.getLogger(ProjectService.class.getName()).log(Level.SEVERE, null, ex);
+        //}
+        //return data;
     }
     
     /**
