@@ -82,14 +82,12 @@ La aplicación está dockerizada con Docker-Compose. Se ha configurado un volume
 ## Repositorio del Proyecto
 [https://github.com/paulamunoz06/GestionProyectosMicro.git](https://github.com/paulamunoz06/GestionProyectosMicro.git) 
 
-## Video sustentación
-
 ## Créditos
 **Desarrollado por:**
 -   Ana Sofía Arango Yanza 
 -   Juan Diego Gómez Garcés 
 -   Paula Andrea Muñoz Delgado 
 -   Cristhian Camilo Unas Ocaña 
--   [cite_start]Juan David Vela Coronado 
+-   Juan David Vela Coronado 
 
-**Profesor:** Nombres y apellidos 
+**Profesor:** Libardo Pantoja Yepez 
