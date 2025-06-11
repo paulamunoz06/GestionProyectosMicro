@@ -37,7 +37,7 @@ Se implementaron seis patrones de diseño: Observer, Singleton, Builder, Factory
 
 ### Despliegue
 
-La aplicación está dockerizada con Docker-Compose. Se ha configurado un volumen para la persistencia del microservicio del coordinador mediante Postgres. 
+La aplicación está dockerizada con Docker-Compose. Se ha configurado un volumen para la persistencia del microservicio del coordinador mediante MariaDb. 
 
 ## Tecnologías Utilizadas
 
